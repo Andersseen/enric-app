@@ -2,13 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { IonContent, IonRippleEffect } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import AppHeader from '@components/header';
-
-interface BirdItem {
-  id: number;
-  name: string;
-  image: string;
-  favorite: boolean;
-}
+import { BIRDS, type BirdItem } from '@data/bird';
 
 @Component({
   selector: 'app-birds',
@@ -17,8 +11,8 @@ interface BirdItem {
     <ion-content [fullscreen]="true" class="text-basecolor" [scrollEvents]="false">
       <div class="mx-auto max-w-5xl px-4 py-8 md:py-12">
         <app-header
-          [title]="'Fauna - Pajaros'"
-          [subtitle]="'Selecciona un pájaro o marca como favorito'"
+          [title]="'Fauna - Pájaros'"
+          [subtitle]="'Selecciona o marca tus especies favoritas'"
           [showBackButton]="true"
         />
 
@@ -53,15 +47,17 @@ interface BirdItem {
 
             <a
               [routerLink]="['/birds', bird.id]"
-              class="flex flex-col items-center justify-center gap-2 p-4 text-center"
+              class="relative block w-full pb-[100%] overflow-hidden"
             >
               <img
                 [src]="bird.image"
                 [alt]="bird.name"
                 loading="lazy"
-                class="h-16 w-16 rounded-md object-cover"
+                class="absolute inset-0 h-full w-full object-cover"
               />
-              <div class="text-sm font-medium truncate w-full text-ellipsis text-basecolor">
+              <div
+                class="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm px-2 py-1 text-center text-xs font-medium text-white"
+              >
                 {{ bird.name }}
               </div>
             </a>
@@ -75,48 +71,7 @@ interface BirdItem {
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class BirdsPage {
-  private readonly initialBirds: BirdItem[] = [
-    {
-      id: 1,
-      name: 'Gorrión común',
-      image: 'https://picsum.photos/seed/sparrow/100',
-      favorite: false,
-    },
-    { id: 2, name: 'Paloma', image: 'https://picsum.photos/seed/pigeon/100', favorite: false },
-    { id: 3, name: 'Cuervo', image: 'https://picsum.photos/seed/crow/100', favorite: false },
-    { id: 4, name: 'Canario', image: 'https://picsum.photos/seed/canary/100', favorite: false },
-    { id: 5, name: 'Golondrina', image: 'https://picsum.photos/seed/swallow/100', favorite: false },
-    { id: 6, name: 'Petirrojo', image: 'https://picsum.photos/seed/robin/100', favorite: false },
-    { id: 7, name: 'Mirlo', image: 'https://picsum.photos/seed/blackbird/100', favorite: false },
-    { id: 8, name: 'Vencejo', image: 'https://picsum.photos/seed/swift/100', favorite: false },
-    { id: 9, name: 'Halcón', image: 'https://picsum.photos/seed/falcon/100', favorite: false },
-    { id: 10, name: 'Águila', image: 'https://picsum.photos/seed/eagle/100', favorite: false },
-    { id: 11, name: 'Búho', image: 'https://picsum.photos/seed/owl/100', favorite: false },
-    { id: 12, name: 'Lechuza', image: 'https://picsum.photos/seed/barnowl/100', favorite: false },
-    { id: 13, name: 'Gaviota', image: 'https://picsum.photos/seed/seagull/100', favorite: false },
-    {
-      id: 14,
-      name: 'Cormorán',
-      image: 'https://picsum.photos/seed/cormorant/100',
-      favorite: false,
-    },
-    { id: 15, name: 'Abubilla', image: 'https://picsum.photos/seed/hoopoe/100', favorite: false },
-    { id: 16, name: 'Carbonero', image: 'https://picsum.photos/seed/tit/100', favorite: false },
-    {
-      id: 17,
-      name: 'Jilguero',
-      image: 'https://picsum.photos/seed/goldfinch/100',
-      favorite: false,
-    },
-    { id: 18, name: 'Cigüeña', image: 'https://picsum.photos/seed/stork/100', favorite: false },
-    {
-      id: 19,
-      name: 'Martín pescador',
-      image: 'https://picsum.photos/seed/kingfisher/100',
-      favorite: false,
-    },
-    { id: 20, name: 'Zorzal', image: 'https://picsum.photos/seed/thrush/100', favorite: false },
-  ];
+  private readonly initialBirds: BirdItem[] = BIRDS;
 
   birds = signal<BirdItem[]>(this.initialBirds);
   query = signal('');
