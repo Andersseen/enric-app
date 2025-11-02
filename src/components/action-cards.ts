@@ -16,7 +16,7 @@ export interface ActionCardItem {
   selector: 'app-action-cards',
   imports: [IonRippleEffect, RouterLink],
   template: `
-    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       @for (card of items(); track card.title) {
       <a
         [routerLink]="card.routerLink"
@@ -36,15 +36,14 @@ export interface ActionCardItem {
             </p>
           </div>
         </div>
+
         <ion-ripple-effect class="pointer-events-none absolute inset-0" />
       </a>
       }
     </section>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    class: 'block w-full',
-  },
+  host: { class: 'block w-full' },
 })
 export default class ActionCards {
   items = input.required<ActionCardItem[]>();
