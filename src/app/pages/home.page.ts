@@ -30,7 +30,7 @@ export default class Home {
       icon: '🧰',
       title: 'Prevención',
       description: 'Medidas preventivas de fauna en pista.',
-      routerLink: ['reviews'],
+      routerLink: ['prevention'],
       color: 'primary',
     },
     {

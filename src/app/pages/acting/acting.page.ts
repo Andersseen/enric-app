@@ -17,7 +17,7 @@ import ActionCards, { ActionCardItem } from '@components/action-cards';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
-export default class WildlifePage {
+export default class ActingPage {
   cards: ActionCardItem[] = [
     {
       icon: '➕',
