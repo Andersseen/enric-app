@@ -2,51 +2,12 @@
 @import './styles/tokens.css';
 
 @theme {
-  --color-text: var(--c-text);
+  --color-text: var(--ion-text-color);
+  --color-background: var(--ion-background-color);
   --color-muted: var(--c-muted);
   --color-surface: var(--c-surface);
   --color-primary: var(--c-primary);
   --color-primary-hover: var(--c-primary-hover);
   --color-secondary: var(--c-secondary);
   --color-secondary-hover: var(--c-secondary-hover);
-}
-
-/* Utilidades semánticas minimas */
-.text-basecolor {
-  color: var(--color-text);
-}
-.text-muted {
-  color: var(--color-muted);
-}
-.bg-surface {
-  background-color: var(--color-surface);
-}
-.border-muted {
-  border-color: var(--color-muted);
-}
-
-/* Botones (aplicables a bg/ring/text) */
-.bg-primary {
-  background-color: var(--color-primary);
-}
-.hover\:bg-primary-hover:hover {
-  background-color: var(--color-primary-hover);
-}
-.text-on-primary {
-  color: oklch(98% 0 0deg);
-}
-
-.bg-secondary {
-  background-color: var(--color-secondary);
-}
-.hover\:bg-secondary-hover:hover {
-  background-color: var(--color-secondary-hover);
-}
-.text-on-secondary {
-  color: oklch(12% 0 0deg);
-}
-
-/* Ring acorde al primario */
-.ring-primary {
-  --tw-ring-color: var(--color-primary);
 }
