@@ -5,7 +5,7 @@ const homeRoutes: Routes = [
     path: '',
     loadComponent: () => import('./home.page'),
   },
-  { path: 'wildlife', loadComponent: () => import('./wildlife/wildlife.page') },
-  { path: 'reviews', loadChildren: () => import('./reviews/reviews.router') },
+  { path: 'action', loadChildren: () => import('./acting/acting.router') },
+  { path: 'prevention', loadChildren: () => import('./prevention/prevention.router') },
 ];
 export default homeRoutes;
