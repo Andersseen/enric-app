@@ -11,7 +11,7 @@ export interface SessionHeaderData {
 @Component({
   selector: 'app-session-header',
   template: `
-    <section class="rounded-xl border border-muted bg-surface p-4 shadow-sm space-y-4">
+    <section class="rounded-xl border p-4 shadow-sm">
       <h1 class="text-lg font-semibold mb-2">Datos de sesión</h1>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
