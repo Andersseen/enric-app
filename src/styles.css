@@ -11,3 +11,6 @@
   --color-secondary: var(--c-secondary);
   --color-secondary-hover: var(--c-secondary-hover);
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
