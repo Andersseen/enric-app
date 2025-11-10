@@ -10,7 +10,7 @@ import { IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
         <ion-icon name="play-circle"></ion-icon>
         Zonas
       </ion-tab-button>
-      <ion-tab-button tab="step-2">
+      <ion-tab-button tab="step-2" class="bg-primary">
         <ion-icon name="radio"></ion-icon>
         Especies
       </ion-tab-button>
@@ -18,7 +18,7 @@ import { IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
         <ion-icon name="library"></ion-icon>
         Cantidades
       </ion-tab-button>
-      <ion-tab-button tab="step-4">
+      <ion-tab-button disabled tab="step-4">
         <ion-icon name="search"></ion-icon>
         Revisión
       </ion-tab-button>

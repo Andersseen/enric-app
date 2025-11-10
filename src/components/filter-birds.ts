@@ -6,15 +6,12 @@ import {
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
-  IonModal,
 } from '@ionic/angular/standalone';
-
 import AppHeader from '@components/header';
 import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
 import SearchBar from '@components/searchbar';
-import ModalInput from '@components/modal-input';
 
 @Component({
   selector: 'app-filter-birds',
@@ -27,8 +24,6 @@ import ModalInput from '@components/modal-input';
     IonIcon,
     IonButton,
     SearchBar,
-    IonModal,
-    ModalInput,
   ],
   template: `
     <div class="mx-auto p-8">
