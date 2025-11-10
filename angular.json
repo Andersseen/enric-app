@@ -3,10 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "pnpm",
-    "schematicCollections": [
-      "@ionic/angular-toolkit",
-      "@ionic/angular-toolkit"
-    ]
+    "schematicCollections": ["@ionic/angular-toolkit", "@ionic/angular-toolkit"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -58,7 +55,6 @@
               }
             ],
             "styles": [
-              "src/custom-theme.scss",
               "src/styles.css",
               {
                 "input": "node_modules/@ionic/angular/css/core.css"
@@ -177,9 +173,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/styles.css"]
           }
         },
         "ionic-cordova-serve": {
