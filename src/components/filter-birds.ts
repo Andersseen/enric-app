@@ -80,11 +80,6 @@ import ModalInput from '@components/modal-input';
         </ion-card>
         }
       </section>
-      <ion-modal [isOpen]="isModalOpen()" (ionModalDidDismiss)="isModalOpen.set(false)">
-        <ng-template>
-          <app-modal-input [bird]="selectedBird()" [(isModalOpen)]="isModalOpen" />
-        </ng-template>
-      </ion-modal>
     </div>
   `,
   host: { class: 'block h-full w-full font-sans antialiased' },

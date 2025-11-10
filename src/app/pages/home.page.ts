@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
-import SessionHeaderComponent from '@components/session-header';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  imports: [IonContent, SessionHeaderComponent, RouterOutlet],
+  imports: [IonContent, RouterOutlet],
   template: `
-    <ion-content [fullscreen]="true" [scrollEvents]="false">
-      <app-session-header (sessionChange)="onSessionChange($event)" />
+    <ion-content>
       <router-outlet />
     </ion-content>
   `,
