@@ -1,15 +1,11 @@
 import { Component } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
-import { RouterOutlet } from '@angular/router';
+import { IonRouterOutlet } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-home',
-  imports: [IonContent, RouterOutlet],
-  template: `
-    <ion-content>
-      <router-outlet />
-    </ion-content>
-  `,
+  imports: [IonRouterOutlet],
+  template: ` <ion-router-outlet /> `,
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class Home {

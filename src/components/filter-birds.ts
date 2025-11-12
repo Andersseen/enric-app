@@ -27,11 +27,11 @@ import SearchBar from '@components/searchbar';
   ],
   template: `
     <div class="mx-auto p-8">
-      <app-header
+      <!-- <app-header
         [title]="'Actuación - Especies'"
         [subtitle]="'Selecciona o marca tus especies favoritas'"
         [showBackButton]="true"
-      />
+      /> -->
 
       <!-- SEARCH + TOGGLE SELECTED PANEL -->
 
