@@ -1,11 +1,10 @@
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, signal, output } from '@angular/core';
 import { Zone, zones } from '@data/zones';
 import { IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-map-zones',
-  imports: [IonButton, RouterLink],
+  imports: [IonButton],
   template: `
     <div class="grid grid-cols-8 gap-1">
       @for ( zone of zonesList(); track zone.id) {
@@ -24,14 +23,14 @@ import { IonButton } from '@ionic/angular/standalone';
     <h2 class="mt-4 text-xl">Seleccionada: {{ selectedZone()!.name }}</h2>
     } @if (selectedZone()) {
     <div class="flex justify-center mt-4">
-      <ion-button routerLink="comments">Seguir</ion-button>
+      <ion-button (click)="selectZone()">Seguir</ion-button>
     </div>
 
     }
   `,
 })
 export default class MapZones {
-  @Output() zoneSelect = new EventEmitter<Zone>();
+  zoneSelect = output<Zone>();
 
   basePath = '/zones/';
 
@@ -63,6 +62,10 @@ export default class MapZones {
   onSelect(zone: Zone): void {
     this._selectedId.set(zone.id);
     this._selectedZone.set(zone);
-    this.zoneSelect.emit(zone);
+  }
+
+  selectZone() {
+    if (!this.selectedZone()) return;
+    this.zoneSelect.emit(this.selectedZone()!);
   }
 }
