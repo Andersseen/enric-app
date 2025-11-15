@@ -10,8 +10,8 @@ import StoreService from '@service/state';
       @for ( zone of zonesList(); track zone.id) {
       <div
         (click)="onSelect(zone)"
-        [class.border-4]="selectedZone()?.id === zone.id"
-        [class.border-indigo-500]="selectedZone()?.id === zone.id"
+        [class.border-8]="selectedZone()?.id === zone.id"
+        [class.border-primary]="selectedZone()?.id === zone.id"
         class="cursor-pointer"
       >
         <img [src]="basePath + zone.image" [alt]="zone.name" class="w-full h-auto block" />

@@ -26,12 +26,13 @@ import StoreService from '@service/state';
       <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         @for ( bird of filteredBirds(); track bird.id) {
         <ion-card
-          class="relative flex justify-between group overflow-hidden rounded-xl border cursor-pointer
-            shadow-sm transition-all hover:shadow-md active:scale-[0.99] p-4"
+          class="relative flex justify-between overflow-hidden rounded-xl border cursor-pointer transition-all p-2 h-20"
           role="button"
           tabindex="0"
           (click)="onCardClick(bird)"
           [attr.aria-label]="'Seleccionar ' + bird.commonName"
+          [class.border-4]="selectedBird()?.id === bird.id"
+          [class.border-primary]="selectedBird()?.id === bird.id"
         >
           <div class="min-w-0 pr-2">
             <ion-card-header>
@@ -72,6 +73,8 @@ export default class FilterBirds {
   birds = signal<BirdItem[]>(this.#initialBirds);
   query = signal('');
 
+  selectedBird = signal({} as BirdItem);
+
   filteredBirds = computed(() => {
     const q = this.query().toLowerCase().trim();
     const all = this.birds();
@@ -100,6 +103,7 @@ export default class FilterBirds {
   }
 
   onCardClick(bird: BirdItem): void {
+    this.selectedBird.set(bird);
     this.#store.setValueForCurrentStep(bird);
   }
 }

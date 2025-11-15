@@ -13,7 +13,7 @@ import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 import { Router } from '@angular/router';
 import StoreService from '@service/state';
-import { STEP_ID } from '@data/steps';
+import { StepId } from '@data/steps';
 
 @Component({
   selector: 'app-step-panel',
@@ -72,11 +72,11 @@ export default class StepPanel {
 
   goBack() {
     this.#router.navigate(['/home/action', this.currentStateStep().prev]);
-    this.#store.setCurrentStep(this.currentStateStep().prev as STEP_ID);
+    this.#store.setCurrentStep(this.currentStateStep().prev as StepId);
   }
 
   goForward() {
     this.#router.navigate(['/home/action', this.currentStateStep().next]);
-    this.#store.setCurrentStep(this.currentStateStep().next as STEP_ID);
+    this.#store.setCurrentStep(this.currentStateStep().next as StepId);
   }
 }

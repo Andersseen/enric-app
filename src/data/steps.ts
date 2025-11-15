@@ -1,10 +1,10 @@
 export interface Step {
-  id: STEP_ID;
+  id: StepId;
   title: string;
   icon: string;
 }
 
-export type STEP_ID = 'step-1' | 'step-2' | 'step-3' | 'step-4';
+export type StepId = 'step-1' | 'step-2' | 'step-3' | 'step-4';
 
 export const STEP_STATE = {
   'step-1': { prev: null, next: 'step-2' },

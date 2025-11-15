@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import ModalInput from '@components/modal-input';
+import Form from '@components/form';
 import StepPage from './';
 
 @Component({
   selector: 'app-form-step',
   template: `
     <step-page>
-      <app-modal-input />
+      <app-form />
     </step-page>
   `,
-  imports: [ModalInput, StepPage],
+  imports: [Form, StepPage],
 })
-export default class ListStep {}
+export default class FormStep {}
