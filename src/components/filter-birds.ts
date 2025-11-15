@@ -31,8 +31,8 @@ import StoreService from '@service/state';
           tabindex="0"
           (click)="onCardClick(bird)"
           [attr.aria-label]="'Seleccionar ' + bird.commonName"
-          [class.border-4]="selectedBird()?.id === bird.id"
-          [class.border-primary]="selectedBird()?.id === bird.id"
+          [class.border-4]="selectedBird().id === bird.id"
+          [class.border-primary]="selectedBird().id === bird.id"
         >
           <div class="min-w-0 pr-2">
             <ion-card-header>
