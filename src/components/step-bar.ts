@@ -4,7 +4,7 @@ import { type Step } from '@data/steps';
 import { IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { playCircle } from 'ionicons/icons';
-import { StoreService } from 'src/service/state';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-step-bar',

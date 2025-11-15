@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonTabs } from '@ionic/angular/standalone';
 import StepBar from '@components/step-bar';
-import { StoreService } from 'src/service/state';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-acting',

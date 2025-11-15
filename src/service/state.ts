@@ -1,16 +1,21 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Step, STEP_ID, STEP_STASTE, STEPS } from '@data/steps';
+import { STATE } from '@data/state';
+import { STEP_ID, STEP_STATE, STEPS } from '@data/steps';
 
 @Injectable({ providedIn: 'root' })
-export class StoreService {
+export default class StoreService {
   #router = inject(Router);
   #steps = signal(STEPS);
 
   steps = this.#steps.asReadonly();
+  state = signal(STATE);
 
   currentStep = signal<STEP_ID>(STEPS[0].id);
-  currentStepState = computed(() => STEP_STASTE[this.currentStep()]);
+
+  currentStateStep = computed(() => STEP_STATE[this.currentStep()]);
+  currentLabel = computed(() => this.state()[this.currentStep()].label);
+  finishStep = computed(() => !!this.state()[this.currentStep()].value);
 
   constructor() {
     const step = this.#router.url.split('/').pop();
@@ -21,5 +26,12 @@ export class StoreService {
 
   setCurrentStep(stepId: STEP_ID) {
     this.currentStep.set(stepId);
+  }
+
+  setValueForCurrentStep(value: unknown) {
+    this.state.update((currentState) => ({
+      ...currentState,
+      [this.currentStep()]: { label: currentState[this.currentStep()].label, value },
+    }));
   }
 }

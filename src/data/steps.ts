@@ -6,7 +6,7 @@ export interface Step {
 
 export type STEP_ID = 'step-1' | 'step-2' | 'step-3' | 'step-4';
 
-export const STEP_STASTE = {
+export const STEP_STATE = {
   'step-1': { prev: null, next: 'step-2' },
   'step-2': { prev: 'step-1', next: 'step-3' },
   'step-3': { prev: 'step-2', next: 'step-4' },

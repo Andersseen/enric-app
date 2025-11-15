@@ -1,5 +1,6 @@
-import { Component, signal, output, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { Zone, zones } from '@data/zones';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-map-zones',
@@ -9,8 +10,8 @@ import { Zone, zones } from '@data/zones';
       @for ( zone of zonesList(); track zone.id) {
       <div
         (click)="onSelect(zone)"
-        [class.border-4]="selectedId() === zone.id"
-        [class.border-indigo-500]="selectedId() === zone.id"
+        [class.border-4]="selectedZone()?.id === zone.id"
+        [class.border-indigo-500]="selectedZone()?.id === zone.id"
         class="cursor-pointer"
       >
         <img [src]="basePath + zone.image" [alt]="zone.name" class="w-full h-auto block" />
@@ -24,20 +25,19 @@ import { Zone, zones } from '@data/zones';
   `,
 })
 export default class MapZones {
-  zoneSelected = output<Zone>();
+  #store = inject(StoreService);
 
   basePath = '/zones/';
 
   private _zones = signal<Zone[]>(this.sortedZones());
   zonesList = this._zones.asReadonly();
 
-  private _selectedId = signal<string | null>(null);
-  selectedId = this._selectedId.asReadonly();
+  #selectedZone = signal<Zone | null>(null);
 
-  private _selectedZone = signal<Zone | null>(null);
   selectedZone = computed(() => {
-    this.zoneSelected.emit(this._selectedZone()!);
-    return this._selectedZone();
+    if (!this.#selectedZone()) return;
+
+    return this.#selectedZone();
   });
 
   private sortedZones(): Zone[] {
@@ -56,8 +56,8 @@ export default class MapZones {
     return result;
   }
 
-  onSelect(zone: Zone): void {
-    this._selectedId.set(zone.id);
-    this._selectedZone.set(zone);
+  onSelect(zone: Zone) {
+    this.#selectedZone.set(zone);
+    this.#store.setValueForCurrentStep(this.#selectedZone());
   }
 }

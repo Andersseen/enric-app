@@ -1,4 +1,4 @@
-import { Component, computed, signal, EventEmitter, output } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import {
   IonCard,
   IonIcon,
@@ -11,6 +11,7 @@ import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
 import SearchBar from '@components/searchbar';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-filter-birds',
@@ -64,7 +65,7 @@ import SearchBar from '@components/searchbar';
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class FilterBirds {
-  birdSelected = output<BirdItem>();
+  #store = inject(StoreService);
 
   #initialBirds: BirdItem[] = BIRDS;
 
@@ -99,6 +100,6 @@ export default class FilterBirds {
   }
 
   onCardClick(bird: BirdItem): void {
-    this.birdSelected.emit(bird);
+    this.#store.setValueForCurrentStep(bird);
   }
 }
