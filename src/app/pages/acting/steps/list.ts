@@ -1,16 +1,14 @@
 import { Component } from '@angular/core';
-import StepPanel from '@components/step-panel';
 import FilterBirds from '@components/filter-birds';
-import SessionHeaderComponent from '@components/session-header';
+import StepPage from './';
 
 @Component({
   selector: 'app-list-step',
   template: `
-    <app-step-panel title="Lista">
-      <app-session-header />
+    <step-page>
       <app-filter-birds />
-    </app-step-panel>
+    </step-page>
   `,
-  imports: [StepPanel, FilterBirds, SessionHeaderComponent],
+  imports: [FilterBirds, StepPage],
 })
 export default class ListStep {}

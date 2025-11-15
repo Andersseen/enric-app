@@ -28,7 +28,7 @@ export default class List {
       icon: '🚨',
       title: 'Actuación',
       description: 'Registrar acciones ejecutadas en campo.',
-      routerLink: ['action/step-1'],
+      routerLink: ['action'],
       color: 'secondary',
     },
     {

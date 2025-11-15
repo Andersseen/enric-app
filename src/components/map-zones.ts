@@ -1,17 +1,17 @@
-import { Component, signal, output } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { Zone, zones } from '@data/zones';
-import { IonButton } from '@ionic/angular/standalone';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-map-zones',
-  imports: [IonButton],
+  imports: [],
   template: `
     <div class="grid grid-cols-8 gap-1">
       @for ( zone of zonesList(); track zone.id) {
       <div
         (click)="onSelect(zone)"
-        [class.border-4]="selectedId() === zone.id"
-        [class.border-indigo-500]="selectedId() === zone.id"
+        [class.border-8]="selectedZone()?.id === zone.id"
+        [class.border-primary]="selectedZone()?.id === zone.id"
         class="cursor-pointer"
       >
         <img [src]="basePath + zone.image" [alt]="zone.name" class="w-full h-auto block" />
@@ -21,27 +21,24 @@ import { IonButton } from '@ionic/angular/standalone';
 
     @if (selectedZone()) {
     <h2 class="mt-4 text-xl">Seleccionada: {{ selectedZone()!.name }}</h2>
-    } @if (selectedZone()) {
-    <div class="flex justify-center mt-4">
-      <ion-button (click)="selectZone()">Seguir</ion-button>
-    </div>
-
     }
   `,
 })
 export default class MapZones {
-  zoneSelect = output<Zone>();
+  #store = inject(StoreService);
 
   basePath = '/zones/';
 
   private _zones = signal<Zone[]>(this.sortedZones());
   zonesList = this._zones.asReadonly();
 
-  private _selectedId = signal<string | null>(null);
-  selectedId = this._selectedId.asReadonly();
+  #selectedZone = signal<Zone | null>(null);
 
-  private _selectedZone = signal<Zone | null>(null);
-  selectedZone = this._selectedZone.asReadonly();
+  selectedZone = computed(() => {
+    if (!this.#selectedZone()) return;
+
+    return this.#selectedZone();
+  });
 
   private sortedZones(): Zone[] {
     const letters = ['o', 'p', 'q', 'r'];
@@ -59,13 +56,8 @@ export default class MapZones {
     return result;
   }
 
-  onSelect(zone: Zone): void {
-    this._selectedId.set(zone.id);
-    this._selectedZone.set(zone);
-  }
-
-  selectZone() {
-    if (!this.selectedZone()) return;
-    this.zoneSelect.emit(this.selectedZone()!);
+  onSelect(zone: Zone) {
+    this.#selectedZone.set(zone);
+    this.#store.setValueForCurrentStep(this.#selectedZone());
   }
 }
