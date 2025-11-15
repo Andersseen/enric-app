@@ -12,6 +12,8 @@ import {
 } from '@ionic/angular/standalone';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import StoreService from '@service/state';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-form',
@@ -147,16 +149,46 @@ export default class Form {
   });
 
   save() {
-    console.log(this.form.value);
+    // console.log(this.form.getRawValue());
 
-    // if (this.form.invalid) {
-    //   this.form.markAllAsTouched();
-    //   return { ok: false, errors: ['Formulario inválido'] };
-    // }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-    // return {
-    //   ok: true,
-    //   payload: this.form.getRawValue(),
-    // };
+    this.generate();
+  }
+
+  generate() {
+    const data = this.form.getRawValue();
+
+    const rows = [
+      ['Campo', 'Valor'],
+      ['Zona ID', data.zoneId],
+      ['Especie', data.speciesId],
+      ['Cuántas', data.count],
+      ['Actitud', data.behavior],
+      ['Tipo acción', data.actionType],
+      ['Interacción operación', data.interaction],
+      ['Método empleado', data.method],
+      ['Animal empleado', data.animal],
+      ['Eficacia', data.efficacy],
+      ['Capturas', data.captured],
+      ['Observaciones', data.notes],
+      ['Fecha registro', new Date().toLocaleString()],
+    ];
+
+    // crear worksheet
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+
+    // crear workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Actuación');
+
+    // escribir archivo
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    saveAs(file, 'actuacion.xlsx');
   }
 }
