@@ -134,7 +134,7 @@ export default class Form {
   bird = computed(() => this.#store.step2Value());
 
   form = inject(FormBuilder).group({
-    zoneId: [{ value: this.zone()?.id, disabled: true }],
+    zoneId: [{ value: this.zone()?.name, disabled: true }],
     speciesId: [{ value: this.bird()?.commonName, disabled: true }],
 
     count: [0, [Validators.required, Validators.min(0)]],

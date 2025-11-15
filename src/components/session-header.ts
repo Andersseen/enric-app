@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  output,
-  signal,
-  inject,
-} from '@angular/core';
-import { format } from 'date-fns';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   IonCard,
   IonCardHeader,
@@ -21,17 +13,11 @@ import {
 } from '@ionic/angular/standalone';
 import { chevronDown, chevronUp } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-
-export interface SessionHeaderData {
-  date: string;
-  time: string;
-  weather: string;
-  worker: string;
-}
+import Session from '@service/session';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-session-header',
-  standalone: true,
   imports: [
     IonCard,
     IonCardHeader,
@@ -43,16 +29,18 @@ export interface SessionHeaderData {
     IonSelect,
     IonSelectOption,
     IonCardSubtitle,
+    ReactiveFormsModule,
   ],
   template: `
-    <ion-card class="session-card">
+    <ion-card>
       <ion-card-header class="flex items-center justify-between gap-3 p-3">
         <div class="flex gap-4 items-center">
           <ion-card-title class="text-lg font-semibold">Datos de sesión</ion-card-title>
           <div>
-            <ion-card-subtitle> {{ session().worker }}</ion-card-subtitle>
+            <ion-card-subtitle> {{ sessionForm.get('worker')?.value }}</ion-card-subtitle>
             <div class="text-xs">
-              {{ session().date }} · {{ session().time }}· {{ session().weather }}
+              {{ sessionForm.get('date')?.value }} · {{ sessionForm.get('time')?.value }}·
+              {{ sessionForm.get('weather')?.value }}
             </div>
           </div>
           <ion-button
@@ -75,14 +63,15 @@ export interface SessionHeaderData {
         role="region"
         [attr.aria-hidden]="!expanded()"
       >
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <form
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm"
+          [formGroup]="sessionForm"
+        >
           <div class="flex flex-col">
             <ion-input
               label="Fecha"
-              id="date"
+              formControlName="date"
               type="date"
-              [value]="session().date"
-              (ionChange)="update('date', $any($event.detail).value ?? $any($event.target).value)"
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             />
           </div>
@@ -90,10 +79,8 @@ export interface SessionHeaderData {
           <div class="flex flex-col">
             <ion-input
               label="Hora"
-              id="time"
+              formControlName="time"
               type="time"
-              [value]="session().time"
-              (ionChange)="update('time', $any($event.detail).value ?? $any($event.target).value)"
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             />
           </div>
@@ -102,9 +89,7 @@ export interface SessionHeaderData {
             <ion-select
               label="Climatología"
               interface="action-sheet"
-              id="weather"
-              [value]="session().weather"
-              (ionChange)="update('weather', $any($event.detail).value)"
+              formControlName="weather"
               placeholder="Seleccionar..."
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             >
@@ -120,9 +105,7 @@ export interface SessionHeaderData {
             <ion-select
               interface="action-sheet"
               label="Trabajador"
-              id="worker"
-              [value]="session().worker"
-              (ionChange)="update('worker', $any($event.detail).value)"
+              formControlName="worker"
               placeholder="Seleccionar..."
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             >
@@ -133,7 +116,7 @@ export interface SessionHeaderData {
               <ion-select-option value="Ana Torres">Ana Torres</ion-select-option>
             </ion-select>
           </div>
-        </div>
+        </form>
       </ion-card-content>
     </ion-card>
   `,
@@ -152,47 +135,24 @@ export interface SessionHeaderData {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
       }
-
-      .session-card {
-        border-radius: 0.75rem;
-      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block w-full' },
 })
 export default class SessionHeaderComponent {
-  readonly initial = (): SessionHeaderData => {
-    const now = new Date();
-    return {
-      date: format(now, 'yyyy-MM-dd'),
-      time: format(now, 'HH:mm'),
-      weather: '',
-      worker: '',
-    };
-  };
+  #session = inject(Session);
 
-  session = signal<SessionHeaderData>(this.initial());
+  expanded = computed(() => this.#session.expand());
 
-  sessionChange = output<SessionHeaderData>();
-
-  expanded = signal(true);
-
-  display = computed(() => `${this.session().date} ${this.session().time}`);
+  sessionForm = this.#session.sessionForm;
 
   constructor() {
     addIcons({ chevronUp, chevronDown });
+    console.log(this.sessionForm);
   }
 
   toggle(): void {
-    this.expanded.update((v) => !v);
-  }
-
-  update<K extends keyof SessionHeaderData>(key: K, value: string): void {
-    this.session.update((s) => {
-      const next = { ...s, [key]: value };
-      this.sessionChange.emit(next);
-      return next;
-    });
+    this.#session.setExpand(!this.#session.expand());
   }
 }
