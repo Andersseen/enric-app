@@ -1,21 +1,82 @@
-import { Component, input } from '@angular/core';
-import { IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { Component, computed, inject, input } from '@angular/core';
+import {
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonContent,
+  IonIcon,
+  IonButton,
+} from '@ionic/angular/standalone';
+import SessionHeaderComponent from './session-header';
+import { addIcons } from 'ionicons';
+import { caretBack, caretForward } from 'ionicons/icons';
+import { Router } from '@angular/router';
+import { StoreService } from 'src/service/state';
+import { STEP_ID } from '@data/steps';
 
 @Component({
   selector: 'app-step-panel',
-  imports: [IonHeader, IonTitle, IonToolbar],
+  imports: [
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    SessionHeaderComponent,
+    IonButtons,
+    IonContent,
+    IonIcon,
+    IonButton,
+  ],
   template: `
-    <section id="search-page">
+    <section id="page" class="ion-page flex flex-col gap-4">
       <ion-header>
-        <ion-toolbar>
-          <ion-title>{{ title() }}</ion-title>
+        <ion-toolbar class="flex">
+          @if (currentStepState().prev) {
+          <ion-buttons slot="start" class="cursor-pointer">
+            <ion-button (click)="goBack()">
+              <ion-icon slot="icon-only" name="caret-back"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          }
+          <ion-title class="text-center">{{ title() }}</ion-title>
+          @if (currentStepState().next && canGoForward()) {
+          <ion-buttons slot="end" class="cursor-pointer">
+            <ion-button (click)="goForward()">
+              <ion-icon slot="icon-only" name="caret-forward"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          }
         </ion-toolbar>
-      </ion-header>
 
-      <ng-content />
+        <app-session-header />
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ng-content />
+      </ion-content>
     </section>
   `,
 })
 export default class StepPanel {
+  #store = inject(StoreService);
+  #router = inject(Router);
+
+  currentStepState = computed(() => this.#store.currentStepState());
+
   title = input<string>();
+
+  canGoForward = input<boolean>();
+
+  constructor() {
+    addIcons({ caretBack, caretForward });
+  }
+
+  goBack() {
+    this.#router.navigate(['/home/action', this.currentStepState().prev]);
+    this.#store.setCurrentStep(this.currentStepState().prev as STEP_ID);
+  }
+
+  goForward() {
+    this.#router.navigate(['/home/action', this.currentStepState().next]);
+    this.#store.setCurrentStep(this.currentStepState().next as STEP_ID);
+  }
 }

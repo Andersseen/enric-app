@@ -1,10 +1,9 @@
-import { Component, signal, output } from '@angular/core';
+import { Component, signal, output, computed } from '@angular/core';
 import { Zone, zones } from '@data/zones';
-import { IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-map-zones',
-  imports: [IonButton],
+  imports: [],
   template: `
     <div class="grid grid-cols-8 gap-1">
       @for ( zone of zonesList(); track zone.id) {
@@ -21,16 +20,11 @@ import { IonButton } from '@ionic/angular/standalone';
 
     @if (selectedZone()) {
     <h2 class="mt-4 text-xl">Seleccionada: {{ selectedZone()!.name }}</h2>
-    } @if (selectedZone()) {
-    <div class="flex justify-center mt-4">
-      <ion-button (click)="selectZone()">Seguir</ion-button>
-    </div>
-
     }
   `,
 })
 export default class MapZones {
-  zoneSelect = output<Zone>();
+  zoneSelected = output<Zone>();
 
   basePath = '/zones/';
 
@@ -41,7 +35,10 @@ export default class MapZones {
   selectedId = this._selectedId.asReadonly();
 
   private _selectedZone = signal<Zone | null>(null);
-  selectedZone = this._selectedZone.asReadonly();
+  selectedZone = computed(() => {
+    this.zoneSelected.emit(this._selectedZone()!);
+    return this._selectedZone();
+  });
 
   private sortedZones(): Zone[] {
     const letters = ['o', 'p', 'q', 'r'];
@@ -62,10 +59,5 @@ export default class MapZones {
   onSelect(zone: Zone): void {
     this._selectedId.set(zone.id);
     this._selectedZone.set(zone);
-  }
-
-  selectZone() {
-    if (!this.selectedZone()) return;
-    this.zoneSelect.emit(this.selectedZone()!);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, signal, EventEmitter } from '@angular/core';
+import { Component, computed, signal, EventEmitter, output } from '@angular/core';
 import {
   IonCard,
   IonIcon,
@@ -7,7 +7,6 @@ import {
   IonCardHeader,
   IonCardTitle,
 } from '@ionic/angular/standalone';
-import AppHeader from '@components/header';
 import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
@@ -15,24 +14,9 @@ import SearchBar from '@components/searchbar';
 
 @Component({
   selector: 'app-filter-birds',
-  imports: [
-    IonCardContent,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    AppHeader,
-    IonIcon,
-    IonButton,
-    SearchBar,
-  ],
+  imports: [IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonIcon, IonButton, SearchBar],
   template: `
     <div class="mx-auto p-8">
-      <!-- <app-header
-        [title]="'Actuación - Especies'"
-        [subtitle]="'Selecciona o marca tus especies favoritas'"
-        [showBackButton]="true"
-      /> -->
-
       <!-- SEARCH + TOGGLE SELECTED PANEL -->
 
       <app-search-bar class="w-full" (valueChange)="onSearch($event)" />
@@ -80,16 +64,12 @@ import SearchBar from '@components/searchbar';
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class FilterBirds {
-  birdSelected = new EventEmitter<BirdItem[]>();
+  birdSelected = output<BirdItem>();
 
   #initialBirds: BirdItem[] = BIRDS;
 
   birds = signal<BirdItem[]>(this.#initialBirds);
   query = signal('');
-
-  selectedBird = signal<BirdItem>({} as BirdItem);
-
-  isModalOpen = signal(false);
 
   filteredBirds = computed(() => {
     const q = this.query().toLowerCase().trim();
@@ -119,7 +99,6 @@ export default class FilterBirds {
   }
 
   onCardClick(bird: BirdItem): void {
-    this.selectedBird.set(bird);
-    this.isModalOpen.set(true);
+    this.birdSelected.emit(bird);
   }
 }
