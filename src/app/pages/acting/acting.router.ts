@@ -7,20 +7,24 @@ const actingRoutes: Routes = [
     children: [
       {
         path: 'step-1',
-        loadComponent: () => import('./steps/zones'),
+        loadComponent: () => import('./steps/step-1'),
       },
       {
         path: 'step-2',
-        loadComponent: () => import('./steps/list'),
+        loadComponent: () => import('./steps/step-2'),
       },
       {
         path: 'step-3',
-        loadComponent: () => import('./steps/form'),
+        loadComponent: () => import('./steps/step-3'),
       },
-      {
-        path: 'step-4',
-        loadComponent: () => import('./steps/list'),
-      },
+      // {
+      //   path: 'step-4',
+      //   loadComponent: () => import('./steps/step-4'),
+      // },
+      // {
+      //   path: 'step-5',
+      //   loadComponent: () => import('./steps/step-5'),
+      // },
       {
         path: '',
         redirectTo: 'step-1',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import Form from '@components/form';
-import StepPage from './';
+import StepPage from '.';
 
 @Component({
   selector: 'app-form-step',

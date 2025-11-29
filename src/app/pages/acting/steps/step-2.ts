@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import FilterBirds from '@components/filter-birds';
-import StepPage from './';
+import StepPage from '.';
 
 @Component({
   selector: 'app-list-step',

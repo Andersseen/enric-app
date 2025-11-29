@@ -25,6 +25,7 @@ export default class StoreService {
   step2Value = computed(() => this.state()[STEP_ID.Step2].value as BirdItem);
   step3Value = computed(() => this.state()[STEP_ID.Step3].value);
   step4Value = computed(() => this.state()[STEP_ID.Step4].value);
+  step5Value = computed(() => this.state()[STEP_ID.Step5].value);
 
   constructor() {
     const step = this.#router.url.split('/').pop();
