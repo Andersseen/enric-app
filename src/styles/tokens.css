@@ -1,29 +1,19 @@
 :root {
-  /* Texto principal en dark: gris claro */
-  --c-text: oklch(92% 0 0deg); /* aprox #eaeaea */
+  --c-text: oklch(92% 0 0deg);
 
-  /* Muted (bordes y texto suave) */
-  --c-muted: oklch(65% 0 0deg); /* aprox #9a9a9a */
+  --c-muted: oklch(65% 0 0deg);
 
-  /* Superficie (paneles sobre dark); un gris muy oscuro pero no negro */
-  --c-surface: oklch(22% 0 0deg); /* aprox #2a2a2a */
+  --c-surface: oklch(22% 0 0deg);
 
-  /* Primario (azulado) */
   --c-primary: oklch(65% 0.08 255deg);
-  --c-primary-hover: oklch(60% 0.08 255deg);
 
-  /* Secundario (verde/teal) */
   --c-secondary: oklch(70% 0.09 170deg);
-  --c-secondary-hover: oklch(65% 0.09 170deg);
 }
 
-/* Si activas .light en el futuro, puedes redefinir aquí para modo claro */
 .light {
   --c-text: oklch(20% 0 0deg);
   --c-muted: oklch(55% 0 0deg);
-  --c-surface: oklch(97% 0 0deg); /* aprox #f5f5f5 */
+  --c-surface: oklch(97% 0 0deg);
   --c-primary: oklch(55% 0.1 255deg);
-  --c-primary-hover: oklch(50% 0.1 255deg);
   --c-secondary: oklch(65% 0.1 170deg);
-  --c-secondary-hover: oklch(60% 0.1 170deg);
 }

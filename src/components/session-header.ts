@@ -23,35 +23,41 @@ import { ReactiveFormsModule } from '@angular/forms';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    IonButton,
     IonIcon,
     IonInput,
     IonSelect,
     IonSelectOption,
-    IonCardSubtitle,
     ReactiveFormsModule,
+    IonButton,
   ],
   template: `
     <ion-card>
-      <ion-card-header class="flex items-center justify-between gap-3 p-3">
-        <div class="flex gap-4 items-center">
-          <ion-card-title class="text-lg font-semibold">Datos de sesión</ion-card-title>
-          <div>
-            <ion-card-subtitle> {{ sessionForm.get('worker')?.value }}</ion-card-subtitle>
-            <div class="text-xs">
-              {{ sessionForm.get('date')?.value }} · {{ sessionForm.get('time')?.value }}·
-              {{ sessionForm.get('weather')?.value }}
+      <ion-card-header class="p-0">
+        <div
+          class="flex items-center justify-between p-2 cursor-pointer"
+          (click)="toggle()"
+          role="button"
+          [attr.aria-expanded]="expanded()"
+          aria-controls="session-body"
+        >
+          <div class="flex flex-col gap-1">
+            <ion-card-title class="text-lg font-semibold flex items-center gap-2">
+              Datos de sesión @if (!expanded()) {
+              <span class="text-sm font-normal text-gray-500"> (Click para editar) </span>
+              }
+            </ion-card-title>
+            <div class="text-sm text-gray-600">
+              <span class="font-medium">{{
+                sessionForm.get('worker')?.value || 'Sin asignar'
+              }}</span>
+              <span class="mx-2">·</span>
+              <span>{{ sessionForm.get('date')?.value }}</span>
+              <span class="mx-2">·</span>
+              <span>{{ sessionForm.get('time')?.value }}</span>
             </div>
           </div>
-          <ion-button
-            fill="clear"
-            size="small"
-            (click)="toggle()"
-            [attr.aria-expanded]="expanded()"
-            aria-controls="session-body"
-            title="Mostrar / ocultar datos de sesión"
-          >
-            <ion-icon [name]="expanded() ? 'chevron-up' : 'chevron-down'"></ion-icon>
+          <ion-button shape="round" [class.rotate-180]="expanded()">
+            <ion-icon name="chevron-down" size="large"></ion-icon>
           </ion-button>
         </div>
       </ion-card-header>

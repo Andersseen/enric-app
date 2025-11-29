@@ -1,32 +1,41 @@
 import { Component, inject } from '@angular/core';
 import StepPage from '.';
-import { IonCard, IonCardContent, IonInput } from '@ionic/angular/standalone';
+import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular/standalone';
+import { signal } from '@angular/core';
 import StoreService from '@service/state';
 
 @Component({
   selector: 'form-step-ten',
-  imports: [IonCard, IonCardContent, IonInput],
+  imports: [IonGrid, IonRow, IonCol, IonCard, IonCardContent],
   template: `
-    <ion-card>
-      <ion-card-content class="flex flex-col items-center justify-center py-12">
-        <ion-input
-          type="number"
-          label="Captura número individuo"
-          labelPlacement="stacked"
-          placeholder="0"
-          class="text-6xl font-bold ion-text-center"
-          (ionInput)="onInput($event)"
-        ></ion-input>
-      </ion-card-content>
-    </ion-card>
+    <ion-grid>
+      <ion-row>
+        @for (num of numbers; track num) {
+        <ion-col class="p-2" size="6" size-md="4" size-lg="3">
+          <ion-card
+            class="ion-text-center h-32 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105"
+            [class.ring-2]="selectedNumber() === num"
+            [class.ring-primary]="selectedNumber() === num"
+            (click)="onSelect(num)"
+          >
+            <ion-card-content>
+              <h2 class="text-3xl font-bold">{{ num }}</h2>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
   `,
 })
 export class FormStepTen {
   #store = inject(StoreService);
+  numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+  selectedNumber = signal<number | null>(null);
 
-  onInput(event: any) {
-    const value = event.target.value;
-    this.#store.setValueForCurrentStep(value);
+  onSelect(num: number) {
+    this.selectedNumber.set(num);
+    this.#store.setValueForCurrentStep(this.selectedNumber());
   }
 }
 
