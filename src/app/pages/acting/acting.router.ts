@@ -50,6 +50,10 @@ const actingRoutes: Routes = [
         loadComponent: () => import('./steps/step-11'),
       },
       {
+        path: 'step-12',
+        loadComponent: () => import('./steps/step-12'),
+      },
+      {
         path: '',
         redirectTo: 'step-1',
         pathMatch: 'full',

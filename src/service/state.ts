@@ -21,8 +21,8 @@ export default class StoreService {
 
   finishStep = computed(() => !!this.state()[this.currentStep()].value);
 
-  step1Value = computed(() => this.state()[STEP_ID.Step1].value as Zone);
-  step2Value = computed(() => this.state()[STEP_ID.Step2].value as BirdItem);
+  step1Value = computed(() => this.state()[STEP_ID.Step1].value as Zone | null);
+  step2Value = computed(() => this.state()[STEP_ID.Step2].value as BirdItem | null);
   step3Value = computed(() => this.state()[STEP_ID.Step3].value);
   step4Value = computed(() => this.state()[STEP_ID.Step4].value);
   step5Value = computed(() => this.state()[STEP_ID.Step5].value);
@@ -32,6 +32,7 @@ export default class StoreService {
   step9Value = computed(() => this.state()[STEP_ID.Step9].value);
   step10Value = computed(() => this.state()[STEP_ID.Step10].value);
   step11Value = computed(() => this.state()[STEP_ID.Step11].value);
+  step12Value = computed(() => this.state()[STEP_ID.Step12].value);
 
   constructor() {
     const step = this.#router.url.split('/').pop();

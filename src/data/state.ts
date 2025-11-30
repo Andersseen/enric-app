@@ -21,6 +21,7 @@ export enum STEP_ID {
   Step9 = 'step-9',
   Step10 = 'step-10',
   Step11 = 'step-11',
+  Step12 = 'step-12',
 }
 
 export const STATE: State = {
@@ -35,4 +36,5 @@ export const STATE: State = {
   [STEP_ID.Step9]: { label: 'Eficacia', value: null },
   [STEP_ID.Step10]: { label: 'Captura número individuo', value: null },
   [STEP_ID.Step11]: { label: 'Observaciones', value: null },
+  [STEP_ID.Step12]: { label: 'Resumen', value: null },
 };

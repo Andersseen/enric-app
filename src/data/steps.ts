@@ -15,7 +15,8 @@ export type StepId =
   | 'step-8'
   | 'step-9'
   | 'step-10'
-  | 'step-11';
+  | 'step-11'
+  | 'step-12';
 
 export const STEP_STATE = {
   'step-1': { prev: null, next: 'step-2' },
@@ -28,7 +29,8 @@ export const STEP_STATE = {
   'step-8': { prev: 'step-7', next: 'step-9' },
   'step-9': { prev: 'step-8', next: 'step-10' },
   'step-10': { prev: 'step-9', next: 'step-11' },
-  'step-11': { prev: 'step-10', next: null },
+  'step-11': { prev: 'step-10', next: 'step-12' },
+  'step-12': { prev: 'step-11', next: null },
 } as const;
 
 export const STEPS: Step[] = [
@@ -43,4 +45,5 @@ export const STEPS: Step[] = [
   { id: 'step-9', title: 'Eficacia', icon: 'checkmark-circle' },
   { id: 'step-10', title: 'Captura', icon: 'camera' },
   { id: 'step-11', title: 'Observaciones', icon: 'document-text' },
+  { id: 'step-12', title: 'Resumen', icon: 'list' },
 ];
