@@ -1,14 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonTabs } from '@ionic/angular/standalone';
-import StepBar from '@components/step-bar';
 import StoreService from '@service/state';
+import { BottomBarComponent } from '@components/bottom-bar';
 
 @Component({
   selector: 'app-acting',
-  imports: [IonTabs, StepBar],
+  imports: [IonTabs, BottomBarComponent],
   template: `
     <ion-tabs>
-      <app-step-bar [steps]="steps()" />
+      <app-bottom-bar />
     </ion-tabs>
   `,
 })

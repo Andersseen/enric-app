@@ -18,7 +18,7 @@ import StoreService from '@service/state';
         [disabled]="selectedStep() !== item.id"
       >
         <ion-icon [name]="item.icon" />
-        {{ item.title }}
+        {{ $index + 1 }}
       </ion-tab-button>
       }
     </ion-tab-bar>

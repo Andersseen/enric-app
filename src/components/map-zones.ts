@@ -26,13 +26,12 @@ import StoreService from '@service/state';
 })
 export default class MapZones {
   #store = inject(StoreService);
+  #zones = signal<Zone[]>(this.sortedZones());
+  #selectedZone = signal<Zone | null>(null);
 
   basePath = '/zones/';
 
-  private _zones = signal<Zone[]>(this.sortedZones());
-  zonesList = this._zones.asReadonly();
-
-  #selectedZone = signal<Zone | null>(null);
+  zonesList = this.#zones.asReadonly();
 
   selectedZone = computed(() => {
     if (!this.#selectedZone()) return;

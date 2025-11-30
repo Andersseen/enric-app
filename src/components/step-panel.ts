@@ -50,7 +50,7 @@ import { StepId } from '@data/steps';
 
         <app-session-header />
       </ion-header>
-      <ion-content class="ion-padding">
+      <ion-content>
         <ng-content />
       </ion-content>
     </section>
