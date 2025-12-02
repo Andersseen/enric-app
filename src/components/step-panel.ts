@@ -66,17 +66,19 @@ export default class StepPanel {
 
   canGoForward = input<boolean>();
 
+  basePath = input<string>('/home/action');
+
   constructor() {
     addIcons({ caretBack, caretForward });
   }
 
   goBack() {
-    this.#router.navigate(['/home/action', this.currentStateStep().prev]);
+    this.#router.navigate([this.basePath(), this.currentStateStep().prev]);
     this.#store.setCurrentStep(this.currentStateStep().prev as StepId);
   }
 
   goForward() {
-    this.#router.navigate(['/home/action', this.currentStateStep().next]);
+    this.#router.navigate([this.basePath(), this.currentStateStep().next]);
     this.#store.setCurrentStep(this.currentStateStep().next as StepId);
   }
 }
