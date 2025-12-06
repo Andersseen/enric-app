@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import MapZones from '@components/map-zones';
 import StepPage from '.';
-import StoreService from '@service/state';
+import TrapsStoreService from '@service/traps-store.service';
 import { Zone } from '@data/zones';
 
 @Component({
-  selector: 'app-zones-step',
+  selector: 'traps-zones-step',
   template: `
     <step-page>
       <app-map-zones [selected]="store.step1Value()" (select)="onSelect($event)" />
@@ -13,8 +13,8 @@ import { Zone } from '@data/zones';
   `,
   imports: [MapZones, StepPage],
 })
-export default class ZonesStep {
-  store = inject(StoreService);
+export default class TrapsZonesStep {
+  store = inject(TrapsStoreService);
 
   onSelect(zone: Zone) {
     this.store.setValueForCurrentStep(zone);

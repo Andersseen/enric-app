@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import StepPage from '.';
 import TextInputComponent from '@components/forms/text-input';
-import StoreService from '@service/state';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
-  selector: 'form-step-eleven',
+  selector: 'traps-form-step-eleven',
   imports: [TextInputComponent],
   template: `
     <app-text-input
@@ -14,8 +14,8 @@ import StoreService from '@service/state';
     />
   `,
 })
-export class FormStepEleven {
-  #store = inject(StoreService);
+export class TrapsFormStepEleven {
+  #store = inject(TrapsStoreService);
 
   onInput(value: string) {
     this.#store.setValueForCurrentStep(value);
@@ -23,12 +23,12 @@ export class FormStepEleven {
 }
 
 @Component({
-  selector: 'step-eleven',
+  selector: 'traps-step-eleven',
   template: `
     <step-page>
-      <form-step-eleven />
+      <traps-form-step-eleven />
     </step-page>
   `,
-  imports: [StepPage, FormStepEleven],
+  imports: [StepPage, TrapsFormStepEleven],
 })
-export default class StepEleven {}
+export default class TrapsStepEleven {}

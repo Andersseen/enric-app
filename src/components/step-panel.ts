@@ -12,8 +12,9 @@ import SessionHeaderComponent from './session-header';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 import { Router } from '@angular/router';
-import StoreService from '@service/state';
+
 import { StepId } from '@data/steps';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-step-panel',
@@ -66,17 +67,19 @@ export default class StepPanel {
 
   canGoForward = input<boolean>();
 
+  basePath = input<string>('/home/action');
+
   constructor() {
     addIcons({ caretBack, caretForward });
   }
 
   goBack() {
-    this.#router.navigate(['/home/action', this.currentStateStep().prev]);
+    this.#router.navigate([this.basePath(), this.currentStateStep().prev]);
     this.#store.setCurrentStep(this.currentStateStep().prev as StepId);
   }
 
   goForward() {
-    this.#router.navigate(['/home/action', this.currentStateStep().next]);
+    this.#router.navigate([this.basePath(), this.currentStateStep().next]);
     this.#store.setCurrentStep(this.currentStateStep().next as StepId);
   }
 }

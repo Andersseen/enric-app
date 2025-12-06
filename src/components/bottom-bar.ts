@@ -72,8 +72,8 @@ export class BottomBarComponent {
       selectedIcon: 'flash',
     },
     {
-      tab: 'tramps',
-      path: '/home/tramps',
+      tab: 'traps',
+      path: '/home/traps',
       label: 'Trampas',
       icon: 'aperture-outline',
       selectedIcon: 'aperture',
@@ -102,12 +102,18 @@ export class BottomBarComponent {
 
     const isActing = currentUrl.includes('/home/action');
     const isPrevention = currentUrl.includes('/home/prevention');
+    const isTraps = currentUrl.includes('/home/traps');
 
     const targetIsAction = path.includes('/action');
     const targetIsPrevention = path.includes('/prevention');
+    const targetIsTraps = path.includes('/traps');
     const targetIsHome = path === '/home';
 
-    if ((isActing && targetIsAction) || (isPrevention && targetIsPrevention)) {
+    if (
+      (isActing && targetIsAction) ||
+      (isPrevention && targetIsPrevention) ||
+      (isTraps && targetIsTraps)
+    ) {
       return;
     }
 
@@ -115,7 +121,7 @@ export class BottomBarComponent {
       return;
     }
 
-    if (isActing || isPrevention) {
+    if (isActing || isPrevention || isTraps) {
       const alert = await this.alertCtrl.create({
         header: '¿Salir del proceso?',
         message: 'Si sales ahora, perderás los datos introducidos.',

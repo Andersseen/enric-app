@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
-import StepPage from '.';
 import TextInputComponent from '@components/forms/text-input';
-import StoreService from '@service/state';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
-  selector: 'form-step-eight',
+  selector: 'traps-form-step-eight',
   imports: [TextInputComponent],
   template: ` <app-text-input label="Animal empleado" (valueChange)="onInput($event)" /> `,
 })
-export class FormStepEight {
-  #store = inject(StoreService);
+export class TrapsFormStepEight {
+  #store = inject(TrapsStoreService);
 
   onInput(value: string) {
     this.#store.setValueForCurrentStep(value);
@@ -17,12 +17,12 @@ export class FormStepEight {
 }
 
 @Component({
-  selector: 'step-eight',
+  selector: 'traps-step-eight',
   template: `
     <step-page>
-      <form-step-eight />
+      <traps-form-step-eight />
     </step-page>
   `,
-  imports: [StepPage, FormStepEight],
+  imports: [StepPage, TrapsFormStepEight],
 })
-export default class StepEight {}
+export default class TrapsStepEight {}

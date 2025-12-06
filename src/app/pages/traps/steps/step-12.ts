@@ -1,5 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
-import StepPage from '.';
+import { Component, inject } from '@angular/core';
 import {
   IonCard,
   IonCardContent,
@@ -8,17 +7,17 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
-  AlertController,
 } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
-import { ToastController } from '@ionic/angular/standalone';
+import { ToastController, AlertController } from '@ionic/angular/standalone';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
-  selector: 'form-step-twelve',
+  selector: 'traps-form-step-twelve',
   imports: [IonCard, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonIcon],
   template: `
     <ion-card>
@@ -107,8 +106,8 @@ import { ToastController } from '@ionic/angular/standalone';
     </ion-card>
   `,
 })
-export class FormStepTwelve {
-  #store = inject(StoreService);
+export class TrapsFormStepTwelve {
+  #store = inject(TrapsStoreService);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
@@ -148,11 +147,11 @@ export class FormStepTwelve {
 
     const ws = XLSX.utils.aoa_to_sheet(rows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Actuación');
+    XLSX.utils.book_append_sheet(wb, ws, 'Trampas');
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
 
-    saveAs(file, 'actuacion.xlsx');
+    saveAs(file, 'trampas.xlsx');
 
     const toast = await this.toastController.create({
       message: 'Guardado correctamente',
@@ -188,12 +187,12 @@ export class FormStepTwelve {
 }
 
 @Component({
-  selector: 'step-twelve',
+  selector: 'traps-step-twelve',
   template: `
     <step-page>
-      <form-step-twelve />
+      <traps-form-step-twelve />
     </step-page>
   `,
-  imports: [StepPage, FormStepTwelve],
+  imports: [StepPage, TrapsFormStepTwelve],
 })
-export default class StepTwelve {}
+export default class TrapsStepTwelve {}

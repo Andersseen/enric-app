@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
-import StoreService from '@service/state';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
-  selector: 'form-step-ten',
+  selector: 'traps-form-step-ten',
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
@@ -14,9 +14,9 @@ import StoreService from '@service/state';
     />
   `,
 })
-export class FormStepTen {
-  #store = inject(StoreService);
-  numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+export class TrapsFormStepTen {
+  #store = inject(TrapsStoreService);
+  numbers = Array.from({ length: 6 }, (_, i) => i + 1);
   selectedNumber = signal<number | null>(null);
 
   onSelect(num: number) {
@@ -26,12 +26,12 @@ export class FormStepTen {
 }
 
 @Component({
-  selector: 'step-ten',
+  selector: 'traps-step-ten',
   template: `
     <step-page>
-      <form-step-ten />
+      <traps-form-step-ten />
     </step-page>
   `,
-  imports: [StepPage, FormStepTen],
+  imports: [StepPage, TrapsFormStepTen],
 })
-export default class StepTen {}
+export default class TrapsStepTen {}

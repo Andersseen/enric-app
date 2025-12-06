@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
-import StoreService from '@service/state';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
-  selector: 'form-step-six',
+  selector: 'traps-form-step-six',
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
@@ -16,8 +16,8 @@ import StoreService from '@service/state';
     />
   `,
 })
-export class FormStepSix {
-  #store = inject(StoreService);
+export class TrapsFormStepSix {
+  #store = inject(TrapsStoreService);
   options = ['Si', 'No'];
   selectedOption = signal<string | null>(null);
 
@@ -28,12 +28,12 @@ export class FormStepSix {
 }
 
 @Component({
-  selector: 'step-six',
+  selector: 'traps-step-six',
   template: `
     <step-page>
-      <form-step-six />
+      <traps-form-step-six />
     </step-page>
   `,
-  imports: [StepPage, FormStepSix],
+  imports: [StepPage, TrapsFormStepSix],
 })
-export default class StepSix {}
+export default class TrapsStepSix {}
