@@ -48,7 +48,8 @@ export default class StoreService {
   goToNextStep() {
     const nextStep = STEP_STATE[this.currentStep()].next;
     if (nextStep) {
-      this.#router.navigate(['acting', nextStep]);
+      const basePath = this.#router.url.includes('traps') ? 'traps' : 'acting';
+      this.#router.navigate([basePath, nextStep]);
     }
   }
 

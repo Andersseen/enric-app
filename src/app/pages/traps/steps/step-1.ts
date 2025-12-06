@@ -1,21 +1,14 @@
-import { Component, computed, inject } from '@angular/core';
-import StepPanel from '@components/step-panel';
-import StoreService from '@service/state';
+import { Component } from '@angular/core';
+import StepPage from '@app/pages/acting/steps';
 import MapZones from '@components/map-zones';
 
 @Component({
-  selector: 'app-traps-step-1',
+  selector: 'traps-zones-step',
   template: `
-    <app-step-panel [title]="label()" [canGoForward]="finish()" basePath="/home/traps">
+    <step-page>
       <app-map-zones />
-    </app-step-panel>
+    </step-page>
   `,
-  imports: [StepPanel, MapZones],
+  imports: [MapZones, StepPage],
 })
-export default class TrapsStep1Page {
-  #store = inject(StoreService);
-
-  label = computed(() => this.#store.currentLabel());
-
-  finish = computed(() => this.#store.finishStep());
-}
+export default class TrapsZonesStep {}
