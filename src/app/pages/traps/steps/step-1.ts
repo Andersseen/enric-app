@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import StepPage from '@app/pages/acting/steps';
 import MapZones from '@components/map-zones';
+import StepPage from '.';
 
 @Component({
   selector: 'traps-zones-step',

@@ -1,33 +1,17 @@
 import { Component, inject } from '@angular/core';
-import StepPage from '@app/pages/acting/steps';
-
-import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
+import TextInputComponent from '@components/forms/text-input';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
   selector: 'traps-form-step-eight',
-  imports: [IonCard, IonCardContent, IonTextarea],
-  template: `
-    <ion-card class="min-h-64">
-      <ion-card-content class="h-full">
-        <ion-textarea
-          class="h-full text-xl"
-          label="Animal empleado"
-          labelPlacement="floating"
-          placeholder="Escribe aquí..."
-          [autoGrow]="true"
-          [rows]="6"
-          (ionInput)="onInput($event)"
-        ></ion-textarea>
-      </ion-card-content>
-    </ion-card>
-  `,
+  imports: [TextInputComponent],
+  template: ` <app-text-input label="Animal empleado" (valueChange)="onInput($event)" /> `,
 })
 export class TrapsFormStepEight {
-  #store = inject(StoreService);
+  #store = inject(TrapsStoreService);
 
-  onInput(event: any) {
-    const value = event.target.value;
+  onInput(value: string) {
     this.#store.setValueForCurrentStep(value);
   }
 }

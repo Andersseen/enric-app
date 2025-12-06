@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import StepPage from '@app/pages/acting/steps';
+import StepPage from '.';
 import FilterBirds from '@components/filter-birds';
 
 @Component({

@@ -13,7 +13,8 @@ import StoreService from '@service/state';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
-import { downloadOutline } from 'ionicons/icons';
+import { downloadOutline, homeOutline } from 'ionicons/icons';
+import { ToastController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'form-step-twelve',
@@ -90,10 +91,15 @@ import { downloadOutline } from 'ionicons/icons';
           </ion-item>
         </ion-list>
 
-        <div class="mt-4">
+        <div class="mt-4 space-y-3">
           <ion-button expand="block" (click)="generate()">
             <ion-icon slot="start" name="download-outline"></ion-icon>
             Generar Excel
+          </ion-button>
+
+          <ion-button expand="block" color="medium" fill="outline" (click)="finish()">
+            <ion-icon slot="start" name="home-outline"></ion-icon>
+            Finalizar y Volver
           </ion-button>
         </div>
       </ion-card-content>
@@ -115,11 +121,13 @@ export class FormStepTwelve {
   captured = this.#store.step10Value;
   notes = this.#store.step11Value;
 
+  toastController = inject(ToastController);
+
   constructor() {
-    addIcons({ downloadOutline });
+    addIcons({ downloadOutline, homeOutline });
   }
 
-  generate() {
+  async generate() {
     const rows = [
       ['Campo', 'Valor'],
       ['Zona ID', this.zone()?.name || ''],
@@ -136,18 +144,25 @@ export class FormStepTwelve {
       ['Fecha registro', new Date().toLocaleString()],
     ];
 
-    // crear worksheet
     const ws = XLSX.utils.aoa_to_sheet(rows);
-
-    // crear workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Actuación');
-
-    // escribir archivo
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
 
     saveAs(file, 'actuacion.xlsx');
+
+    const toast = await this.toastController.create({
+      message: 'Guardado correctamente',
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
+  }
+
+  finish() {
+    this.#store.reset();
   }
 }
 

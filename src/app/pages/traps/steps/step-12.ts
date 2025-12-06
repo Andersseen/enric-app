@@ -8,12 +8,13 @@ import {
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
-import { downloadOutline } from 'ionicons/icons';
-import StepPage from '@app/pages/acting/steps';
+import { downloadOutline, homeOutline } from 'ionicons/icons';
+import { ToastController, AlertController } from '@ionic/angular/standalone';
+import TrapsStoreService from '@service/traps-store.service';
+import StepPage from '.';
 
 @Component({
   selector: 'traps-form-step-twelve',
@@ -90,10 +91,15 @@ import StepPage from '@app/pages/acting/steps';
           </ion-item>
         </ion-list>
 
-        <div class="mt-4">
+        <div class="mt-4 space-y-3">
           <ion-button expand="block" (click)="generate()">
             <ion-icon slot="start" name="download-outline"></ion-icon>
             Generar Excel
+          </ion-button>
+
+          <ion-button expand="block" color="medium" fill="outline" (click)="finish()">
+            <ion-icon slot="start" name="home-outline"></ion-icon>
+            Finalizar y Volver
           </ion-button>
         </div>
       </ion-card-content>
@@ -101,7 +107,7 @@ import StepPage from '@app/pages/acting/steps';
   `,
 })
 export class TrapsFormStepTwelve {
-  #store = inject(StoreService);
+  #store = inject(TrapsStoreService);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
@@ -115,11 +121,14 @@ export class TrapsFormStepTwelve {
   captured = this.#store.step10Value;
   notes = this.#store.step11Value;
 
+  toastController = inject(ToastController);
+  alertController = inject(AlertController);
+
   constructor() {
-    addIcons({ downloadOutline });
+    addIcons({ downloadOutline, homeOutline });
   }
 
-  generate() {
+  async generate() {
     const rows = [
       ['Campo', 'Valor'],
       ['Zona ID', this.zone()?.name || ''],
@@ -136,18 +145,44 @@ export class TrapsFormStepTwelve {
       ['Fecha registro', new Date().toLocaleString()],
     ];
 
-    // crear worksheet
     const ws = XLSX.utils.aoa_to_sheet(rows);
-
-    // crear workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Trampas');
-
-    // escribir archivo
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
 
     saveAs(file, 'trampas.xlsx');
+
+    const toast = await this.toastController.create({
+      message: 'Guardado correctamente',
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
+  }
+
+  async finish() {
+    const alert = await this.alertController.create({
+      header: '¿Finalizar?',
+      message:
+        '¿Estás seguro de que quieres finalizar? Se perderán los datos actuales del formulario.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Finalizar',
+          role: 'confirm',
+          handler: () => {
+            this.#store.reset();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }
 

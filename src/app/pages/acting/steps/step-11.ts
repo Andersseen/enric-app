@@ -1,32 +1,23 @@
 import { Component, inject } from '@angular/core';
 import StepPage from '.';
-import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
+import TextInputComponent from '@components/forms/text-input';
 import StoreService from '@service/state';
 
 @Component({
   selector: 'form-step-eleven',
-  imports: [IonCard, IonCardContent, IonTextarea],
+  imports: [TextInputComponent],
   template: `
-    <ion-card class="min-h-64">
-      <ion-card-content class="h-full">
-        <ion-textarea
-          class="h-full text-xl"
-          label="Observaciones"
-          labelPlacement="floating"
-          placeholder="Escribe tus observaciones aquí..."
-          [autoGrow]="true"
-          [rows]="6"
-          (ionInput)="onInput($event)"
-        ></ion-textarea>
-      </ion-card-content>
-    </ion-card>
+    <app-text-input
+      label="Observaciones"
+      placeholder="Escribe tus observaciones aquí..."
+      (valueChange)="onInput($event)"
+    />
   `,
 })
 export class FormStepEleven {
   #store = inject(StoreService);
 
-  onInput(event: any) {
-    const value = event.target.value;
+  onInput(value: string) {
     this.#store.setValueForCurrentStep(value);
   }
 }

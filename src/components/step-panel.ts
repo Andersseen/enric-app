@@ -12,8 +12,9 @@ import SessionHeaderComponent from './session-header';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 import { Router } from '@angular/router';
-import StoreService from '@service/state';
+
 import { StepId } from '@data/steps';
+import StoreService from '@service/state';
 
 @Component({
   selector: 'app-step-panel',
