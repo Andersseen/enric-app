@@ -5,7 +5,7 @@ import StoreService from '@service/state';
 @Component({
   selector: 'step-page',
   template: `
-    <app-step-panel [title]="label()" [canGoForward]="finish()">
+    <app-step-panel [title]="label()" [canGoForward]="finish()" basePath="/home/action">
       <ng-content />
     </app-step-panel>
   `,

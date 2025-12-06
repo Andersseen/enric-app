@@ -5,7 +5,7 @@ import TrapsStoreService from '@service/traps-store.service';
 @Component({
   selector: 'step-page',
   template: `
-    <app-step-panel [title]="label()" [canGoForward]="finish()">
+    <app-step-panel [title]="label()" [canGoForward]="finish()" basePath="/home/traps">
       <ng-content />
     </app-step-panel>
   `,

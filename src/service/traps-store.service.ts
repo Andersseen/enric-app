@@ -48,7 +48,8 @@ export default class TrapsStoreService {
   goToNextStep() {
     const nextStep = STEP_STATE[this.currentStep()].next;
     if (nextStep) {
-      this.#router.navigate(['traps', nextStep]);
+      this.#router.navigate(['home', 'traps', nextStep]);
+      this.currentStep.set(nextStep);
     }
   }
 

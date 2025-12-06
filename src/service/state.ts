@@ -48,8 +48,9 @@ export default class StoreService {
   goToNextStep() {
     const nextStep = STEP_STATE[this.currentStep()].next;
     if (nextStep) {
-      const basePath = this.#router.url.includes('traps') ? 'traps' : 'acting';
-      this.#router.navigate([basePath, nextStep]);
+      const basePath = this.#router.url.includes('traps') ? 'traps' : 'action';
+      this.#router.navigate(['home', basePath, nextStep]);
+      this.currentStep.set(nextStep);
     }
   }
 
@@ -63,6 +64,6 @@ export default class StoreService {
   reset() {
     this.state.set(JSON.parse(JSON.stringify(STATE)));
     this.currentStep.set(STEPS[0].id);
-    this.#router.navigate(['acting', 'step-1']);
+    this.#router.navigate(['/']);
   }
 }

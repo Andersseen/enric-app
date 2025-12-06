@@ -8,6 +8,7 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
+  AlertController,
 } from '@ionic/angular/standalone';
 import StoreService from '@service/state';
 import * as XLSX from 'xlsx';
@@ -122,6 +123,7 @@ export class FormStepTwelve {
   notes = this.#store.step11Value;
 
   toastController = inject(ToastController);
+  alertController = inject(AlertController);
 
   constructor() {
     addIcons({ downloadOutline, homeOutline });
@@ -161,8 +163,27 @@ export class FormStepTwelve {
     await toast.present();
   }
 
-  finish() {
-    this.#store.reset();
+  async finish() {
+    const alert = await this.alertController.create({
+      header: '¿Finalizar?',
+      message:
+        '¿Estás seguro de que quieres finalizar? Se perderán los datos actuales del formulario.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Finalizar',
+          role: 'confirm',
+          handler: () => {
+            this.#store.reset();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }
 
