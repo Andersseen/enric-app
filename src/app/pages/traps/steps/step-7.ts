@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import SelectionGridComponent from '@components/forms/selection-grid';
-import TrapsStoreService from '@service/traps-store.service';
+import TrapsStoreService from '@service/traps-store';
 import StepPage from '.';
 
 @Component({

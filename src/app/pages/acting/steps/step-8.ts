@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import StepPage from '.';
 import TextInputComponent from '@components/forms/text-input';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 
 @Component({
   selector: 'form-step-eight',

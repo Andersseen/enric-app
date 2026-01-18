@@ -13,7 +13,7 @@ import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
 import { ToastController, AlertController } from '@ionic/angular/standalone';
-import TrapsStoreService from '@service/traps-store.service';
+import TrapsStoreService from '@service/traps-store';
 import StepPage from '.';
 
 @Component({

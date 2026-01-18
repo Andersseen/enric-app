@@ -19,7 +19,12 @@ export default class StoreService {
   currentLabel = computed(() => this.state()[this.currentStep()].label);
   currentValue = computed(() => this.state()[this.currentStep()].value);
 
-  finishStep = computed(() => !!this.state()[this.currentStep()].value);
+  finishStep = computed(() => {
+    if (this.#acceptEmptyStep([STEP_ID.Step8, STEP_ID.Step11])) {
+      return true;
+    }
+    return !!this.state()[this.currentStep()].value;
+  });
 
   step1Value = computed(() => this.state()[STEP_ID.Step1].value as Zone | null);
   step2Value = computed(() => this.state()[STEP_ID.Step2].value as BirdItem | null);
@@ -48,7 +53,7 @@ export default class StoreService {
   goToNextStep() {
     const nextStep = STEP_STATE[this.currentStep()].next;
     if (nextStep) {
-      const basePath = this.#router.url.includes('traps') ? 'traps' : 'action';
+      const basePath = this.#router.url.includes('action') ? 'action' : 'traps';
       this.#router.navigate(['home', basePath, nextStep]);
       this.currentStep.set(nextStep);
     }
@@ -65,5 +70,12 @@ export default class StoreService {
     this.state.set(JSON.parse(JSON.stringify(STATE)));
     this.currentStep.set(STEPS[0].id);
     this.#router.navigate(['/']);
+  }
+
+  #acceptEmptyStep(stepId: StepId[]): boolean {
+    if (stepId.includes(this.currentStep())) {
+      return true;
+    }
+    return false;
   }
 }

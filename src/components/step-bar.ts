@@ -4,7 +4,7 @@ import { type Step } from '@data/steps';
 import { IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { playCircle } from 'ionicons/icons';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 
 @Component({
   selector: 'app-step-bar',
@@ -12,14 +12,14 @@ import StoreService from '@service/state';
   template: `
     <ion-tab-bar slot="bottom">
       @for (item of steps(); track $index) {
-      <ion-tab-button
-        [tab]="item.id"
-        [ngClass]="{ 'bg-primary text-background': selectedStep() === item.id }"
-        [disabled]="selectedStep() !== item.id"
-      >
-        <ion-icon [name]="item.icon" />
-        {{ $index + 1 }}
-      </ion-tab-button>
+        <ion-tab-button
+          [tab]="item.id"
+          [ngClass]="{ 'bg-primary text-background': selectedStep() === item.id }"
+          [disabled]="selectedStep() !== item.id"
+        >
+          <ion-icon [name]="item.icon" />
+          {{ $index + 1 }}
+        </ion-tab-button>
       }
     </ion-tab-bar>
   `,

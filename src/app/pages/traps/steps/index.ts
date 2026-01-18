@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import StepPanel from '@components/step-panel';
-import TrapsStoreService from '@service/traps-store.service';
+import TrapsStoreService from '@service/traps-store';
 
 @Component({
   selector: 'step-page',

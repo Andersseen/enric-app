@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import MapZones from '@components/map-zones';
 import StepPage from '.';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 import { Zone } from '@data/zones';
 
 @Component({

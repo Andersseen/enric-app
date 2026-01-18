@@ -14,7 +14,7 @@ import { caretBack, caretForward } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
 import { StepId } from '@data/steps';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 
 @Component({
   selector: 'app-step-panel',
@@ -33,19 +33,19 @@ import StoreService from '@service/state';
       <ion-header>
         <ion-toolbar class="flex">
           @if (currentStateStep().prev) {
-          <ion-buttons slot="start" class="cursor-pointer">
-            <ion-button (click)="goBack()">
-              <ion-icon slot="icon-only" name="caret-back"></ion-icon>
-            </ion-button>
-          </ion-buttons>
+            <ion-buttons slot="start" class="cursor-pointer">
+              <ion-button (click)="goBack()">
+                <ion-icon slot="icon-only" name="caret-back"></ion-icon>
+              </ion-button>
+            </ion-buttons>
           }
           <ion-title class="text-center">{{ title() }}</ion-title>
           @if (currentStateStep().next && canGoForward()) {
-          <ion-buttons slot="end" class="cursor-pointer">
-            <ion-button (click)="goForward()">
-              <ion-icon slot="icon-only" name="caret-forward"></ion-icon>
-            </ion-button>
-          </ion-buttons>
+            <ion-buttons slot="end" class="cursor-pointer">
+              <ion-button (click)="goForward()">
+                <ion-icon slot="icon-only" name="caret-forward"></ion-icon>
+              </ion-button>
+            </ion-buttons>
           }
         </ion-toolbar>
 

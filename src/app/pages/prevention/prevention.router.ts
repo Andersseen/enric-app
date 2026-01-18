@@ -9,10 +9,7 @@ const preventionRoutes: Routes = [
         path: '',
         loadComponent: () => import('./prevention-list.page'),
       },
-      {
-        path: 'observation',
-        loadComponent: () => import('./pages/observation.page'),
-      },
+
       {
         path: 'track-review',
         loadComponent: () => import('./pages/track-review.page'),
@@ -28,10 +25,6 @@ const preventionRoutes: Routes = [
       {
         path: 'marking-flight',
         loadComponent: () => import('./pages/marking-flight.page'),
-      },
-      {
-        path: 'traps-placement',
-        loadComponent: () => import('./pages/traps-placement.page'),
       },
     ],
   },

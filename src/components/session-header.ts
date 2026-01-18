@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import {
+  IonButton,
   IonCard,
+  IonCardContent,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent,
-  IonButton,
   IonIcon,
   IonInput,
   IonSelect,
   IonSelectOption,
-  IonCardSubtitle,
 } from '@ionic/angular/standalone';
-import { chevronDown, chevronUp } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
 import Session from '@service/session';
-import { ReactiveFormsModule } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import { chevronDown, chevronUp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-session-header',
@@ -42,8 +41,9 @@ import { ReactiveFormsModule } from '@angular/forms';
         >
           <div class="flex flex-col gap-1">
             <ion-card-title class="text-lg font-semibold flex items-center gap-2">
-              Datos de sesión @if (!expanded()) {
-              <span class="text-sm font-normal text-gray-500"> (Click para editar) </span>
+              Datos de sesión
+              @if (!expanded()) {
+                <span class="text-sm font-normal text-gray-500"> (Click para editar) </span>
               }
             </ion-card-title>
             <div class="text-sm text-gray-600">
@@ -130,7 +130,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     `
       .session-body {
         overflow: hidden;
-        transition: max-height 320ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease;
+        transition:
+          max-height 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          opacity 240ms ease;
         max-height: 1000px;
         opacity: 1;
       }
@@ -155,7 +157,6 @@ export default class SessionHeaderComponent {
 
   constructor() {
     addIcons({ chevronUp, chevronDown });
-    console.log(this.sessionForm);
   }
 
   toggle(): void {

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonTabs } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 import { BottomBarComponent } from '@components/bottom-bar';
 
 @Component({

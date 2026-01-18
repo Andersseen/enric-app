@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import StepPanel from '@components/step-panel';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 
 @Component({
   selector: 'step-page',

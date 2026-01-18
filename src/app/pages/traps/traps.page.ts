@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { BottomBarComponent } from '@components/bottom-bar';
 import { IonTabs } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
-import TrapsStoreService from '@service/traps-store.service';
+import StoreService from '@service/actions-store';
+import TrapsStoreService from '@service/traps-store';
 
 @Component({
   selector: 'app-traps',

@@ -25,14 +25,14 @@ import {
   template: `
     <ion-tab-bar slot="bottom">
       @for (item of tabs; track item.tab) {
-      <ion-tab-button
-        [tab]="item.tab"
-        (click)="navigate(item.path)"
-        [class.selected-tab]="isActive(item.path)"
-      >
-        <ion-icon [name]="isActive(item.path) ? item.selectedIcon : item.icon"></ion-icon>
-        <ion-label>{{ item.label }}</ion-label>
-      </ion-tab-button>
+        <ion-tab-button
+          [tab]="item.tab"
+          (click)="navigate(item.path)"
+          [class.selected-tab]="isActive(item.path)"
+        >
+          <ion-icon [name]="isActive(item.path) ? item.selectedIcon : item.icon"></ion-icon>
+          <ion-label>{{ item.label }}</ion-label>
+        </ion-tab-button>
       }
     </ion-tab-bar>
   `,

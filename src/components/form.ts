@@ -11,7 +11,7 @@ import {
   IonButton,
 } from '@ionic/angular/standalone';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 

@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 
 @Component({
   selector: 'form-step-ten',

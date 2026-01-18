@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import TextInputComponent from '@components/forms/text-input';
-import TrapsStoreService from '@service/traps-store.service';
+import TrapsStoreService from '@service/traps-store';
 import StepPage from '.';
 
 @Component({

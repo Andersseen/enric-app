@@ -10,7 +10,7 @@ import {
   IonIcon,
   AlertController,
 } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
+import StoreService from '@service/actions-store';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
