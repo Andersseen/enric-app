@@ -4,7 +4,7 @@ import TextInputComponent from '@components/forms/text-input';
 import ActionsStore from '@service/actions-store';
 
 @Component({
-  selector: 'form-step-eleven',
+  selector: 'form-step-three',
   imports: [TextInputComponent],
   template: `
     <app-text-input
@@ -14,7 +14,7 @@ import ActionsStore from '@service/actions-store';
     />
   `,
 })
-export class FormStepEleven {
+export class FormStepThree {
   #store = inject(ActionsStore);
 
   onInput(value: string) {
@@ -23,12 +23,12 @@ export class FormStepEleven {
 }
 
 @Component({
-  selector: 'step-eleven',
+  selector: 'step-three',
   template: `
     <step-page>
-      <form-step-eleven />
+      <form-step-three />
     </step-page>
   `,
-  imports: [StepPage, FormStepEleven],
+  imports: [StepPage, FormStepThree],
 })
-export default class StepEleven {}
+export default class StepThree {}

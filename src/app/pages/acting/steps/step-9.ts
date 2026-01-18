@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
-import StoreService from '@service/actions-store';
+import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'form-step-nine',
@@ -17,7 +17,7 @@ import StoreService from '@service/actions-store';
   `,
 })
 export class FormStepNine {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
   options = ['Si', 'No'];
   selectedOption = signal<string | null>(null);
 

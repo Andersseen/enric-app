@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonTabs } from '@ionic/angular/standalone';
-import StoreService from '@service/actions-store';
+import ActionsStore from '@service/actions-store';
 import { BottomBarComponent } from '@components/bottom-bar';
 
 @Component({
@@ -13,7 +13,7 @@ import { BottomBarComponent } from '@components/bottom-bar';
   `,
 })
 export default class ActingPage {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   steps = signal(this.#store.steps());
 }

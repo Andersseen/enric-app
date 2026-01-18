@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import MapZones from '@components/map-zones';
 import StepPage from '.';
-import ActionsStore from '@service/actions-store';
+import PreventionStore from '@service/prevention-store';
 import { Zone } from '@data/zones';
 
 @Component({
-  selector: 'app-zones-step',
+  selector: 'app-dog-review-step-1',
   template: `
     <step-page>
       <app-map-zones [selected]="store.step1Value()" (select)="onSelect($event)" />
@@ -13,8 +13,8 @@ import { Zone } from '@data/zones';
   `,
   imports: [MapZones, StepPage],
 })
-export default class ZonesStep {
-  store = inject(ActionsStore);
+export default class DogReviewStep1 {
+  store = inject(PreventionStore);
 
   onSelect(zone: Zone) {
     this.store.setValueForCurrentStep(zone);

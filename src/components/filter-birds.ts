@@ -11,7 +11,7 @@ import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
 import SearchBar from '@components/searchbar';
-import StoreService from '@service/actions-store';
+import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'app-filter-birds',
@@ -66,7 +66,7 @@ import StoreService from '@service/actions-store';
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class FilterBirds {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   #initialBirds: BirdItem[] = BIRDS;
 

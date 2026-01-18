@@ -6,7 +6,7 @@ import { Zone } from '@data/zones';
 import BaseStore from './base-store';
 
 @Injectable({ providedIn: 'root' })
-export default class TrapsStoreService extends BaseStore {
+export default class TrapsActionsStore extends BaseStore {
   #steps = signal(STEPS);
 
   override steps = this.#steps.asReadonly();

@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import StepPanel from '@components/step-panel';
-import StoreService from '@service/actions-store';
+import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'step-page',
@@ -12,7 +12,7 @@ import StoreService from '@service/actions-store';
   imports: [StepPanel],
 })
 export default class StepPage {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   label = computed(() => this.#store.currentLabel());
 

@@ -1,20 +1,19 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { Router } from '@angular/router';
+import SessionHeaderComponent from '@components/session-header';
+import { DogReviewStepId } from '@data/dog-review-data';
 import {
-  IonHeader,
-  IonTitle,
-  IonToolbar,
+  IonButton,
   IonButtons,
   IonContent,
+  IonHeader,
   IonIcon,
-  IonButton,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
-import SessionHeaderComponent from './session-header';
+import PreventionStore from '@service/prevention-store';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
-import { Router } from '@angular/router';
-
-import { StepId } from '@data/steps';
-import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'app-step-panel',
@@ -58,7 +57,7 @@ import ActionsStore from '@service/actions-store';
   `,
 })
 export default class StepPanel {
-  #store = inject(ActionsStore);
+  #store = inject(PreventionStore);
   #router = inject(Router);
 
   currentStateStep = computed(() => this.#store.currentStateStep());
@@ -75,11 +74,11 @@ export default class StepPanel {
 
   goBack() {
     this.#router.navigate([this.basePath(), this.currentStateStep().prev]);
-    this.#store.setCurrentStep(this.currentStateStep().prev as StepId);
+    this.#store.setCurrentStep(this.currentStateStep().prev as DogReviewStepId);
   }
 
   goForward() {
     this.#router.navigate([this.basePath(), this.currentStateStep().next]);
-    this.#store.setCurrentStep(this.currentStateStep().next as StepId);
+    this.#store.setCurrentStep(this.currentStateStep().next as DogReviewStepId);
   }
 }

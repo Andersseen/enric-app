@@ -4,7 +4,7 @@ import { type Step } from '@data/steps';
 import { IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { playCircle } from 'ionicons/icons';
-import StoreService from '@service/actions-store';
+import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'app-step-bar',
@@ -25,7 +25,7 @@ import StoreService from '@service/actions-store';
   `,
 })
 export default class StepBar {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
   constructor() {
     addIcons({ playCircle });
   }

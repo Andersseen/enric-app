@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import SelectionGridComponent from '@components/forms/selection-grid';
 import StepPage from '.';
-import TrapsStoreService from '@service/traps-store';
+import TrapsActionsStore from '@service/traps-store';
 
 @Component({
   selector: 'traps-form-step-five',
@@ -17,7 +17,7 @@ import TrapsStoreService from '@service/traps-store';
   `,
 })
 export class TrapsFormStepFive {
-  #store = inject(TrapsStoreService);
+  #store = inject(TrapsActionsStore);
   options = ['Captura'];
   selectedOption = signal<string | null>(null);
 
