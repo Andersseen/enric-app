@@ -1,26 +1,22 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { computed, Injectable, signal } from '@angular/core';
 import { BirdItem } from '@data/bird';
-import { STATE, STEP_ID } from '@data/state';
-import { StepId, STEP_STATE, STEPS } from '@data/steps';
+import { STEP_ID } from '@data/state';
+import { STEP_STATE, StepId, STEPS } from '@data/steps';
 import { Zone } from '@data/zones';
+import BaseStore from './base-store';
 
 @Injectable({ providedIn: 'root' })
-export default class StoreService {
-  #router = inject(Router);
+export default class StoreService extends BaseStore {
   #steps = signal(STEPS);
 
-  steps = this.#steps.asReadonly();
-  state = signal(JSON.parse(JSON.stringify(STATE)));
-
-  currentStep = signal<StepId>(STEPS[0].id);
+  override steps = this.#steps.asReadonly();
 
   currentStateStep = computed(() => STEP_STATE[this.currentStep()]);
   currentLabel = computed(() => this.state()[this.currentStep()].label);
   currentValue = computed(() => this.state()[this.currentStep()].value);
 
   finishStep = computed(() => {
-    if (this.#acceptEmptyStep([STEP_ID.Step8, STEP_ID.Step11])) {
+    if (this.acceptEmptyStep([STEP_ID.Step8, STEP_ID.Step11])) {
       return true;
     }
     return !!this.state()[this.currentStep()].value;
@@ -40,7 +36,8 @@ export default class StoreService {
   step12Value = computed(() => this.state()[STEP_ID.Step12].value);
 
   constructor() {
-    const step = this.#router.url.split('/').pop();
+    super();
+    const step = this.router.url.split('/').pop();
     if (step && (step as string) !== this.currentStep()) {
       this.currentStep.set(step as StepId);
     }
@@ -53,8 +50,8 @@ export default class StoreService {
   goToNextStep() {
     const nextStep = STEP_STATE[this.currentStep()].next;
     if (nextStep) {
-      const basePath = this.#router.url.includes('action') ? 'action' : 'traps';
-      this.#router.navigate(['home', basePath, nextStep]);
+      const basePath = this.router.url.includes('action') ? 'action' : 'traps';
+      this.router.navigate(['home', basePath, nextStep]);
       this.currentStep.set(nextStep);
     }
   }
@@ -64,18 +61,5 @@ export default class StoreService {
       ...currentState,
       [this.currentStep()]: { label: currentState[this.currentStep()].label, value },
     }));
-  }
-
-  reset() {
-    this.state.set(JSON.parse(JSON.stringify(STATE)));
-    this.currentStep.set(STEPS[0].id);
-    this.#router.navigate(['/']);
-  }
-
-  #acceptEmptyStep(stepId: StepId[]): boolean {
-    if (stepId.includes(this.currentStep())) {
-      return true;
-    }
-    return false;
   }
 }

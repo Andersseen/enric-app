@@ -18,7 +18,7 @@ import StoreService from '@service/actions-store';
 })
 export class FormStepFive {
   #store = inject(StoreService);
-  options = ['Prevención', 'Dispersión'];
+  options = ['Dispersión', 'Observación'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
