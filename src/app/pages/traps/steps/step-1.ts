@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import MapZones from '@components/map-zones';
 import StepPage from '.';
-import TrapsStoreService from '@service/traps-store.service';
+import TrapsStore from '@service/traps-store';
 import { Zone } from '@data/zones';
 
 @Component({
@@ -14,7 +14,7 @@ import { Zone } from '@data/zones';
   imports: [MapZones, StepPage],
 })
 export default class TrapsZonesStep {
-  store = inject(TrapsStoreService);
+  store = inject(TrapsStore);
 
   onSelect(zone: Zone) {
     this.store.setValueForCurrentStep(zone);

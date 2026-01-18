@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import StepPage from '.';
 import TextInputComponent from '@components/forms/text-input';
-import StoreService from '@service/state';
+import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'form-step-eight',
@@ -9,7 +9,7 @@ import StoreService from '@service/state';
   template: ` <app-text-input label="Animal empleado" (valueChange)="onInput($event)" /> `,
 })
 export class FormStepEight {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   onInput(value: string) {
     this.#store.setValueForCurrentStep(value);

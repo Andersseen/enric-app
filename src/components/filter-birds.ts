@@ -11,7 +11,7 @@ import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
 import SearchBar from '@components/searchbar';
-import StoreService from '@service/state';
+import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'app-filter-birds',
@@ -24,41 +24,41 @@ import StoreService from '@service/state';
 
       <!-- GRID OF BIRDS -->
       <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-        @for ( bird of filteredBirds(); track bird.id) {
-        <ion-card
-          class="relative flex justify-between overflow-hidden rounded-xl border cursor-pointer transition-all p-2 h-20"
-          role="button"
-          tabindex="0"
-          (click)="onCardClick(bird)"
-          [attr.aria-label]="'Seleccionar ' + bird.commonName"
-          [class.border-4]="selectedBird().id === bird.id"
-          [class.border-primary]="selectedBird().id === bird.id"
-        >
-          <div class="min-w-0 pr-2">
-            <ion-card-header>
-              <ion-card-title class="text-md truncate"> {{ bird.commonName }}</ion-card-title>
-            </ion-card-header>
-            <ion-card-content class="text-sm text-muted truncate">
-              {{ bird.scientificName }}
-            </ion-card-content>
-          </div>
+        @for (bird of filteredBirds(); track bird.id) {
+          <ion-card
+            class="relative flex justify-between overflow-hidden rounded-xl border cursor-pointer transition-all p-2 h-20"
+            role="button"
+            tabindex="0"
+            (click)="onCardClick(bird)"
+            [attr.aria-label]="'Seleccionar ' + bird.commonName"
+            [class.border-4]="selectedBird().id === bird.id"
+            [class.border-primary]="selectedBird().id === bird.id"
+          >
+            <div class="min-w-0 pr-2">
+              <ion-card-header>
+                <ion-card-title class="text-md truncate"> {{ bird.commonName }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content class="text-sm text-muted truncate">
+                {{ bird.scientificName }}
+              </ion-card-content>
+            </div>
 
-          <div class="flex items-start gap-2">
-            <!-- Favorite toggle -->
-            <ion-button
-              fill="clear"
-              (click)="toggleFavorite(bird.id); $event.stopPropagation()"
-              aria-label="Favorito"
-              title="Marcar favorito"
-            >
-              @if(bird.favorite){
-              <ion-icon name="star" color="primary" size="large" />
-              } @else{
-              <ion-icon name="star-outline" />
-              }
-            </ion-button>
-          </div>
-        </ion-card>
+            <div class="flex items-start gap-2">
+              <!-- Favorite toggle -->
+              <ion-button
+                fill="clear"
+                (click)="toggleFavorite(bird.id); $event.stopPropagation()"
+                aria-label="Favorito"
+                title="Marcar favorito"
+              >
+                @if (bird.favorite) {
+                  <ion-icon name="star" color="primary" size="large" />
+                } @else {
+                  <ion-icon name="star-outline" />
+                }
+              </ion-button>
+            </div>
+          </ion-card>
         }
       </section>
     </div>
@@ -66,7 +66,7 @@ import StoreService from '@service/state';
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class FilterBirds {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   #initialBirds: BirdItem[] = BIRDS;
 
@@ -81,7 +81,7 @@ export default class FilterBirds {
     const filtered = q
       ? all.filter(
           (b) =>
-            b.commonName.toLowerCase().includes(q) || b.scientificName.toLowerCase().includes(q)
+            b.commonName.toLowerCase().includes(q) || b.scientificName.toLowerCase().includes(q),
         )
       : all;
 

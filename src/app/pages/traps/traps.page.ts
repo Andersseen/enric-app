@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { BottomBarComponent } from '@components/bottom-bar';
 import { IonTabs } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
-import TrapsStoreService from '@service/traps-store.service';
+import ActionsStore from '@service/actions-store';
+import TrapsActionsStore from '@service/traps-store';
 
 @Component({
   selector: 'app-traps',
   imports: [IonTabs, BottomBarComponent],
   providers: [
     {
-      provide: StoreService,
-      useExisting: TrapsStoreService,
+      provide: ActionsStore,
+      useExisting: TrapsActionsStore,
     },
   ],
   template: `

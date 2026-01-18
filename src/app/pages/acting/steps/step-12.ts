@@ -1,21 +1,21 @@
-import { Component, inject, computed } from '@angular/core';
-import StepPage from '.';
+import { Component, inject } from '@angular/core';
 import {
+  AlertController,
+  IonButton,
   IonCard,
   IonCardContent,
-  IonList,
+  IonIcon,
   IonItem,
   IonLabel,
-  IonButton,
-  IonIcon,
-  AlertController,
+  IonList,
+  ToastController,
 } from '@ionic/angular/standalone';
-import StoreService from '@service/state';
-import * as XLSX from 'xlsx';
+import ActionsStore from '@service/actions-store';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
-import { ToastController } from '@ionic/angular/standalone';
+import * as XLSX from 'xlsx';
+import StepPage from '.';
 
 @Component({
   selector: 'form-step-twelve',
@@ -108,7 +108,7 @@ import { ToastController } from '@ionic/angular/standalone';
   `,
 })
 export class FormStepTwelve {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;

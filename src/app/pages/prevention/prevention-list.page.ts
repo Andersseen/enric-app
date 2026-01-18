@@ -15,13 +15,6 @@ import ActionCards, { type ActionCardItem } from '@components/action-cards';
 export default class PreventionListPage {
   cards: ActionCardItem[] = [
     {
-      icon: '👁️',
-      title: 'Observación',
-      description: 'Registro de observaciones.',
-      routerLink: ['observation'],
-      color: 'primary',
-    },
-    {
       icon: '🛣️',
       title: 'Revisión pista',
       description: 'Inspección de pista.',
@@ -48,13 +41,6 @@ export default class PreventionListPage {
       description: 'Control mediante cetrería.',
       routerLink: ['marking-flight'],
       color: 'primary',
-    },
-    {
-      icon: '🪤',
-      title: 'Colocación trampas',
-      description: 'Gestión de trampas.',
-      routerLink: ['traps-placement'],
-      color: 'secondary',
     },
   ];
 }

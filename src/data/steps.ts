@@ -33,7 +33,35 @@ export const STEP_STATE = {
   'step-12': { prev: 'step-11', next: null },
 } as const;
 
+export const BASE_STEPS: Step[] = [
+  { id: 'step-1', title: '', icon: 'map' },
+  { id: 'step-2', title: '', icon: 'paw' },
+  { id: 'step-3', title: '', icon: 'calculator' },
+  { id: 'step-4', title: '', icon: 'eye' },
+  { id: 'step-5', title: '', icon: 'flash' },
+  { id: 'step-6', title: '', icon: 'people' },
+  { id: 'step-7', title: '', icon: 'build' },
+  { id: 'step-8', title: '', icon: 'paw' },
+  { id: 'step-9', title: '', icon: 'checkmark-circle' },
+  { id: 'step-10', title: '', icon: 'camera' },
+  { id: 'step-11', title: '', icon: 'document-text' },
+  { id: 'step-12', title: '', icon: 'list' },
+];
 export const STEPS: Step[] = [
+  { id: 'step-1', title: 'Zonas', icon: 'map' },
+  { id: 'step-2', title: 'Especies', icon: 'paw' },
+  { id: 'step-3', title: 'Cantidades', icon: 'calculator' },
+  { id: 'step-4', title: 'Comportamiento', icon: 'eye' },
+  { id: 'step-5', title: 'Actuación', icon: 'flash' },
+  { id: 'step-6', title: 'Interacción', icon: 'people' },
+  { id: 'step-7', title: 'Método', icon: 'build' },
+  { id: 'step-8', title: 'Animal', icon: 'paw' },
+  { id: 'step-9', title: 'Eficacia', icon: 'checkmark-circle' },
+  { id: 'step-10', title: 'Captura', icon: 'camera' },
+  { id: 'step-11', title: 'Observaciones', icon: 'document-text' },
+  { id: 'step-12', title: 'Resumen', icon: 'list' },
+];
+export const TRAPS_STEPS: Step[] = [
   { id: 'step-1', title: 'Zonas', icon: 'map' },
   { id: 'step-2', title: 'Especies', icon: 'paw' },
   { id: 'step-3', title: 'Cantidades', icon: 'calculator' },

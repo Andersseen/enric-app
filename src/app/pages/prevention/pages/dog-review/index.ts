@@ -1,18 +1,22 @@
 import { Component, computed, inject } from '@angular/core';
-import StepPanel from '@components/step-panel';
-import TrapsActionsStore from '@service/traps-store';
+import StepPanel from './step-panel';
+import PreventionStore from '@service/prevention-store';
 
 @Component({
   selector: 'step-page',
   template: `
-    <app-step-panel [title]="label()" [canGoForward]="finish()" basePath="/home/traps">
+    <app-step-panel
+      [title]="label()"
+      [canGoForward]="finish()"
+      basePath="/home/prevention/dog-review"
+    >
       <ng-content />
     </app-step-panel>
   `,
   imports: [StepPanel],
 })
 export default class StepPage {
-  #store = inject(TrapsActionsStore);
+  #store = inject(PreventionStore);
 
   label = computed(() => this.#store.currentLabel());
 

@@ -11,7 +11,7 @@ import {
   IonButton,
 } from '@ionic/angular/standalone';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import StoreService from '@service/state';
+import ActionsStore from '@service/actions-store';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
@@ -128,7 +128,7 @@ import { saveAs } from 'file-saver';
   `,
 })
 export default class Form {
-  #store = inject(StoreService);
+  #store = inject(ActionsStore);
 
   zone = computed(() => this.#store.step1Value());
   bird = computed(() => this.#store.step2Value());

@@ -13,7 +13,7 @@ import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
 import { ToastController, AlertController } from '@ionic/angular/standalone';
-import TrapsStoreService from '@service/traps-store.service';
+import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
 
 @Component({
@@ -107,7 +107,7 @@ import StepPage from '.';
   `,
 })
 export class TrapsFormStepTwelve {
-  #store = inject(TrapsStoreService);
+  #store = inject(TrapsActionsStore);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
