@@ -12,8 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import ActionsStore from '@service/actions-store';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import { ExcelService } from '@service/excel.service';
 
 @Component({
   selector: 'app-form',
@@ -129,6 +128,7 @@ import { saveAs } from 'file-saver';
 })
 export default class Form {
   #store = inject(ActionsStore);
+  #excelService = inject(ExcelService);
 
   zone = computed(() => this.#store.step1Value());
   bird = computed(() => this.#store.step2Value());
@@ -159,36 +159,21 @@ export default class Form {
     this.generate();
   }
 
-  generate() {
-    const data = this.form.getRawValue();
+  async generate() {
+    const formData = this.form.getRawValue();
 
-    const rows = [
-      ['Campo', 'Valor'],
-      ['Zona ID', data.zoneId],
-      ['Especie', data.speciesId],
-      ['Cuántas', data.count],
-      ['Actitud', data.behavior],
-      ['Tipo acción', data.actionType],
-      ['Interacción operación', data.interaction],
-      ['Método empleado', data.method],
-      ['Animal empleado', data.animal],
-      ['Eficacia', data.efficacy],
-      ['Capturas', data.captured],
-      ['Observaciones', data.notes],
-      ['Fecha registro', new Date().toLocaleString()],
-    ];
-
-    // crear worksheet
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-
-    // crear workbook
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Actuación');
-
-    // escribir archivo
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
-
-    saveAs(file, 'actuacion.xlsx');
+    await this.#excelService.generateActuacionExcel({
+      zoneId: formData.zoneId || '',
+      speciesId: formData.speciesId || '',
+      count: formData.count || 0,
+      behavior: formData.behavior || '',
+      actionType: formData.actionType || '',
+      interaction: formData.interaction || '',
+      method: formData.method || '',
+      animal: formData.animal || '',
+      efficacy: formData.efficacy || '',
+      captured: formData.captured || 0,
+      notes: formData.notes || '',
+    });
   }
 }
