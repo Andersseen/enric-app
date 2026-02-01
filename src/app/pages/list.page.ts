@@ -3,13 +3,17 @@ import { IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { moonOutline, sunnyOutline } from 'ionicons/icons';
 import ActionCards, { type ActionCardItem } from '@components/action-cards';
+import SessionHeaderComponent from '@components/session-header';
 import ThemeService from '@service/theme.service';
 
 @Component({
   selector: 'app-list',
-  imports: [ActionCards, IonFab, IonFabButton, IonIcon],
+  imports: [ActionCards, SessionHeaderComponent, IonFab, IonFabButton, IonIcon],
   template: `
     <div>
+      <!-- Session Configuration -->
+      <app-session-header class="mb-6" />
+
       <h2
         class="text-xl font-semibold tracking-tight mb-4 text-center md:text-left text-foreground"
       >
