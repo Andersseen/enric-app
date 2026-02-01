@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ReportsStorageService } from './reports-storage.service';
+import Session from './session';
 
 export interface AssignmentRow {
   number: string;
@@ -35,6 +36,7 @@ export interface TrampaData {
 })
 export class ExcelService {
   private reportsStorage = inject(ReportsStorageService);
+  private session = inject(Session);
   /**
    * Creates a styled title row with yellow background
    */
@@ -47,52 +49,67 @@ export class ExcelService {
       fgColor: { argb: 'FFFF00' },
     };
     titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
+    titleRow.height = 25;
     worksheet.mergeCells(mergeColumns);
   }
 
   /**
-   * Creates a header row with black background and white text
+   * Creates a header row with dark green background and white text (matching reference Excel)
    */
   private createHeaderRow(worksheet: ExcelJS.Worksheet, headers: string[]): void {
     const headerRow = worksheet.addRow(headers);
+    headerRow.height = 30;
     headerRow.eachCell((cell) => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '000000' },
+        fgColor: { argb: '375623' }, // Dark green like in the reference
       };
       cell.font = {
+        name: 'Arial',
+        size: 10,
         bold: true,
         color: { argb: 'FFFFFF' },
       };
       cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' },
+        top: { style: 'thin', color: { argb: '000000' } },
+        left: { style: 'thin', color: { argb: '000000' } },
+        bottom: { style: 'thin', color: { argb: '000000' } },
+        right: { style: 'thin', color: { argb: '000000' } },
       };
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+        wrapText: true,
+      };
     });
   }
 
   /**
-   * Adds a data row with borders
+   * Adds a data row with borders (matching reference Excel)
    */
   private addDataRow(worksheet: ExcelJS.Worksheet, data: any[]): void {
-    const row = worksheet.addRow(data);
-    row.eachCell((cell) => {
+    const dataRow = worksheet.addRow(data);
+    dataRow.height = 20;
+    dataRow.eachCell((cell) => {
+      cell.font = {
+        name: 'Arial',
+        size: 9,
+      };
       cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' },
+        top: { style: 'thin', color: { argb: '000000' } },
+        left: { style: 'thin', color: { argb: '000000' } },
+        bottom: { style: 'thin', color: { argb: '000000' } },
+        right: { style: 'thin', color: { argb: '000000' } },
+      };
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+        wrapText: true,
       };
     });
   }
 
-  /**
-   * Creates assignment section (top section with categories)
-   */
   private createAssignmentSection(
     worksheet: ExcelJS.Worksheet,
     assignmentRows: AssignmentRow[],
@@ -110,9 +127,6 @@ export class ExcelService {
     });
   }
 
-  /**
-   * Generates an Excel file for "Actuación" with horizontal layout
-   */
   async generateActuacionExcel(
     data: ActuacionData,
     assignmentRows: AssignmentRow[] = [
@@ -121,73 +135,90 @@ export class ExcelService {
       { number: '3', category: 'Cetrero', name: '', alta: '', baja: '' },
       { number: '4', category: 'Cetrero', name: '', alta: '', baja: '' },
     ],
-    filename: string = 'actuacion.xlsx',
+    filename?: string,
   ): Promise<void> {
+    // Get current session data
+    const sessionData = this.session.sessionForm.value;
+
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Actuación');
 
-    // Title
-    this.createTitleRow(worksheet, 'Expediente xxxx', 'A1:M1');
-
-    // Assignment Section
-    this.createAssignmentSection(worksheet, assignmentRows);
-
-    // Spacer
-    worksheet.addRow([]);
-
-    // Data Section Header
     this.createHeaderRow(worksheet, [
-      'Zona',
-      'Especie',
-      'Cuántas',
-      'Actitud',
-      'Tipo acción',
-      'Interacción',
-      'Método',
-      'Animal',
-      'Eficacia',
-      'Capturas',
-      'Observaciones',
       'Fecha',
+      'Climatología',
+      'Personal',
+      'Hora',
+      'Localización',
+      'Especie',
+      'Nº',
+      'Actitud',
+      'Tipo actuación',
+      'Operación',
+      'Interacción perro/halcón',
+      'Método empleado',
+      'Animal empleado',
+      'Eficacia',
+      'Captura Efectiva',
+      'Observaciones',
     ]);
 
-    // Data Row
     this.addDataRow(worksheet, [
-      data.zoneId || '',
-      data.speciesId || '',
-      data.count || 0,
-      data.behavior || '',
-      data.actionType || '',
-      data.interaction || '',
-      data.method || '',
-      data.animal || '',
-      data.efficacy || '',
-      data.captured || 0,
-      data.notes || '',
-      new Date().toLocaleString(),
+      sessionData.date || new Date().toLocaleDateString('es-ES'), // Fecha
+      sessionData.weather || '', // Climatología
+      sessionData.worker || '', // Personal
+      sessionData.time ||
+        new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), // Hora
+      data.zoneId || '', // Localización
+      data.speciesId || '', // Especie
+      data.count || 0, // Nº
+      data.behavior || '', // Actitud
+      data.actionType || '', // Tipo actuación
+      '', // Operación
+      data.interaction || '', // Interacción perro/halcón
+      data.method || '', // Método empleado
+      data.animal || '', // Animal empleado
+      data.efficacy || '', // Eficacia
+      data.captured || 0, // Captura Efectiva
+      data.notes || '', // Observaciones
     ]);
 
-    // Column widths
+    // Column widths (matching reference Excel)
     worksheet.columns = [
-      { width: 15 }, // Zona
-      { width: 20 }, // Especie
-      { width: 10 }, // Cuántas
-      { width: 15 }, // Actitud
-      { width: 15 }, // Tipo acción
-      { width: 15 }, // Interacción
-      { width: 20 }, // Método
-      { width: 15 }, // Animal
+      { width: 10 }, // Fecha
+      { width: 12 }, // Crimológico
+      { width: 10 }, // Personal
+      { width: 8 }, // Hora
+      { width: 14 }, // Localización
+      { width: 16 }, // Especie
+      { width: 6 }, // Nº
+      { width: 14 }, // Actitud
+      { width: 14 }, // Tipo actuación
+      { width: 12 }, // Operación
+      { width: 18 }, // Interacción perro/halcón
+      { width: 16 }, // Método empleado
+      { width: 16 }, // Animal empleado
       { width: 10 }, // Eficacia
-      { width: 10 }, // Capturas
+      { width: 14 }, // Captura Efectiva
       { width: 30 }, // Observaciones
-      { width: 20 }, // Fecha
     ];
 
-    // Save with metadata
-    await this.saveWorkbook(workbook, filename, 'actuacion', {
+    // Generate filename: actuacion_2026-02-01_18-30.xlsx
+    const dateStr = (sessionData.date || new Date().toISOString().split('T')[0]).replace(
+      /\//g,
+      '-',
+    );
+    const timeStr = (sessionData.time || new Date().toTimeString().slice(0, 5)).replace(':', '-');
+    const generatedFilename = `actuacion_${dateStr}_${timeStr}.xlsx`;
+
+    // Save with metadata including session data
+    await this.saveWorkbook(workbook, generatedFilename, 'actuacion', {
       zone: data.zoneId,
       species: data.speciesId,
       count: data.count,
+      worker: sessionData.worker || undefined,
+      date: sessionData.date || undefined,
+      time: sessionData.time || undefined,
+      weather: sessionData.weather || undefined,
     });
   }
 
@@ -202,10 +233,13 @@ export class ExcelService {
       { number: '3', category: 'Cetrero', name: '', alta: '', baja: '' },
       { number: '4', category: 'Cetrero', name: '', alta: '', baja: '' },
     ],
-    filename: string = 'trampas.xlsx',
+    filename: string = 'trampa.xlsx',
   ): Promise<void> {
+    // Get current session data
+    const sessionData = this.session.sessionForm.value;
+
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Trampas');
+    const worksheet = workbook.addWorksheet('Trampa');
 
     // Title
     this.createTitleRow(worksheet, 'Expediente xxxx', 'A1:M1');
@@ -216,13 +250,14 @@ export class ExcelService {
     // Spacer
     worksheet.addRow([]);
 
-    // TODO: Add your trap-specific headers and data here
-    // Example:
-    // this.createHeaderRow(worksheet, ['Field1', 'Field2', ...]);
-    // this.addDataRow(worksheet, [data.field1, data.field2, ...]);
-
-    // Save
-    await this.saveWorkbook(workbook, filename, 'trampa', data);
+    // Save with session data
+    await this.saveWorkbook(workbook, filename, 'trampa', {
+      ...data,
+      worker: sessionData.worker || undefined,
+      date: sessionData.date || undefined,
+      time: sessionData.time || undefined,
+      weather: sessionData.weather || undefined,
+    });
   }
 
   /**

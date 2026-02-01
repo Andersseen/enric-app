@@ -124,17 +124,49 @@ import { Report, ReportType } from '../../../models/report.model';
               ></ion-icon>
 
               <ion-label>
-                <h2 class="font-semibold text-gray-900 dark:text-white">{{ report.filename }}</h2>
+                <h2 class="font-semibold text-gray-900 dark:text-white">
+                  {{ report.filename }}
+                </h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ formatDate(report.createdAt) }}
+                  {{ report.createdAt | date: 'dd/MM/yyyy HH:mm' }} ·
+                  {{ formatFileSize(report.fileSize) }}
                 </p>
-                <div class="flex flex-wrap gap-2 mt-2">
+
+                <!-- Session Info -->
+                @if (report.metadata?.worker || report.metadata?.date || report.metadata?.weather) {
+                  <div class="flex flex-wrap gap-2 mt-1">
+                    @if (report.metadata?.worker) {
+                      <span
+                        class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded"
+                      >
+                        👤 {{ report.metadata?.worker }}
+                      </span>
+                    }
+                    @if (report.metadata?.date) {
+                      <span
+                        class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded"
+                      >
+                        📅 {{ report.metadata?.date }}
+                        @if (report.metadata?.time) {
+                          {{ report.metadata?.time }}
+                        }
+                      </span>
+                    }
+                    @if (report.metadata?.weather) {
+                      <span
+                        class="text-xs bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded"
+                      >
+                        🌤️ {{ report.metadata?.weather }}
+                      </span>
+                    }
+                  </div>
+                }
+
+                <!-- Report Metadata -->
+                <div class="flex flex-wrap gap-2 mt-1">
                   <ion-badge [color]="getReportColor(report.type)" class="text-xs">
                     {{ getReportTypeLabel(report.type) }}
                   </ion-badge>
-                  <span class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ formatFileSize(report.fileSize) }}
-                  </span>
                   @if (report.metadata?.zone) {
                     <span class="text-xs text-gray-600 dark:text-gray-300">
                       📍 {{ report.metadata?.zone }}

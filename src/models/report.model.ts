@@ -6,9 +6,15 @@ export interface Report {
   fileUri: string;
   fileSize: number;
   metadata?: {
+    // Report-specific data
     zone?: string;
     species?: string;
     count?: number;
+    // Session data
+    worker?: string;
+    date?: string;
+    time?: string;
+    weather?: string;
     [key: string]: any;
   };
 }
