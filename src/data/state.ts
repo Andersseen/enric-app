@@ -1,13 +1,11 @@
+import { BaseState, BaseStateItem } from './base-types';
 import { StepId } from './steps';
 
-export type State = {
-  [key in StepId]: StateItem;
-};
+// Reutiliza BaseStateItem en lugar de redefinirlo
+export type StateItem = BaseStateItem;
 
-export interface StateItem {
-  label: string;
-  value: unknown | null;
-}
+// Extiende BaseState con StepId específico
+export type State = BaseState<StepId>;
 
 export enum STEP_ID {
   Step1 = 'step-1',

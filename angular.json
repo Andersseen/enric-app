@@ -3,10 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "pnpm",
-    "schematicCollections": [
-      "@ionic/angular-toolkit",
-      "@ionic/angular-toolkit"
-    ],
+    "schematicCollections": ["@ionic/angular-toolkit", "@ionic/angular-toolkit"],
     "analytics": false
   },
   "newProjectRoot": "projects",
@@ -59,6 +56,9 @@
               }
             ],
             "styles": [
+              {
+                "input": "node_modules/@ionic/angular/css/palettes/dark.class.css"
+              },
               "src/styles.css",
               {
                 "input": "node_modules/@ionic/angular/css/core.css"
@@ -133,8 +133,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",

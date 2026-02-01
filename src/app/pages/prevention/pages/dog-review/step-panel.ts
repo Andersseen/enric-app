@@ -17,16 +17,7 @@ import { caretBack, caretForward } from 'ionicons/icons';
 
 @Component({
   selector: 'app-step-panel',
-  imports: [
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    SessionHeaderComponent,
-    IonButtons,
-    IonContent,
-    IonIcon,
-    IonButton,
-  ],
+  imports: [IonHeader, IonTitle, IonToolbar, IonButtons, IonContent, IonIcon, IonButton],
   template: `
     <section id="page" class="ion-page flex flex-col gap-4">
       <ion-header>
@@ -47,8 +38,6 @@ import { caretBack, caretForward } from 'ionicons/icons';
             </ion-buttons>
           }
         </ion-toolbar>
-
-        <app-session-header />
       </ion-header>
       <ion-content>
         <ng-content />

@@ -8,7 +8,7 @@ import {
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
-import * as XLSX from 'xlsx';
+import { ExcelService } from '@service/excel.service';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
@@ -108,6 +108,7 @@ import StepPage from '.';
 })
 export class TrapsFormStepTwelve {
   #store = inject(TrapsActionsStore);
+  #excelService = inject(ExcelService);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
@@ -129,29 +130,25 @@ export class TrapsFormStepTwelve {
   }
 
   async generate() {
-    const rows = [
-      ['Campo', 'Valor'],
-      ['Zona ID', this.zone()?.name || ''],
-      ['Especie', this.bird()?.commonName || ''],
-      ['Cuántas', this.count() || 0],
-      ['Actitud', this.behavior() || ''],
-      ['Tipo acción', this.actionType() || ''],
-      ['Interacción operación', this.interaction() || ''],
-      ['Método empleado', this.method() || ''],
-      ['Animal empleado', this.animal() || ''],
-      ['Eficacia', this.efficacy() || ''],
-      ['Capturas', this.captured() || 0],
-      ['Observaciones', this.notes() || ''],
-      ['Fecha registro', new Date().toLocaleString()],
-    ];
-
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Trampas');
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
-
-    saveAs(file, 'trampas.xlsx');
+    // TODO: Update this to use proper trap data structure
+    // For now, using the same structure as actuacion
+    await this.#excelService.generateActuacionExcel(
+      {
+        zoneId: this.zone()?.name || '',
+        speciesId: this.bird()?.commonName || '',
+        count: this.count() || 0,
+        behavior: this.behavior() || '',
+        actionType: this.actionType() || '',
+        interaction: this.interaction() || '',
+        method: this.method() || '',
+        animal: this.animal() || '',
+        efficacy: this.efficacy() || '',
+        captured: this.captured() || 0,
+        notes: this.notes() || '',
+      },
+      undefined,
+      'trampas.xlsx',
+    );
 
     const toast = await this.toastController.create({
       message: 'Guardado correctamente',

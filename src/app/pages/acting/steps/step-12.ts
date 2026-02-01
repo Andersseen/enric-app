@@ -14,7 +14,7 @@ import ActionsStore from '@service/actions-store';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
-import * as XLSX from 'xlsx';
+import { ExcelService } from '@service/excel.service';
 import StepPage from '.';
 
 @Component({
@@ -109,6 +109,7 @@ import StepPage from '.';
 })
 export class FormStepTwelve {
   #store = inject(ActionsStore);
+  #excelService = inject(ExcelService);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
@@ -130,29 +131,19 @@ export class FormStepTwelve {
   }
 
   async generate() {
-    const rows = [
-      ['Campo', 'Valor'],
-      ['Zona ID', this.zone()?.name || ''],
-      ['Especie', this.bird()?.commonName || ''],
-      ['Cuántas', this.count() || 0],
-      ['Actitud', this.behavior() || ''],
-      ['Tipo acción', this.actionType() || ''],
-      ['Interacción operación', this.interaction() || ''],
-      ['Método empleado', this.method() || ''],
-      ['Animal empleado', this.animal() || ''],
-      ['Eficacia', this.efficacy() || ''],
-      ['Capturas', this.captured() || 0],
-      ['Observaciones', this.notes() || ''],
-      ['Fecha registro', new Date().toLocaleString()],
-    ];
-
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Actuación');
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
-
-    saveAs(file, 'actuacion.xlsx');
+    await this.#excelService.generateActuacionExcel({
+      zoneId: this.zone()?.name || '',
+      speciesId: this.bird()?.commonName || '',
+      count: this.count() || 0,
+      behavior: this.behavior() || '',
+      actionType: this.actionType() || '',
+      interaction: this.interaction() || '',
+      method: this.method() || '',
+      animal: this.animal() || '',
+      efficacy: this.efficacy() || '',
+      captured: this.captured() || 0,
+      notes: this.notes() || '',
+    });
 
     const toast = await this.toastController.create({
       message: 'Guardado correctamente',
