@@ -38,5 +38,12 @@ export default class List {
       routerLink: ['traps'],
       color: 'primary',
     },
+    {
+      icon: '📊',
+      title: 'Mis Reportes',
+      description: 'Ver, filtrar y compartir reportes generados.',
+      routerLink: ['/reports'],
+      color: 'primary',
+    },
   ];
 }

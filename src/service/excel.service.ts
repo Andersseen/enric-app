@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { ReportsStorageService } from './reports-storage.service';
 
 export interface AssignmentRow {
   number: string;
@@ -33,6 +34,7 @@ export interface TrampaData {
   providedIn: 'root',
 })
 export class ExcelService {
+  private reportsStorage = inject(ReportsStorageService);
   /**
    * Creates a styled title row with yellow background
    */
@@ -181,8 +183,12 @@ export class ExcelService {
       { width: 20 }, // Fecha
     ];
 
-    // Save
-    await this.saveWorkbook(workbook, filename);
+    // Save with metadata
+    await this.saveWorkbook(workbook, filename, 'actuacion', {
+      zone: data.zoneId,
+      species: data.speciesId,
+      count: data.count,
+    });
   }
 
   /**
@@ -216,7 +222,7 @@ export class ExcelService {
     // this.addDataRow(worksheet, [data.field1, data.field2, ...]);
 
     // Save
-    await this.saveWorkbook(workbook, filename);
+    await this.saveWorkbook(workbook, filename, 'trampa', data);
   }
 
   /**
@@ -229,7 +235,9 @@ export class ExcelService {
     dataRows: any[][],
     columnWidths: number[],
     filename: string,
+    reportType: 'actuacion' | 'trampa' | 'prevencion' = 'actuacion',
     assignmentRows?: AssignmentRow[],
+    metadata?: any,
   ): Promise<void> {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
@@ -256,16 +264,39 @@ export class ExcelService {
     worksheet.columns = columnWidths.map((width) => ({ width }));
 
     // Save
-    await this.saveWorkbook(workbook, filename);
+    await this.saveWorkbook(workbook, filename, reportType, metadata);
   }
 
   /**
    * Saves the workbook as a file
+   * On mobile: saves to device and registers in reports database
+   * On web: downloads using file-saver
    */
-  private async saveWorkbook(workbook: ExcelJS.Workbook, filename: string): Promise<void> {
+  private async saveWorkbook(
+    workbook: ExcelJS.Workbook,
+    filename: string,
+    reportType: 'actuacion' | 'trampa' | 'prevencion' = 'actuacion',
+    metadata?: any,
+  ): Promise<void> {
     const buffer = await workbook.xlsx.writeBuffer();
-    const file = new Blob([buffer], { type: 'application/octet-stream' });
-    saveAs(file, filename);
+
+    // Check if running on native platform
+    if (this.reportsStorage.isNative()) {
+      // Save to device using Capacitor Filesystem
+      try {
+        await this.reportsStorage.saveReport(buffer, filename, reportType, metadata);
+        console.log('Report saved successfully to device');
+      } catch (error) {
+        console.error('Error saving report to device:', error);
+        // Fallback to file-saver if Capacitor fails
+        const file = new Blob([buffer], { type: 'application/octet-stream' });
+        saveAs(file, filename);
+      }
+    } else {
+      // Web: use file-saver
+      const file = new Blob([buffer], { type: 'application/octet-stream' });
+      saveAs(file, filename);
+    }
   }
 
   /**
