@@ -1,8 +1,4 @@
-export interface Step {
-  id: StepId;
-  title: string;
-  icon: string;
-}
+import { BaseStep, BaseStepNavigationMap } from './base-types';
 
 export type StepId =
   | 'step-1'
@@ -18,7 +14,9 @@ export type StepId =
   | 'step-11'
   | 'step-12';
 
-export const STEP_STATE = {
+export interface Step extends BaseStep<StepId> {}
+
+export const STEP_STATE: BaseStepNavigationMap<StepId> = {
   'step-1': { prev: null, next: 'step-2' },
   'step-2': { prev: 'step-1', next: 'step-3' },
   'step-3': { prev: 'step-2', next: 'step-4' },
@@ -46,32 +44,4 @@ export const BASE_STEPS: Step[] = [
   { id: 'step-10', title: '', icon: 'camera' },
   { id: 'step-11', title: '', icon: 'document-text' },
   { id: 'step-12', title: '', icon: 'list' },
-];
-export const STEPS: Step[] = [
-  { id: 'step-1', title: 'Zonas', icon: 'map' },
-  { id: 'step-2', title: 'Especies', icon: 'paw' },
-  { id: 'step-3', title: 'Cantidades', icon: 'calculator' },
-  { id: 'step-4', title: 'Comportamiento', icon: 'eye' },
-  { id: 'step-5', title: 'Actuación', icon: 'flash' },
-  { id: 'step-6', title: 'Interacción', icon: 'people' },
-  { id: 'step-7', title: 'Método', icon: 'build' },
-  { id: 'step-8', title: 'Animal', icon: 'paw' },
-  { id: 'step-9', title: 'Eficacia', icon: 'checkmark-circle' },
-  { id: 'step-10', title: 'Captura', icon: 'camera' },
-  { id: 'step-11', title: 'Observaciones', icon: 'document-text' },
-  { id: 'step-12', title: 'Resumen', icon: 'list' },
-];
-export const TRAPS_STEPS: Step[] = [
-  { id: 'step-1', title: 'Zonas', icon: 'map' },
-  { id: 'step-2', title: 'Especies', icon: 'paw' },
-  { id: 'step-3', title: 'Cantidades', icon: 'calculator' },
-  { id: 'step-4', title: 'Comportamiento', icon: 'eye' },
-  { id: 'step-5', title: 'Actuación', icon: 'flash' },
-  { id: 'step-6', title: 'Interacción', icon: 'people' },
-  { id: 'step-7', title: 'Método', icon: 'build' },
-  { id: 'step-8', title: 'Animal', icon: 'paw' },
-  { id: 'step-9', title: 'Eficacia', icon: 'checkmark-circle' },
-  { id: 'step-10', title: 'Captura', icon: 'camera' },
-  { id: 'step-11', title: 'Observaciones', icon: 'document-text' },
-  { id: 'step-12', title: 'Resumen', icon: 'list' },
 ];

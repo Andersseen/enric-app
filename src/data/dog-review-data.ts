@@ -1,19 +1,15 @@
+import { BaseStep, BaseState, BaseStateItem, BaseStepNavigationMap } from './base-types';
+
 export type DogReviewStepId = 'step-1' | 'step-2' | 'step-3' | 'step-4';
 
-export interface DogReviewStep {
-  id: DogReviewStepId;
-  title: string;
-  icon: string;
-}
+// Extiende BaseStep con DogReviewStepId específico
+export interface DogReviewStep extends BaseStep<DogReviewStepId> {}
 
-export type State = {
-  [key in DogReviewStepId]: StateItem;
-};
+// Reutiliza BaseStateItem en lugar de redefinirlo
+export type StateItem = BaseStateItem;
 
-export interface StateItem {
-  label: string;
-  value: unknown | null;
-}
+// Extiende BaseState con DogReviewStepId específico
+export type State = BaseState<DogReviewStepId>;
 
 export enum DOG_REVIEW_STEP_ID {
   Step1 = 'step-1',
@@ -36,7 +32,7 @@ export const DOG_REVIEW_STATE: State = {
   [DOG_REVIEW_STEP_ID.Step4]: { label: 'Resumen', value: null },
 };
 
-export const DOG_REVIEW_STEP_STATE = {
+export const DOG_REVIEW_STEP_STATE: BaseStepNavigationMap<DogReviewStepId> = {
   'step-1': { prev: null, next: 'step-2' },
   'step-2': { prev: 'step-1', next: 'step-3' },
   'step-3': { prev: 'step-2', next: 'step-4' },

@@ -1,13 +1,14 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { ACTIONS_STEPS } from '@data/actions-data';
 import { BirdItem } from '@data/bird';
 import { STEP_ID } from '@data/state';
-import { STEP_STATE, StepId, STEPS } from '@data/steps';
+import { STEP_STATE, StepId } from '@data/steps';
 import { Zone } from '@data/zones';
 import BaseStore from './base-store';
 
 @Injectable({ providedIn: 'root' })
 export default class ActionsStore extends BaseStore {
-  #steps = signal(STEPS);
+  #steps = signal(ACTIONS_STEPS);
 
   override steps = this.#steps.asReadonly();
 
