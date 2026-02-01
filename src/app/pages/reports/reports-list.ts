@@ -67,20 +67,20 @@ import { Report, ReportType } from '../../../models/report.model';
     <ion-content class="ion-padding">
       <!-- Stats Dashboard -->
       <div class="grid grid-cols-2 gap-3 mb-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total</p>
-          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats().total }}</p>
+        <div class="bg-surface rounded-lg p-4 shadow-sm">
+          <p class="text-sm text-muted mb-1">Total</p>
+          <p class="text-2xl font-bold text-foreground">{{ stats().total }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Actuaciones</p>
+        <div class="bg-surface rounded-lg p-4 shadow-sm">
+          <p class="text-sm text-muted mb-1">Actuaciones</p>
           <p class="text-2xl font-bold text-blue-600">{{ stats().actuacion }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Trampas</p>
+        <div class="bg-surface rounded-lg p-4 shadow-sm">
+          <p class="text-sm text-muted mb-1">Trampas</p>
           <p class="text-2xl font-bold text-green-600">{{ stats().trampa }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Prevención</p>
+        <div class="bg-surface rounded-lg p-4 shadow-sm">
+          <p class="text-sm text-muted mb-1">Prevención</p>
           <p class="text-2xl font-bold text-orange-600">{{ stats().prevencion }}</p>
         </div>
       </div>
@@ -112,10 +112,7 @@ import { Report, ReportType } from '../../../models/report.model';
       @if (filteredReports().length > 0) {
         <ion-list class="rounded-lg overflow-hidden">
           @for (report of filteredReports(); track report.id) {
-            <ion-item
-              lines="full"
-              class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
+            <ion-item lines="full" class="hover:bg-surface transition-colors">
               <ion-icon
                 slot="start"
                 name="document-text-outline"
@@ -124,10 +121,10 @@ import { Report, ReportType } from '../../../models/report.model';
               ></ion-icon>
 
               <ion-label>
-                <h2 class="font-semibold text-gray-900 dark:text-white">
-                  {{ report.filename }}
+                <h2 class="font-semibold text-foreground">
+                  {{ report.type }}
                 </h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-muted">
                   {{ report.createdAt | date: 'dd/MM/yyyy HH:mm' }} ·
                   {{ formatFileSize(report.fileSize) }}
                 </p>
@@ -136,16 +133,12 @@ import { Report, ReportType } from '../../../models/report.model';
                 @if (report.metadata?.worker || report.metadata?.date || report.metadata?.weather) {
                   <div class="flex flex-wrap gap-2 mt-1">
                     @if (report.metadata?.worker) {
-                      <span
-                        class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded"
-                      >
+                      <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                         👤 {{ report.metadata?.worker }}
                       </span>
                     }
                     @if (report.metadata?.date) {
-                      <span
-                        class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded"
-                      >
+                      <span class="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
                         📅 {{ report.metadata?.date }}
                         @if (report.metadata?.time) {
                           {{ report.metadata?.time }}
@@ -153,9 +146,7 @@ import { Report, ReportType } from '../../../models/report.model';
                       </span>
                     }
                     @if (report.metadata?.weather) {
-                      <span
-                        class="text-xs bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded"
-                      >
+                      <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
                         🌤️ {{ report.metadata?.weather }}
                       </span>
                     }
@@ -173,9 +164,7 @@ import { Report, ReportType } from '../../../models/report.model';
                     </span>
                   }
                   @if (report.metadata?.species) {
-                    <span class="text-xs text-gray-600 dark:text-gray-300">
-                      🦅 {{ report.metadata?.species }}
-                    </span>
+                    <span class="text-xs text-muted"> 🦅 {{ report.metadata?.species }} </span>
                   }
                 </div>
               </ion-label>
@@ -198,14 +187,9 @@ import { Report, ReportType } from '../../../models/report.model';
       } @else {
         <!-- Empty State -->
         <div class="flex flex-col items-center justify-center py-16 text-center">
-          <ion-icon
-            name="document-text-outline"
-            class="text-6xl text-gray-300 dark:text-gray-600 mb-4"
-          ></ion-icon>
-          <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            No hay reportes
-          </h2>
-          <p class="text-gray-500 dark:text-gray-400 max-w-xs">
+          <ion-icon name="document-text-outline" class="text-6xl text-muted mb-4"></ion-icon>
+          <h2 class="text-xl font-semibold text-foreground mb-2">No hay reportes</h2>
+          <p class="text-muted max-w-xs">
             Los reportes que generes aparecerán aquí. Crea tu primer reporte desde Actuación,
             Trampas o Prevención.
           </p>

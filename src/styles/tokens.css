@@ -1,19 +1,41 @@
+/* Light Mode (Default) */
 :root {
-  --c-text: oklch(92% 0 0deg);
+  /* Semantic theme colors */
+  --theme-background: #ffffff;
+  --theme-foreground: #0a0a0a;
+  --theme-muted: #6b7280;
+  --theme-border: #e5e7eb;
+  --theme-surface: #f9fafb;
 
-  --c-muted: oklch(65% 0 0deg);
+  /* Brand colors from Ionic */
+  --theme-primary: var(--ion-color-primary, #3880ff);
+  --theme-secondary: var(--ion-color-secondary, #3dc2ff);
 
-  --c-surface: oklch(22% 0 0deg);
-
-  --c-primary: oklch(65% 0.08 255deg);
-
-  --c-secondary: oklch(70% 0.09 170deg);
-}
-
-.light {
+  /* Legacy variables for backwards compatibility */
   --c-text: oklch(20% 0 0deg);
   --c-muted: oklch(55% 0 0deg);
   --c-surface: oklch(97% 0 0deg);
   --c-primary: oklch(55% 0.1 255deg);
   --c-secondary: oklch(65% 0.1 170deg);
+}
+
+/* Dark Mode */
+.ion-palette-dark {
+  /* Semantic theme colors */
+  --theme-background: #0a0a0a;
+  --theme-foreground: #fafafa;
+  --theme-muted: #9ca3af;
+  --theme-border: #374151;
+  --theme-surface: #1f1f1f;
+
+  /* Brand colors adjusted for dark mode */
+  --theme-primary: var(--ion-color-primary, #4d8dff);
+  --theme-secondary: var(--ion-color-secondary, #46b1ff);
+
+  /* Legacy variables for backwards compatibility */
+  --c-text: oklch(92% 0 0deg);
+  --c-muted: oklch(65% 0 0deg);
+  --c-surface: oklch(22% 0 0deg);
+  --c-primary: oklch(65% 0.08 255deg);
+  --c-secondary: oklch(70% 0.09 170deg);
 }

@@ -334,9 +334,6 @@ export class ExcelService {
     }
   }
 
-  /**
-   * Helper to convert column index to Excel letter (A, B, C, ..., Z, AA, AB, ...)
-   */
   private getColumnLetter(columnNumber: number): string {
     let letter = '';
     while (columnNumber > 0) {

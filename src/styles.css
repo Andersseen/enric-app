@@ -2,14 +2,17 @@
 @import './styles/tokens.css';
 
 @theme {
-  --color-text: var(--ion-text-color);
-  --color-background: var(--ion-background-color);
-  --color-foreground: var(--ion-background-color-step-900);
-  --color-muted: var(--c-muted);
-  --color-surface: var(--c-surface);
-  --color-primary: var(--c-primary);
+  /* Map semantic theme variables to Tailwind */
+  --color-background: var(--theme-background);
+  --color-foreground: var(--theme-foreground);
+  --color-muted: var(--theme-muted);
+  --color-border: var(--theme-border);
+  --color-surface: var(--theme-surface);
+  --color-primary: var(--theme-primary);
+  --color-secondary: var(--theme-secondary);
 
-  --color-secondary: var(--c-secondary);
+  /* Legacy mappings */
+  --color-text: var(--ion-text-color);
 }
 
 html,
