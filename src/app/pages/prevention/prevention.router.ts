@@ -12,19 +12,67 @@ const preventionRoutes: Routes = [
 
       {
         path: 'track-review',
-        loadComponent: () => import('./pages/track-review.page'),
+        children: [
+          {
+            path: 'step-1',
+            loadComponent: () => import('./steps/track-review-step'),
+          },
+          {
+            path: '',
+            redirectTo: 'step-1',
+            pathMatch: 'full',
+          },
+        ],
       },
       {
         path: 'perimeter-review',
-        loadComponent: () => import('./pages/perimeter-review.page'),
+        children: [
+          {
+            path: 'step-1',
+            loadComponent: () => import('./steps/perimeter-review-step'),
+          },
+          {
+            path: '',
+            redirectTo: 'step-1',
+            pathMatch: 'full',
+          },
+        ],
       },
       {
         path: 'dog-review',
-        loadComponent: () => import('./pages/dog-review/dog-review.page'),
+        children: [
+          {
+            path: 'step-1',
+            loadComponent: () => import('./steps/dog-review/step-1'),
+          },
+          {
+            path: 'step-2',
+            loadComponent: () => import('./steps/dog-review/step-2'),
+          },
+          {
+            path: '',
+            redirectTo: 'step-1',
+            pathMatch: 'full',
+          },
+        ],
       },
       {
         path: 'marking-flight',
-        loadComponent: () => import('./pages/marking-flight.page'),
+        children: [
+          {
+            path: 'step-1',
+            loadComponent: () => import('./steps/marking-flight/step-1'),
+          },
+          {
+            path: 'step-2',
+            loadComponent: () => import('./steps/marking-flight/step-2'),
+          },
+          {
+            path: '',
+            redirectTo: 'step-1',
+            pathMatch: 'full',
+          },
+        ],
       },
       {
         path: 'reports',
