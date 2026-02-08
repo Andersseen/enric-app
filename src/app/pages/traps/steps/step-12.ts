@@ -15,6 +15,9 @@ import { downloadOutline, homeOutline } from 'ionicons/icons';
 import { ToastController, AlertController } from '@ionic/angular/standalone';
 import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
+import { ReportStore } from '@service/report-store';
+import Session from '@service/session';
+import { NavController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'traps-form-step-twelve',
@@ -94,7 +97,7 @@ import StepPage from '.';
         <div class="mt-4 space-y-3">
           <ion-button expand="block" (click)="generate()">
             <ion-icon slot="start" name="download-outline"></ion-icon>
-            Generar Excel
+            Guardar en Tabla
           </ion-button>
 
           <ion-button expand="block" color="medium" fill="outline" (click)="finish()">
@@ -108,7 +111,9 @@ import StepPage from '.';
 })
 export class TrapsFormStepTwelve {
   #store = inject(TrapsActionsStore);
-  #excelService = inject(ExcelService);
+  #reportStore = inject(ReportStore);
+  #session = inject(Session);
+  #navController = inject(NavController);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
@@ -130,33 +135,40 @@ export class TrapsFormStepTwelve {
   }
 
   async generate() {
-    // TODO: Update this to use proper trap data structure
-    // For now, using the same structure as actuacion
-    await this.#excelService.generateActuacionExcel(
-      {
-        zoneId: this.zone()?.name || '',
-        speciesId: this.bird()?.commonName || '',
-        count: this.count() || 0,
-        behavior: this.behavior() || '',
-        actionType: this.actionType() || '',
-        interaction: this.interaction() || '',
-        method: this.method() || '',
-        animal: this.animal() || '',
-        efficacy: this.efficacy() || '',
-        captured: this.captured() || 0,
-        notes: this.notes() || '',
-      },
-      undefined,
-      'trampas.xlsx',
-    );
+    const sessionData = this.#session.sessionForm.value;
+    const now = new Date();
+
+    this.#reportStore.addRow({
+      zoneId: this.zone()?.name || '',
+      speciesId: this.bird()?.commonName || '',
+      count: this.count() || 0,
+      behavior: this.behavior() || '',
+      actionType: this.actionType() || '',
+      interaction: this.interaction() || '',
+      method: this.method() || '',
+      animal: this.animal() || '',
+      efficacy: this.efficacy() || '',
+      captured: this.captured() || 0,
+      notes: this.notes() || '',
+      operation: 'No', // Traps usually distinct from active operation? Or "Si"? Leaving "No" or matching logic
+      date: sessionData.date || now.toLocaleDateString('es-ES'),
+      time:
+        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      weather: sessionData.weather || '',
+      worker: sessionData.worker || '',
+    });
 
     const toast = await this.toastController.create({
-      message: 'Guardado correctamente',
+      message: 'Añadido a la tabla correctamente',
       duration: 2000,
       position: 'bottom',
       color: 'success',
     });
     await toast.present();
+
+    // Reset and go home
+    this.#store.reset();
+    this.#navController.navigateRoot('/home');
   }
 
   async finish() {

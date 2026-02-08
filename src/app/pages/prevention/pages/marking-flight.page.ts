@@ -1,7 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import MapZones from '@components/map-zones';
-import { Zone } from '@data/zones';
 import {
   IonBackButton,
   IonButton,
@@ -18,7 +16,9 @@ import {
   NavController,
   ToastController,
 } from '@ionic/angular/standalone';
-import { ExcelService } from '@service/excel.service';
+import MapZones from '@components/map-zones';
+import { Zone } from '@data/zones';
+import { ReportStore } from '@service/report-store';
 
 @Component({
   selector: 'app-marking-flight',
@@ -91,7 +91,7 @@ import { ExcelService } from '@service/excel.service';
             ></ion-textarea>
 
             <ion-button expand="block" class="mt-4" [disabled]="!isValid()" (click)="save()">
-              Guardar
+              Guardar y Añadir a Tabla
             </ion-button>
           </section>
         }
@@ -117,7 +117,7 @@ import { ExcelService } from '@service/excel.service';
   ],
 })
 export default class MarkingFlightPage {
-  private excelService = inject(ExcelService);
+  private reportStore = inject(ReportStore);
   private toastController = inject(ToastController);
   private navController = inject(NavController);
 
@@ -131,11 +131,11 @@ export default class MarkingFlightPage {
   }
 
   isValid() {
-    return this.selectedZone() && this.method && this.animalName.trim().length > 0;
+    return !!this.selectedZone() && this.method && this.animalName.trim().length > 0;
   }
 
   async save() {
-    await this.excelService.generateActuacionExcel({
+    const data = {
       zoneId: this.selectedZone()?.name || '',
       speciesId: '',
       count: 0,
@@ -147,11 +147,13 @@ export default class MarkingFlightPage {
       animal: this.animalName,
       efficacy: 'Si',
       captured: 0,
-      notes: this.observations || '',
-    });
+      notes: this.observations,
+    };
+
+    this.reportStore.addRow(data);
 
     const toast = await this.toastController.create({
-      message: 'Guardado correctamente',
+      message: 'Añadido a la tabla correctamente',
       duration: 2000,
       position: 'bottom',
       color: 'success',

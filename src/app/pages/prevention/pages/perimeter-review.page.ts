@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import {
   IonBackButton,
   IonButton,
@@ -12,7 +11,8 @@ import {
   NavController,
   ToastController,
 } from '@ionic/angular/standalone';
-import { ExcelService } from '@service/excel.service';
+import { FormsModule } from '@angular/forms';
+import { ReportStore } from '@service/report-store';
 
 @Component({
   selector: 'app-perimeter-review',
@@ -44,26 +44,28 @@ import { ExcelService } from '@service/excel.service';
           labelPlacement="floating"
           fill="outline"
           rows="10"
-          placeholder="Escribe aquí los detalles..."
+          placeholder="Escribe aquí las observaciones..."
           class="flex-1"
           [(ngModel)]="observations"
         ></ion-textarea>
 
-        <ion-button expand="block" class="mt-auto" (click)="save()"> Guardar </ion-button>
+        <ion-button expand="block" class="mt-auto" (click)="save()">
+          Guardar y Añadir a Tabla
+        </ion-button>
       </div>
     </ion-content>
   `,
 })
 export default class PerimeterReviewPage {
-  private excelService = inject(ExcelService);
+  private reportStore = inject(ReportStore);
   private toastController = inject(ToastController);
   private navController = inject(NavController);
 
   observations = 'No se observan daños en el vallado perimetral.';
 
   async save() {
-    await this.excelService.generateActuacionExcel({
-      zoneId: 'Perímetro', // Assuming 'Perímetro' as default zone
+    const data = {
+      zoneId: '',
       speciesId: '',
       count: 0,
       behavior: '',
@@ -74,11 +76,13 @@ export default class PerimeterReviewPage {
       animal: '',
       efficacy: 'Si',
       captured: 0,
-      notes: this.observations || '',
-    });
+      notes: this.observations,
+    };
+
+    this.reportStore.addRow(data);
 
     const toast = await this.toastController.create({
-      message: 'Guardado correctamente',
+      message: 'Añadido a la tabla correctamente',
       duration: 2000,
       position: 'bottom',
       color: 'success',

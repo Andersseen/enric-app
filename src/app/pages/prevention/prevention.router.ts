@@ -26,6 +26,10 @@ const preventionRoutes: Routes = [
         path: 'marking-flight',
         loadComponent: () => import('./pages/marking-flight.page'),
       },
+      {
+        path: 'reports',
+        loadComponent: () => import('../reports/reports.page'),
+      },
     ],
   },
 ];

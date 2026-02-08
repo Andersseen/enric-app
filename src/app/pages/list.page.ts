@@ -82,7 +82,7 @@ export default class List {
       icon: '📊',
       title: 'Mis Reportes',
       description: 'Ver, filtrar y compartir reportes generados.',
-      routerLink: ['/reports'],
+      routerLink: ['/home/prevention/reports'],
       color: 'primary',
     },
   ];

@@ -15,7 +15,7 @@ import {
 } from '@ionic/angular/standalone';
 import MapZones from '@components/map-zones';
 import { Zone } from '@data/zones';
-import { ExcelService } from '@service/excel.service';
+import { ReportStore } from '@service/report-store';
 
 @Component({
   selector: 'app-dog-review',
@@ -59,7 +59,7 @@ import { ExcelService } from '@service/excel.service';
               label="Animal empleado"
               labelPlacement="floating"
               fill="outline"
-              placeholder="Nombre del halcón/perro"
+              placeholder="Nombre del perro"
               [(ngModel)]="animalName"
             ></ion-input>
 
@@ -73,7 +73,7 @@ import { ExcelService } from '@service/excel.service';
             ></ion-textarea>
 
             <ion-button expand="block" class="mt-4" [disabled]="!isValid()" (click)="save()">
-              Guardar
+              Guardar y Añadir a Tabla
             </ion-button>
           </section>
         }
@@ -99,7 +99,7 @@ import { ExcelService } from '@service/excel.service';
   ],
 })
 export default class DogReviewPage {
-  private excelService = inject(ExcelService);
+  private reportStore = inject(ReportStore);
   private toastController = inject(ToastController);
   private navController = inject(NavController);
 
@@ -112,11 +112,11 @@ export default class DogReviewPage {
   }
 
   isValid() {
-    return this.selectedZone() && this.animalName.trim().length > 0;
+    return !!this.selectedZone() && this.animalName.trim().length > 0;
   }
 
   async save() {
-    await this.excelService.generateActuacionExcel({
+    const data = {
       zoneId: this.selectedZone()?.name || '',
       speciesId: '',
       count: 0,
@@ -124,15 +124,17 @@ export default class DogReviewPage {
       actionType: 'Revisión perro',
       operation: 'No',
       interaction: 'No',
-      method: 'Perro', // Static method
+      method: 'Perro',
       animal: this.animalName,
       efficacy: 'Si',
       captured: 0,
-      notes: this.observations || '',
-    });
+      notes: this.observations,
+    };
+
+    this.reportStore.addRow(data);
 
     const toast = await this.toastController.create({
-      message: 'Guardado correctamente',
+      message: 'Añadido a la tabla correctamente',
       duration: 2000,
       position: 'bottom',
       color: 'success',
