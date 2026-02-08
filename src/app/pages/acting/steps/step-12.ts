@@ -16,6 +16,9 @@ import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
 import { ExcelService } from '@service/excel.service';
 import StepPage from '.';
+import { ReportStore } from '@service/report-store';
+import Session from '@service/session';
+import { NavController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'form-step-twelve',
@@ -109,7 +112,9 @@ import StepPage from '.';
 })
 export class FormStepTwelve {
   #store = inject(ActionsStore);
-  #excelService = inject(ExcelService);
+  #reportStore = inject(ReportStore);
+  #session = inject(Session);
+  #navController = inject(NavController);
 
   zone = this.#store.step1Value;
   bird = this.#store.step2Value;
@@ -131,7 +136,10 @@ export class FormStepTwelve {
   }
 
   async generate() {
-    await this.#excelService.generateActuacionExcel({
+    const sessionData = this.#session.sessionForm.value;
+    const now = new Date();
+
+    this.#reportStore.addRow({
       zoneId: this.zone()?.name || '',
       speciesId: this.bird()?.commonName || '',
       count: this.count() || 0,
@@ -143,15 +151,25 @@ export class FormStepTwelve {
       efficacy: this.efficacy() || '',
       captured: this.captured() || 0,
       notes: this.notes() || '',
+      operation: 'Si', // It's an operation
+      date: sessionData.date || now.toLocaleDateString('es-ES'),
+      time:
+        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      weather: sessionData.weather || '',
+      worker: sessionData.worker || '',
     });
 
     const toast = await this.toastController.create({
-      message: 'Guardado correctamente',
+      message: 'Añadido a la tabla correctamente',
       duration: 2000,
       position: 'bottom',
       color: 'success',
     });
     await toast.present();
+
+    // Reset and go home
+    this.#store.reset();
+    this.#navController.navigateRoot('/home');
   }
 
   async finish() {

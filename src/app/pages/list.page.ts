@@ -1,5 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
-import { IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { moonOutline, sunnyOutline } from 'ionicons/icons';
 import ActionCards, { type ActionCardItem } from '@components/action-cards';
@@ -8,9 +8,9 @@ import ThemeService from '@service/theme.service';
 
 @Component({
   selector: 'app-list',
-  imports: [ActionCards, SessionHeaderComponent, IonFab, IonFabButton, IonIcon],
+  imports: [ActionCards, SessionHeaderComponent, IonContent, IonFab, IonFabButton, IonIcon],
   template: `
-    <div>
+    <ion-content class="ion-padding">
       <!-- Session Configuration -->
       <app-session-header class="mb-6" />
 
@@ -37,9 +37,8 @@ import ThemeService from '@service/theme.service';
           <ion-icon [name]="themeIcon()"></ion-icon>
         </ion-fab-button>
       </ion-fab>
-    </div>
+    </ion-content>
   `,
-  host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class List {
   themeService = inject(ThemeService);
@@ -82,7 +81,7 @@ export default class List {
       icon: '📊',
       title: 'Mis Reportes',
       description: 'Ver, filtrar y compartir reportes generados.',
-      routerLink: ['/reports'],
+      routerLink: ['/home/prevention/reports'],
       color: 'primary',
     },
   ];
