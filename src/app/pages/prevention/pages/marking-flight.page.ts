@@ -1,14 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import MapZones from '@components/map-zones';
+import { Zone } from '@data/zones';
 import {
   IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonInput,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
   IonTextarea,
   IonTitle,
   IonToolbar,
+  NavController,
+  ToastController,
 } from '@ionic/angular/standalone';
+import { ExcelService } from '@service/excel.service';
 
 @Component({
   selector: 'app-marking-flight',
@@ -21,6 +31,12 @@ import {
     IonContent,
     IonTextarea,
     IonButton,
+    IonInput,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    FormsModule,
+    MapZones,
   ],
   template: `
     <ion-header>
@@ -33,19 +49,114 @@ import {
     </ion-header>
 
     <ion-content class="ion-padding">
-      <div class="flex flex-col gap-4 h-full">
-        <ion-textarea
-          label="Observaciones"
-          labelPlacement="floating"
-          fill="outline"
-          rows="10"
-          placeholder="Escribe aquí los detalles..."
-          class="flex-1"
-        ></ion-textarea>
+      <div class="flex flex-col gap-6 h-full">
+        <!-- Section 1: Map/Zone -->
+        <section>
+          <h3 class="text-lg font-medium mb-3">1. Seleccionar Zona</h3>
+          <app-map-zones [selected]="selectedZone()" (select)="onZoneSelect($event)" />
+        </section>
 
-        <ion-button expand="block" class="mt-auto"> Guardar </ion-button>
+        @if (selectedZone()) {
+          <!-- Section 2: Form Details -->
+          <section class="flex flex-col gap-4 animate-fade-in">
+            <h3 class="text-lg font-medium">2. Detalles</h3>
+
+            <ion-item fill="outline">
+              <ion-select
+                label="Método empleado"
+                labelPlacement="floating"
+                placeholder="Seleccionar método"
+                [(ngModel)]="method"
+              >
+                <ion-select-option value="Halcón">Halcón</ion-select-option>
+                <ion-select-option value="Harris">Harris</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-input
+              label="Animal empleado"
+              labelPlacement="floating"
+              fill="outline"
+              placeholder="Nombre del halcón"
+              [(ngModel)]="animalName"
+            ></ion-input>
+
+            <ion-textarea
+              label="Observaciones"
+              labelPlacement="floating"
+              fill="outline"
+              rows="5"
+              placeholder="Escribe aquí los detalles..."
+              [(ngModel)]="observations"
+            ></ion-textarea>
+
+            <ion-button expand="block" class="mt-4" [disabled]="!isValid()" (click)="save()">
+              Guardar
+            </ion-button>
+          </section>
+        }
       </div>
     </ion-content>
   `,
+  styles: [
+    `
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `,
+  ],
 })
-export default class MarkingFlightPage {}
+export default class MarkingFlightPage {
+  private excelService = inject(ExcelService);
+  private toastController = inject(ToastController);
+  private navController = inject(NavController);
+
+  selectedZone = signal<Zone | null>(null);
+  method = '';
+  animalName = '';
+  observations = '';
+
+  onZoneSelect(zone: Zone) {
+    this.selectedZone.set(zone);
+  }
+
+  isValid() {
+    return this.selectedZone() && this.method && this.animalName.trim().length > 0;
+  }
+
+  async save() {
+    await this.excelService.generateActuacionExcel({
+      zoneId: this.selectedZone()?.name || '',
+      speciesId: '',
+      count: 0,
+      behavior: '',
+      actionType: 'Vuelo de marcaje',
+      operation: 'No',
+      interaction: 'No',
+      method: this.method,
+      animal: this.animalName,
+      efficacy: 'Si',
+      captured: 0,
+      notes: this.observations || '',
+    });
+
+    const toast = await this.toastController.create({
+      message: 'Guardado correctamente',
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
+    this.navController.back();
+  }
+}

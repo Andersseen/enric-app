@@ -20,7 +20,7 @@ const preventionRoutes: Routes = [
       },
       {
         path: 'dog-review',
-        loadChildren: () => import('./pages/dog-review/dog-review.routes'),
+        loadComponent: () => import('./pages/dog-review/dog-review.page'),
       },
       {
         path: 'marking-flight',

@@ -24,6 +24,7 @@ export interface ActuacionData {
   efficacy: string;
   captured: number;
   notes: string;
+  operation?: string;
 }
 
 export interface TrampaData {
@@ -173,7 +174,7 @@ export class ExcelService {
       data.count || 0, // Nº
       data.behavior || '', // Actitud
       data.actionType || '', // Tipo actuación
-      '', // Operación
+      data.operation || '', // Operación
       data.interaction || '', // Interacción perro/halcón
       data.method || '', // Método empleado
       data.animal || '', // Animal empleado
