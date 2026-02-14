@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import {
   IonHeader,
   IonTitle,
@@ -66,6 +66,7 @@ import ActionsStore from '@service/actions-store';
       </ion-content>
     </section>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StepPanel {
   #store = inject(ActionsStore);
@@ -83,13 +84,13 @@ export default class StepPanel {
     addIcons({ caretBack, caretForward });
   }
 
-  goBack() {
+  goBack(): void {
     (document.activeElement as HTMLElement)?.blur();
     this.#router.navigate([this.basePath(), this.currentStateStep().prev]);
     this.#store.setCurrentStep(this.currentStateStep().prev as StepId);
   }
 
-  goForward() {
+  goForward(): void {
     (document.activeElement as HTMLElement)?.blur();
     this.#router.navigate([this.basePath(), this.currentStateStep().next]);
     this.#store.setCurrentStep(this.currentStateStep().next as StepId);

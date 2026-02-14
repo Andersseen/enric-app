@@ -20,7 +20,7 @@ export class BirdStore {
   /**
    * Load favorites from Preferences
    */
-  private async loadFavorites() {
+  private async loadFavorites(): Promise<void> {
     const { value } = await Preferences.get({ key: STORE_KEY });
     if (value) {
       try {
@@ -37,7 +37,7 @@ export class BirdStore {
   /**
    * Toggle favorite status for a bird ID
    */
-  async toggleFavorite(id: number) {
+  async toggleFavorite(id: number): Promise<void> {
     const current = this.#favorites();
     const isFav = current.includes(id);
 
@@ -55,14 +55,14 @@ export class BirdStore {
   /**
    * Check if a bird is a favorite
    */
-  isFavorite(id: number) {
+  isFavorite(id: number): boolean {
     return this.favorites().includes(id);
   }
 
   /**
    * Save to Preferences
    */
-  private async saveToStorage(ids: number[]) {
+  private async saveToStorage(ids: number[]): Promise<void> {
     await Preferences.set({
       key: STORE_KEY,
       value: JSON.stringify(ids),

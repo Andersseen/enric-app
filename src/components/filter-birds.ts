@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import {
   IonCard,
   IonIcon,
@@ -64,6 +64,7 @@ import { BirdStore } from '@service/bird-store';
       </section>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class FilterBirds {
@@ -76,26 +77,30 @@ export default class FilterBirds {
   selectedBird = signal({} as BirdItem);
 
   filteredBirds = computed(() => {
-    const q = this.query().toLowerCase().trim();
-    const all = this.#initialBirds;
-    const favorites = this.#birdStore.favorites();
+    const query = this.query().toLowerCase().trim();
+    const allBirds = this.#initialBirds;
+    const favoriteIds = this.#birdStore.favorites();
 
     // Map strict favorite status from store onto the birds
-    const birdsWithFavorites = all.map((bird) => ({
+    const birdsWithFavorites = allBirds.map((bird) => ({
       ...bird,
-      favorite: favorites.includes(bird.id),
+      favorite: favoriteIds.includes(bird.id),
     }));
 
-    const filtered = q
+    // Filter by search query
+    const filtered = query
       ? birdsWithFavorites.filter(
           (b) =>
-            b.commonName.toLowerCase().includes(q) || b.scientificName.toLowerCase().includes(q),
+            b.commonName.toLowerCase().includes(query) ||
+            b.scientificName.toLowerCase().includes(query),
         )
       : birdsWithFavorites;
 
-    const favs = filtered.filter((b) => b.favorite);
-    const rest = filtered.filter((b) => !b.favorite);
-    return [...favs, ...rest];
+    // Sort: Favorites first
+    return [...filtered].sort((a, b) => {
+      if (a.favorite === b.favorite) return 0;
+      return a.favorite ? -1 : 1;
+    });
   });
 
   constructor() {
