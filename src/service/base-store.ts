@@ -22,8 +22,12 @@ export default class BaseStore {
   }
 
   reset() {
+    this.resetState();
+    this.router.navigate(['/']);
+  }
+
+  resetState() {
     this.state.set(JSON.parse(JSON.stringify(STATE)));
     this.currentStep.set(this.steps()[0].id);
-    this.router.navigate(['/']);
   }
 }

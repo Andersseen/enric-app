@@ -42,7 +42,7 @@ import { NavController } from '@ionic/angular/standalone';
           <ion-item>
             <ion-label>
               <h2>Cantidad</h2>
-              <p>{{ count() || '-' }}</p>
+              <p>{{ count() ?? '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -84,7 +84,7 @@ import { NavController } from '@ionic/angular/standalone';
           <ion-item>
             <ion-label>
               <h2>Capturas</h2>
-              <p>{{ captured() || '-' }}</p>
+              <p>{{ captured() ?? '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -98,7 +98,7 @@ import { NavController } from '@ionic/angular/standalone';
         <div class="mt-4 space-y-3">
           <ion-button expand="block" (click)="generate()">
             <ion-icon slot="start" name="download-outline"></ion-icon>
-            Generar Excel
+            Guardar en Tabla
           </ion-button>
 
           <ion-button expand="block" color="medium" fill="outline" (click)="finish()">

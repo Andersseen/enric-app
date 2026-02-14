@@ -18,27 +18,28 @@ export interface ActionCardItem {
   template: `
     <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       @for (card of items(); track card.title) {
-      <a
-        [routerLink]="card.routerLink"
-        [class]="getBtnClass(card)"
-        (focus)="focused.set(card.title)"
-        (blur)="focused.set(null)"
-      >
-        <div class="flex items-center gap-4">
-          <div [class]="getIconClass(card)" aria-hidden="true">
-            <span class="text-xl">{{ card.icon }}</span>
+        <a
+          [routerLink]="card.routerLink"
+          [class]="getBtnClass(card)"
+          (focus)="focused.set(card.title)"
+          (blur)="focused.set(null)"
+          (click)="blur($event)"
+        >
+          <div class="flex items-center gap-4">
+            <div [class]="getIconClass(card)" aria-hidden="true">
+              <span class="text-xl">{{ card.icon }}</span>
+            </div>
+
+            <div class="min-w-0">
+              <h2 class="truncate text-base font-medium">{{ card.title }}</h2>
+              <p class="mt-1 line-clamp-2 text-sm text-muted">
+                {{ card.description }}
+              </p>
+            </div>
           </div>
 
-          <div class="min-w-0">
-            <h2 class="truncate text-base font-medium">{{ card.title }}</h2>
-            <p class="mt-1 line-clamp-2 text-sm text-muted">
-              {{ card.description }}
-            </p>
-          </div>
-        </div>
-
-        <ion-ripple-effect class="pointer-events-none absolute inset-0" />
-      </a>
+          <ion-ripple-effect class="pointer-events-none absolute inset-0" />
+        </a>
       }
     </section>
   `,
@@ -66,5 +67,9 @@ export default class ActionCards {
     const colorClass =
       color === 'secondary' ? ' bg-secondary text-on-secondary' : ' bg-primary text-on-primary';
     return `${this.iconBaseClass} ${colorClass}`;
+  }
+
+  blur(event: Event) {
+    (event.target as HTMLElement).blur();
   }
 }

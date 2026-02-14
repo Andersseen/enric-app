@@ -20,7 +20,8 @@ export default class TrapsActionsStore extends BaseStore {
     if (this.acceptEmptyStep([STEP_ID.Step8, STEP_ID.Step11])) {
       return true;
     }
-    return !!this.state()[this.currentStep()].value;
+    const value = this.state()[this.currentStep()].value;
+    return value !== null && value !== undefined && value !== '';
   });
 
   step1Value = computed(() => this.state()[STEP_ID.Step1].value as Zone | null);

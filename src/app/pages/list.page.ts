@@ -84,6 +84,13 @@ export default class List {
       routerLink: ['/home/prevention/reports'],
       color: 'primary',
     },
+    {
+      icon: '👷',
+      title: 'Gestionar Trabajadores',
+      description: 'Añadir o eliminar trabajadores.',
+      routerLink: ['/home/manage-workers'],
+      color: 'secondary',
+    },
   ];
 
   toggleTheme(): void {

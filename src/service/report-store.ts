@@ -1,5 +1,6 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { ActuacionData } from './excel.service';
+import { Preferences } from '@capacitor/preferences';
 
 const REPORT_STORE_KEY = 'enric_report_data';
 
@@ -8,7 +9,7 @@ const REPORT_STORE_KEY = 'enric_report_data';
 })
 export class ReportStore {
   // Signal to hold the list of rows
-  #rows = signal<ActuacionData[]>(this.loadFromStorage());
+  #rows = signal<ActuacionData[]>([]);
 
   // Public read-only access
   rows = this.#rows.asReadonly();
@@ -17,24 +18,39 @@ export class ReportStore {
   count = computed(() => this.#rows().length);
 
   constructor() {
-    // Effect to auto-save to localStorage whenever rows change
-    effect(() => {
-      localStorage.setItem(REPORT_STORE_KEY, JSON.stringify(this.#rows()));
-    });
+    this.loadInitialData();
+  }
+
+  /**
+   * Load initial data from Preferences
+   */
+  private async loadInitialData() {
+    const { value } = await Preferences.get({ key: REPORT_STORE_KEY });
+    if (value) {
+      this.#rows.set(JSON.parse(value));
+    }
   }
 
   /**
    * Add a single row
    */
   addRow(row: ActuacionData) {
-    this.#rows.update((current) => [...current, row]);
+    this.#rows.update((current) => {
+      const updated = [...current, row];
+      this.saveToStorage(updated);
+      return updated;
+    });
   }
 
   /**
    * Add multiple rows (e.g. from import)
    */
   addRows(rows: ActuacionData[]) {
-    this.#rows.update((current) => [...current, ...rows]);
+    this.#rows.update((current) => {
+      const updated = [...current, ...rows];
+      this.saveToStorage(updated);
+      return updated;
+    });
   }
 
   /**
@@ -42,28 +58,37 @@ export class ReportStore {
    */
   setRows(rows: ActuacionData[]) {
     this.#rows.set(rows);
+    this.saveToStorage(rows);
   }
 
   /**
    * Remove a row by index
    */
   removeRow(index: number) {
-    this.#rows.update((current) => current.filter((_, i) => i !== index));
+    this.#rows.update((current) => {
+      const updated = current.filter((_, i) => i !== index);
+      this.saveToStorage(updated);
+      return updated;
+    });
   }
 
   /**
    * Clear all rows
    */
   clear() {
-    this.#rows.set([]);
+    const empty: ActuacionData[] = [];
+    this.#rows.set(empty);
+    this.saveToStorage(empty);
   }
 
   /**
-   * Load initial data from localStorage
+   * Save to Preferences
    */
-  private loadFromStorage(): ActuacionData[] {
-    const stored = localStorage.getItem(REPORT_STORE_KEY);
-    return stored ? JSON.parse(stored) : [];
+  private async saveToStorage(rows: ActuacionData[]) {
+    await Preferences.set({
+      key: REPORT_STORE_KEY,
+      value: JSON.stringify(rows),
+    });
   }
 
   generateMockData() {
@@ -101,6 +126,8 @@ export class ReportStore {
         interaction: 'No',
         date: '2025-02-08',
         time: '10:30',
+        weather: 'Nublado',
+        worker: 'Ana',
       },
       {
         zoneId: 'Zona Sur',
@@ -117,6 +144,8 @@ export class ReportStore {
         interaction: 'No',
         date: '2025-02-07',
         time: '16:45',
+        weather: 'Viento',
+        worker: 'Pedro',
       },
       {
         zoneId: 'Zona Pista',
@@ -133,6 +162,8 @@ export class ReportStore {
         interaction: 'No',
         date: '2025-02-06',
         time: '08:15',
+        weather: 'Lluvioso',
+        worker: 'Laura',
       },
     ];
     this.addRows(mock);

@@ -74,11 +74,13 @@ export default class StepPanel {
   }
 
   goBack() {
+    (document.activeElement as HTMLElement)?.blur();
     this.#router.navigate([this.basePath(), this.currentStateStep().prev]);
     this.#store.setCurrentStep(this.currentStateStep().prev as StepId);
   }
 
   goForward() {
+    (document.activeElement as HTMLElement)?.blur();
     this.#router.navigate([this.basePath(), this.currentStateStep().next]);
     this.#store.setCurrentStep(this.currentStateStep().next as StepId);
   }

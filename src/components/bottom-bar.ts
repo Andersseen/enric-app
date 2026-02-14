@@ -1,4 +1,7 @@
 import { Component, inject } from '@angular/core';
+import ActionsStore from '@service/actions-store';
+import PreventionStore from '@service/prevention-store';
+import TrapsActionsStore from '@service/traps-store';
 import { Router } from '@angular/router';
 import {
   IonTabBar,
@@ -25,11 +28,7 @@ import {
   template: `
     <ion-tab-bar slot="bottom">
       @for (item of tabs; track item.tab) {
-        <ion-tab-button
-          [tab]="item.tab"
-          (click)="navigate(item.path)"
-          [class.selected-tab]="isActive(item.path)"
-        >
+        <ion-tab-button (click)="navigate(item.path)" [class.selected-tab]="isActive(item.path)">
           <ion-icon [name]="isActive(item.path) ? item.selectedIcon : item.icon"></ion-icon>
           <ion-label>{{ item.label }}</ion-label>
         </ion-tab-button>
@@ -48,6 +47,9 @@ import {
 export class BottomBarComponent {
   router = inject(Router);
   alertCtrl = inject(AlertController);
+  actionsStore = inject(ActionsStore);
+  preventionStore = inject(PreventionStore);
+  trapsStore = inject(TrapsActionsStore);
 
   tabs = [
     {
@@ -121,6 +123,28 @@ export class BottomBarComponent {
       return;
     }
 
+    const navigateFn = () => {
+      if (targetIsAction) {
+        this.actionsStore.resetState();
+        this.router.navigate(['home', 'action', 'step-1']);
+        return;
+      }
+      if (targetIsTraps) {
+        this.trapsStore.resetState();
+        this.router.navigate(['home', 'traps', 'step-1']);
+        return;
+      }
+      if (targetIsPrevention) {
+        this.preventionStore.resetState();
+        this.router.navigate(['home', 'prevention']);
+        return;
+      }
+      this.actionsStore.resetState();
+      this.trapsStore.resetState();
+      this.preventionStore.resetState();
+      this.router.navigate([path]);
+    };
+
     if (isActing || isPrevention || isTraps) {
       const alert = await this.alertCtrl.create({
         header: '¿Salir del proceso?',
@@ -134,14 +158,14 @@ export class BottomBarComponent {
             text: 'Salir',
             role: 'confirm',
             handler: () => {
-              this.router.navigate([path]);
+              navigateFn();
             },
           },
         ],
       });
       await alert.present();
     } else {
-      this.router.navigate([path]);
+      navigateFn();
     }
   }
 }

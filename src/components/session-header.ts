@@ -116,10 +116,9 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             >
               <ion-select-option value="">Seleccionar...</ion-select-option>
-              <ion-select-option value="Juan Pérez">Juan Pérez</ion-select-option>
-              <ion-select-option value="Laura Gómez">Laura Gómez</ion-select-option>
-              <ion-select-option value="Pedro Martínez">Pedro Martínez</ion-select-option>
-              <ion-select-option value="Ana Torres">Ana Torres</ion-select-option>
+              @for (worker of workers(); track worker) {
+                <ion-select-option [value]="worker">{{ worker }}</ion-select-option>
+              }
             </ion-select>
           </div>
         </form>
@@ -154,6 +153,8 @@ export default class SessionHeaderComponent {
   expanded = computed(() => this.#session.expand());
 
   sessionForm = this.#session.sessionForm;
+
+  workers = this.#session.workers;
 
   constructor() {
     addIcons({ chevronUp, chevronDown });
