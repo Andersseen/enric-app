@@ -98,7 +98,7 @@ import { NavController } from '@ionic/angular/standalone';
         <div class="mt-4 space-y-3">
           <ion-button expand="block" (click)="generate()">
             <ion-icon slot="start" name="download-outline"></ion-icon>
-            Generar Excel
+            Guardar en Tabla
           </ion-button>
 
           <ion-button expand="block" color="medium" fill="outline" (click)="finish()">

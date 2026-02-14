@@ -9,6 +9,10 @@ const homeRoutes: Routes = [
       { path: 'action', loadChildren: () => import('./acting/acting.router') },
       { path: 'prevention', loadChildren: () => import('./prevention/prevention.router') },
       { path: 'traps', loadChildren: () => import('./traps/traps.router') },
+      {
+        path: 'manage-workers',
+        loadComponent: () => import('./manage-workers.page'),
+      },
     ],
   },
 ];
