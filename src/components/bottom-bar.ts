@@ -1,4 +1,7 @@
 import { Component, inject } from '@angular/core';
+import ActionsStore from '@service/actions-store';
+import PreventionStore from '@service/prevention-store';
+import TrapsActionsStore from '@service/traps-store';
 import { Router } from '@angular/router';
 import {
   IonTabBar,
@@ -48,6 +51,9 @@ import {
 export class BottomBarComponent {
   router = inject(Router);
   alertCtrl = inject(AlertController);
+  actionsStore = inject(ActionsStore);
+  preventionStore = inject(PreventionStore);
+  trapsStore = inject(TrapsActionsStore);
 
   tabs = [
     {
@@ -121,6 +127,28 @@ export class BottomBarComponent {
       return;
     }
 
+    const navigateFn = () => {
+      if (targetIsAction) {
+        this.actionsStore.resetState();
+        this.router.navigate(['home', 'action', 'step-1']);
+        return;
+      }
+      if (targetIsTraps) {
+        this.trapsStore.resetState();
+        this.router.navigate(['home', 'traps', 'step-1']);
+        return;
+      }
+      if (targetIsPrevention) {
+        this.preventionStore.resetState();
+        this.router.navigate(['home', 'prevention']);
+        return;
+      }
+      this.actionsStore.resetState();
+      this.trapsStore.resetState();
+      this.preventionStore.resetState();
+      this.router.navigate([path]);
+    };
+
     if (isActing || isPrevention || isTraps) {
       const alert = await this.alertCtrl.create({
         header: '¿Salir del proceso?',
@@ -134,14 +162,14 @@ export class BottomBarComponent {
             text: 'Salir',
             role: 'confirm',
             handler: () => {
-              this.router.navigate([path]);
+              navigateFn();
             },
           },
         ],
       });
       await alert.present();
     } else {
-      this.router.navigate([path]);
+      navigateFn();
     }
   }
 }

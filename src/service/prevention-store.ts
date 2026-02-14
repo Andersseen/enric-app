@@ -29,7 +29,8 @@ export default class PreventionStore {
     if (this.acceptEmptyStep([DOG_REVIEW_STEP_ID.Step2, DOG_REVIEW_STEP_ID.Step3])) {
       return true;
     }
-    return !!this.state()[this.currentStep()].value;
+    const value = this.state()[this.currentStep()].value;
+    return value !== null && value !== undefined && value !== '';
   });
 
   step1Value = computed(() => this.state()[DOG_REVIEW_STEP_ID.Step1].value as Zone);
@@ -71,5 +72,10 @@ export default class PreventionStore {
       return true;
     }
     return false;
+  }
+
+  resetState() {
+    this.state.set(JSON.parse(JSON.stringify(DOG_REVIEW_STATE)));
+    this.currentStep.set(this.steps()[0].id);
   }
 }
