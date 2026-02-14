@@ -14,6 +14,14 @@ export default class Session {
 
   constructor() {
     this.loadWorkers();
+    this.loadSessionData();
+
+    this.sessionForm.valueChanges.subscribe((val) => {
+      // Update signal
+      this.sessionData.set(val as SessionData);
+      // Save to storage
+      this.saveSessionData(val as SessionData);
+    });
   }
 
   readonly initial = (): SessionData => {
@@ -48,6 +56,26 @@ export default class Session {
       this.#workers.set(defaults);
       this.saveWorkers(defaults);
     }
+  }
+
+  private async loadSessionData() {
+    const { value } = await Preferences.get({ key: 'enric_session_data' });
+    if (value) {
+      try {
+        const data = JSON.parse(value);
+        this.sessionData.set(data);
+        this.sessionForm.patchValue(data, { emitEvent: false });
+      } catch (e) {
+        console.error('Error loading session data', e);
+      }
+    }
+  }
+
+  private async saveSessionData(data: SessionData) {
+    await Preferences.set({
+      key: 'enric_session_data',
+      value: JSON.stringify(data),
+    });
   }
 
   addWorker(name: string) {

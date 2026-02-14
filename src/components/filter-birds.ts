@@ -12,6 +12,7 @@ import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
 import SearchBar from '@components/searchbar';
 import ActionsStore from '@service/actions-store';
+import { BirdStore } from '@service/bird-store';
 
 @Component({
   selector: 'app-filter-birds',
@@ -67,23 +68,30 @@ import ActionsStore from '@service/actions-store';
 })
 export default class FilterBirds {
   #store = inject(ActionsStore);
+  #birdStore = inject(BirdStore);
 
   #initialBirds: BirdItem[] = BIRDS;
 
-  birds = signal<BirdItem[]>(this.#initialBirds);
   query = signal('');
-
   selectedBird = signal({} as BirdItem);
 
   filteredBirds = computed(() => {
     const q = this.query().toLowerCase().trim();
-    const all = this.birds();
+    const all = this.#initialBirds;
+    const favorites = this.#birdStore.favorites();
+
+    // Map strict favorite status from store onto the birds
+    const birdsWithFavorites = all.map((bird) => ({
+      ...bird,
+      favorite: favorites.includes(bird.id),
+    }));
+
     const filtered = q
-      ? all.filter(
+      ? birdsWithFavorites.filter(
           (b) =>
             b.commonName.toLowerCase().includes(q) || b.scientificName.toLowerCase().includes(q),
         )
-      : all;
+      : birdsWithFavorites;
 
     const favs = filtered.filter((b) => b.favorite);
     const rest = filtered.filter((b) => !b.favorite);
@@ -99,7 +107,7 @@ export default class FilterBirds {
   }
 
   toggleFavorite(id: number): void {
-    this.birds.update((arr) => arr.map((b) => (b.id === id ? { ...b, favorite: !b.favorite } : b)));
+    this.#birdStore.toggleFavorite(id);
   }
 
   onCardClick(bird: BirdItem): void {
