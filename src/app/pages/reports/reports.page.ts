@@ -1,6 +1,4 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { ActuacionData, ExcelService } from '@service/excel.service';
-import { ReportStore } from '@service/report-store';
 import {
   IonButton,
   IonButtons,
@@ -11,9 +9,18 @@ import {
   IonToolbar,
   ToastController,
 } from '@ionic/angular/standalone';
-import ActuacionTableComponent from '../../components/actuacion-table/actuacion-table.component';
+import { ExcelService } from '@service/excel.service';
+import { ReportStore } from '@service/report-store';
 import { addIcons } from 'ionicons';
-import { downloadOutline, cloudUploadOutline, trashBinOutline, flashOutline } from 'ionicons/icons';
+import {
+  arrowBack,
+  cloudUploadOutline,
+  downloadOutline,
+  flashOutline,
+  trashBinOutline,
+} from 'ionicons/icons';
+import ActuacionTableComponent from '../../components/actuacion-table/actuacion-table.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-reports',
@@ -27,10 +34,16 @@ import { downloadOutline, cloudUploadOutline, trashBinOutline, flashOutline } fr
     IonButton,
     IonIcon,
     ActuacionTableComponent,
+    RouterLink,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button routerLink="/home" color="dark">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
         <ion-title>Reportes</ion-title>
         <ion-buttons slot="end">
           <!-- Hidden file input -->
@@ -99,7 +112,7 @@ export default class ReportsPage {
   count = this.reportStore.count;
 
   constructor() {
-    addIcons({ downloadOutline, cloudUploadOutline, trashBinOutline, flashOutline });
+    addIcons({ downloadOutline, cloudUploadOutline, trashBinOutline, flashOutline, arrowBack });
   }
 
   async onFileSelected(event: Event) {
