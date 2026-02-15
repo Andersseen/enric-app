@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BottomBarComponent } from '@components/bottom-bar';
 import { IonTabs } from '@ionic/angular/standalone';
 import ActionsStore from '@service/actions-store';
@@ -6,6 +6,7 @@ import TrapsActionsStore from '@service/traps-store';
 
 @Component({
   selector: 'app-traps',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonTabs, BottomBarComponent],
   providers: [
     {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import MapZones from '@components/map-zones';
 import StepPage from '.';
 import TrapsStore from '@service/traps-store';
@@ -6,6 +6,7 @@ import { Zone } from '@data/zones';
 
 @Component({
   selector: 'traps-zones-step',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <app-map-zones [selected]="store.step1Value()" (select)="onSelect($event)" />

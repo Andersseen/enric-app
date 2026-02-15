@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { PreventionStep } from './base-step';
 import PreventionStepObservationComponent from './components/prevention-step-observation.component';
 import { ReportStore } from '@service/report-store';
@@ -8,6 +8,7 @@ import PreventionStepPage from './prevention-step-page';
 
 @Component({
   selector: 'app-perimeter-review-step',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepObservationComponent, PreventionStepPage],
   template: `
     <app-prevention-step-page title="Revisión Perímetro">

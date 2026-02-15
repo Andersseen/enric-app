@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActuacionData } from '@service/excel.service';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -6,6 +6,7 @@ import { trashOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-actuacion-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonButton, IonIcon],
   template: `
     <div class="overflow-x-auto w-full border border-gray-200 rounded-lg">

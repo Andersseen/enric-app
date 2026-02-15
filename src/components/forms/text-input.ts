@@ -1,8 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-text-input',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonCard, IonCardContent, IonTextarea],
   template: `
     <ion-card class="min-h-64 rounded-2xl shadow-sm border">

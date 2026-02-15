@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import TextInputComponent from '@components/forms/text-input';
 import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
 
 @Component({
   selector: 'traps-form-step-eleven',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TextInputComponent],
   template: `
     <app-text-input
@@ -24,6 +25,7 @@ export class TrapsFormStepEleven {
 
 @Component({
   selector: 'traps-step-eleven',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <traps-form-step-eleven />

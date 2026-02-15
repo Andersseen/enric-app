@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PreventionStep } from '../base-step';
 import PreventionStepZoneComponent from '../components/prevention-step-zone.component';
 import PreventionStepPage from '../prevention-step-page';
@@ -7,6 +7,8 @@ import { Zone } from '@data/zones';
 @Component({
   selector: 'app-flight-step-one',
   imports: [PreventionStepZoneComponent, PreventionStepPage],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   template: `
     <app-prevention-step-page title="Vuelo de Marcaje - Zona">
       <app-prevention-step-zone

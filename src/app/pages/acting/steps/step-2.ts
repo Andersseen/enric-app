@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import FilterBirds from '@components/filter-birds';
 import StepPage from '.';
 
@@ -10,5 +10,6 @@ import StepPage from '.';
     </step-page>
   `,
   imports: [FilterBirds, StepPage],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ListStep {}

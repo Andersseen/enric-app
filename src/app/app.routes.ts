@@ -5,6 +5,6 @@ export const routes: Routes = [
   { path: 'home', loadChildren: () => import('./pages/home.router') },
   {
     path: 'reports',
-    loadComponent: () => import('./pages/reports/reports-list'),
+    loadComponent: () => import('./pages/reports/reports.page'),
   },
 ];

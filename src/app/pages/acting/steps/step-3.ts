@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
 import ActionsStore from '@service/actions-store';
@@ -33,5 +33,6 @@ export class FormStepThree {
     </step-page>
   `,
   imports: [StepPage, FormStepThree],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StepThree {}

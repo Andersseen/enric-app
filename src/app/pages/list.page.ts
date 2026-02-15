@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { moonOutline, sunnyOutline } from 'ionicons/icons';
@@ -8,6 +8,7 @@ import ThemeService from '@service/theme.service';
 
 @Component({
   selector: 'app-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ActionCards, SessionHeaderComponent, IonContent, IonFab, IonFabButton, IonIcon],
   template: `
     <ion-content class="ion-padding">
@@ -81,7 +82,7 @@ export default class List {
       icon: '📊',
       title: 'Mis Reportes',
       description: 'Ver, filtrar y compartir reportes generados.',
-      routerLink: ['/home/prevention/reports'],
+      routerLink: ['/reports'],
       color: 'primary',
     },
     {

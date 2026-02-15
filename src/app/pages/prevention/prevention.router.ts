@@ -68,15 +68,19 @@ const preventionRoutes: Routes = [
             loadComponent: () => import('./steps/marking-flight/step-2'),
           },
           {
+            path: 'step-3',
+            loadComponent: () => import('./steps/marking-flight/step-3'),
+          },
+          {
+            path: 'step-4',
+            loadComponent: () => import('./steps/marking-flight/step-4'),
+          },
+          {
             path: '',
             redirectTo: 'step-1',
             pathMatch: 'full',
           },
         ],
-      },
-      {
-        path: 'reports',
-        loadComponent: () => import('../reports/reports.page'),
       },
     ],
   },

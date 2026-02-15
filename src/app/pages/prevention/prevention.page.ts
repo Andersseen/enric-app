@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BottomBarComponent } from '@components/bottom-bar';
 import { IonTabs } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-prevention',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonTabs, BottomBarComponent],
   template: `
     <ion-tabs>

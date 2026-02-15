@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { type Step } from '@data/steps';
 import { IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -8,6 +8,7 @@ import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'app-step-bar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonTabBar, IonTabButton, IonIcon, NgClass],
   template: `
     <ion-tab-bar slot="bottom">

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { PreventionStep } from '../base-step';
 import PreventionStepDogDetailsComponent from '../components/prevention-step-dog-details.component';
 import { ReportStore } from '@service/report-store';
@@ -8,6 +8,7 @@ import PreventionStepPage from '../prevention-step-page';
 
 @Component({
   selector: 'app-dog-review-step-two',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepDogDetailsComponent, PreventionStepPage],
   template: `
     <app-prevention-step-page title="Revisión Perros - Detalles">

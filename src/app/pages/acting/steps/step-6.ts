@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
 import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'form-step-six',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
@@ -18,7 +19,7 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepSix {
   #store = inject(ActionsStore);
-  options = ['Si', 'No'];
+  options = ['No', 'Si'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
@@ -29,6 +30,7 @@ export class FormStepSix {
 
 @Component({
   selector: 'step-six',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <form-step-six />

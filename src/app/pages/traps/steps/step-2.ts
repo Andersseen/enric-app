@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import StepPage from '.';
 import FilterBirds from '@components/filter-birds';
 
 @Component({
   selector: 'app-traps-step-two',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <app-filter-birds />
