@@ -345,6 +345,10 @@ export class ExcelService {
       };
 
       const data: ActuacionData = {
+        date: getVal(1),
+        weather: getVal(2),
+        worker: getVal(3),
+        time: getVal(4),
         zoneId: getVal(5),
         speciesId: getVal(6),
         count: Number(values[7]) || 0,

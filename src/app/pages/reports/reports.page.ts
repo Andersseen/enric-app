@@ -61,9 +61,9 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
           <ion-button (click)="fileInput.click()" title="Importar Excel">
             <ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
           </ion-button>
-          <ion-button (click)="generateMock()" title="Generar Datos">
+          <!-- <ion-button (click)="generateMock()" title="Generar Datos">
             <ion-icon slot="icon-only" name="flash-outline"></ion-icon>
-          </ion-button>
+          </ion-button> -->
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
