@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
+import { Injectable, inject } from '@angular/core';
+import { ToastController, AlertController } from '@ionic/angular/standalone';
 import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { Report, ReportFilter } from '../models/report.model';
 
 const REPORTS_STORAGE_KEY = 'enric_reports';
@@ -11,6 +12,9 @@ const REPORTS_DIR = 'reports';
   providedIn: 'root',
 })
 export class ReportsStorageService {
+  private toastController = inject(ToastController);
+  private alertController = inject(AlertController);
+
   /**
    * Check if running on native platform
    */
@@ -32,15 +36,64 @@ export class ReportsStorageService {
     }
 
     // Convert ArrayBuffer to base64
-    const base64Data = this.arrayBufferToBase64(buffer);
+    const base64Data = await this.arrayBufferToBase64(buffer);
 
-    // Save file to device
-    const result = await Filesystem.writeFile({
-      path: `${REPORTS_DIR}/${filename}`,
-      data: base64Data,
-      directory: Directory.Documents,
-      recursive: true,
-    });
+    let result;
+    let finalDirectory = Directory.Documents;
+    let savePath = `${REPORTS_DIR}/${filename}`;
+
+    // TIER 1: Documents (Preferred)
+    try {
+      // Create 'reports' directory if it doesn't exist (recursive handles it usually, but good to be safe)
+      // Attempt save
+      result = await Filesystem.writeFile({
+        path: savePath,
+        data: base64Data,
+        directory: Directory.Documents,
+        recursive: true,
+      });
+
+      finalDirectory = Directory.Documents;
+      await this.showToast('Guardado correctamente en Documentos', 'success');
+      await this.presentSuccessAlert(filename, 'Documentos/reports', finalDirectory);
+    } catch (docError) {
+      console.warn('Tier 1 (Documents) failed:', docError);
+
+      // TIER 2: External (App Specific - No Permissions needed usually)
+      try {
+        finalDirectory = Directory.External;
+        // On Android 11+: Android/data/com.package/files/reports
+        result = await Filesystem.writeFile({
+          path: savePath,
+          data: base64Data,
+          directory: Directory.External,
+          recursive: true,
+        });
+
+        await this.showToast('Guardado en carpeta de la App (Android/data)', 'medium');
+        await this.presentSuccessAlert(filename, 'Android/data/.../reports', finalDirectory);
+      } catch (extError) {
+        console.warn('Tier 2 (External) failed:', extError);
+
+        // TIER 3: Cache (Temporary)
+        try {
+          finalDirectory = Directory.Cache;
+          result = await Filesystem.writeFile({
+            path: savePath,
+            data: base64Data,
+            directory: Directory.Cache,
+            recursive: true,
+          });
+
+          await this.showToast('Guardado temporalmente (Cache)', 'warning');
+          // Auto-share because it's temporary
+          await this.shareReportFile(filename, finalDirectory);
+        } catch (cacheError) {
+          console.error('Tier 3 (Cache) failed:', cacheError);
+          throw new Error('No se pudo guardar el archivo en ninguna ubicación.');
+        }
+      }
+    }
 
     // Create report record
     const report: Report = {
@@ -121,10 +174,25 @@ export class ReportsStorageService {
     // Delete file from device
     if (this.isNative()) {
       try {
-        await Filesystem.deleteFile({
-          path: `${REPORTS_DIR}/${report.filename}`,
-          directory: Directory.Documents,
-        });
+        // Try deleting from Documents
+        try {
+          await Filesystem.deleteFile({
+            path: `${REPORTS_DIR}/${report.filename}`,
+            directory: Directory.Documents,
+          });
+        } catch (e) {
+          // Ignore if not found in Documents
+        }
+
+        // Try deleting from Cache
+        try {
+          await Filesystem.deleteFile({
+            path: `${REPORTS_DIR}/${report.filename}`,
+            directory: Directory.Cache,
+          });
+        } catch (e) {
+          // Ignore if not found in Cache
+        }
       } catch (error) {
         console.error('Error deleting file:', error);
       }
@@ -220,14 +288,71 @@ export class ReportsStorageService {
   }
 
   /**
-   * Private: Convert ArrayBuffer to base64
+   * Private: Convert ArrayBuffer to base64 using FileReader
+   * This is more efficient and prevents UI freezing for large files
    */
-  private arrayBufferToBase64(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
+  private arrayBufferToBase64(buffer: ArrayBuffer): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const blob = new Blob([buffer], { type: 'application/octet-stream' });
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        // remove "data:application/octet-stream;base64,"
+        const base64 = dataUrl.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  /**
+   * Helpers
+   */
+  private async presentSuccessAlert(filename: string, path: string, directory: Directory) {
+    const alert = await this.alertController.create({
+      header: 'Archivo Guardado',
+      message: `El archivo ${filename} se ha guardado en: \n\n${path}\n\n¿Quieres abrirlo o compartirlo?`,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+        },
+        {
+          text: 'Compartir / Abrir',
+          handler: () => {
+            this.shareReportFile(filename, directory);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async shareReportFile(filename: string, directory: Directory) {
+    const uriResult = await Filesystem.getUri({
+      path: `${REPORTS_DIR}/${filename}`,
+      directory: directory,
+    });
+
+    await Share.share({
+      title: 'Compartir Reporte',
+      text: `Reporte: ${filename}`,
+      url: uriResult.uri,
+      dialogTitle: 'Abrir con...',
+    });
+  }
+
+  /**
+   * Private: Show toast message
+   */
+  private async showToast(message: string, color: 'success' | 'warning' | 'danger' | 'medium') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom',
+    });
+    await toast.present();
   }
 }

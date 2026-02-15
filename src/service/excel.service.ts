@@ -458,8 +458,10 @@ export class ExcelService {
     if (this.reportsStorage.isNative()) {
       // Save to device using Capacitor Filesystem
       try {
-        await this.reportsStorage.saveReport(buffer, filename, reportType, metadata);
-        console.log('Report saved successfully to device');
+        const report = await this.reportsStorage.saveReport(buffer, filename, reportType, metadata);
+        console.log('Report saved successfully to device:', report.fileUri);
+
+        // UI feedback (Toast/Alert) is now handled inside saveReport
       } catch (error) {
         console.error('Error saving report to device:', error);
         // Fallback to file-saver if Capacitor fails

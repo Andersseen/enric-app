@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild, OnInit, computed, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem } from '@capacitor/filesystem';
+import { RouterLink } from '@angular/router';
 import {
   IonButton,
   IonButtons,
@@ -20,11 +25,10 @@ import {
   trashBinOutline,
 } from 'ionicons/icons';
 import ActuacionTableComponent from '../../components/actuacion-table/actuacion-table.component';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-reports',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   imports: [
     IonHeader,
     IonToolbar,
@@ -57,9 +61,9 @@ import { RouterLink } from '@angular/router';
           <ion-button (click)="fileInput.click()" title="Importar Excel">
             <ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
           </ion-button>
-          <!-- <ion-button (click)="generateMock()" title="Generar Datos">
+          <ion-button (click)="generateMock()" title="Generar Datos">
             <ion-icon slot="icon-only" name="flash-outline"></ion-icon>
-          </ion-button> -->
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
