@@ -26,7 +26,7 @@ import {
   selector: 'app-bottom-bar',
   imports: [IonTabBar, IonTabButton, IonIcon, IonLabel],
   template: `
-    <ion-tab-bar slot="bottom">
+    <ion-tab-bar slot="bottom" style="margin-bottom: 3rem;">
       @for (item of tabs; track item.tab) {
         <ion-tab-button (click)="navigate(item.path)" [class.selected-tab]="isActive(item.path)">
           <ion-icon [name]="isActive(item.path) ? item.selectedIcon : item.icon"></ion-icon>
