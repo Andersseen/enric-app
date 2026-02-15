@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   AlertController,
   IonButton,
@@ -8,17 +8,15 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  NavController,
   ToastController,
 } from '@ionic/angular/standalone';
 import ActionsStore from '@service/actions-store';
-import { saveAs } from 'file-saver';
-import { addIcons } from 'ionicons';
-import { downloadOutline, homeOutline } from 'ionicons/icons';
-import { ExcelService } from '@service/excel.service';
-import StepPage from '.';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
-import { NavController } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { downloadOutline, homeOutline } from 'ionicons/icons';
+import StepPage from '.';
 
 @Component({
   selector: 'form-step-twelve',
@@ -109,6 +107,7 @@ import { NavController } from '@ionic/angular/standalone';
       </ion-card-content>
     </ion-card>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepTwelve {
   #store = inject(ActionsStore);

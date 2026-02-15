@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import StepPage from '.';
 import SelectionGridComponent from '@components/forms/selection-grid';
 import ActionsStore from '@service/actions-store';
@@ -13,6 +13,7 @@ import ActionsStore from '@service/actions-store';
       (select)="onSelect($event)"
     />
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepTen {
   #store = inject(ActionsStore);

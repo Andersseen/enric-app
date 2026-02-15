@@ -42,12 +42,5 @@ export default class PreventionListPage {
       routerLink: ['marking-flight'],
       color: 'primary',
     },
-    {
-      icon: '📊',
-      title: 'Reportes y Tablas',
-      description: 'Ver tabla, importar y exportar.',
-      routerLink: ['reports'],
-      color: 'secondary',
-    },
   ];
 }

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import StepPage from '.';
 import TextInputComponent from '@components/forms/text-input';
 import ActionsStore from '@service/actions-store';
@@ -13,6 +13,7 @@ import ActionsStore from '@service/actions-store';
       (valueChange)="onInput($event)"
     />
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepEleven {
   #store = inject(ActionsStore);

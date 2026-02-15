@@ -18,7 +18,7 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepSix {
   #store = inject(ActionsStore);
-  options = ['Si', 'No'];
+  options = ['No', 'Si'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {

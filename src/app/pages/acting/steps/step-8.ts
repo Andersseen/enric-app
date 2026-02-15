@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import StepPage from '.';
 import TextInputComponent from '@components/forms/text-input';
 import ActionsStore from '@service/actions-store';
@@ -7,6 +7,7 @@ import ActionsStore from '@service/actions-store';
   selector: 'form-step-eight',
   imports: [TextInputComponent],
   template: ` <app-text-input label="Animal empleado" (valueChange)="onInput($event)" /> `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepEight {
   #store = inject(ActionsStore);

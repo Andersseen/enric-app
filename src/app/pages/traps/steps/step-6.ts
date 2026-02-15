@@ -18,7 +18,7 @@ import StepPage from '.';
 })
 export class TrapsFormStepSix {
   #store = inject(TrapsActionsStore);
-  options = ['Si', 'No'];
+  options = ['No', 'Si'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
