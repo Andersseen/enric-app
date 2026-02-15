@@ -33,20 +33,20 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
     <ion-card>
       <ion-card-header class="p-0">
         <div
-          class="flex items-center justify-between p-2 cursor-pointer"
+          class="flex items-center justify-between p-4 cursor-pointer min-h-16"
           (click)="toggle()"
           role="button"
           [attr.aria-expanded]="expanded()"
           aria-controls="session-body"
         >
           <div class="flex flex-col gap-1">
-            <ion-card-title class="text-lg font-semibold flex items-center gap-2">
+            <ion-card-title class="text-xl font-bold flex items-center gap-2">
               Datos de sesión
               @if (!expanded()) {
                 <span class="text-sm font-normal text-gray-500"> (Click para editar) </span>
               }
             </ion-card-title>
-            <div class="text-sm text-gray-600">
+            <div class="text-base text-gray-600">
               <span class="font-medium">{{
                 sessionForm.get('worker')?.value || 'Sin asignar'
               }}</span>
@@ -56,7 +56,7 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
               <span>{{ sessionForm.get('time')?.value }}</span>
             </div>
           </div>
-          <ion-button shape="round" [class.rotate-180]="expanded()">
+          <ion-button shape="round" size="large" [class.rotate-180]="expanded()">
             <ion-icon name="chevron-down" size="large"></ion-icon>
           </ion-button>
         </div>

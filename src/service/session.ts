@@ -14,6 +14,14 @@ export default class Session {
 
   constructor() {
     this.loadWorkers();
+    this.loadSessionData();
+
+    this.sessionForm.valueChanges.subscribe((val) => {
+      // Update signal
+      this.sessionData.set(val as SessionData);
+      // Save to storage
+      this.saveSessionData(val as SessionData);
+    });
   }
 
   readonly initial = (): SessionData => {
@@ -35,11 +43,11 @@ export default class Session {
     worker: [this.sessionData().worker],
   });
 
-  setExpand(value: boolean) {
+  setExpand(value: boolean): void {
     this.#expand.set(value);
   }
 
-  private async loadWorkers() {
+  private async loadWorkers(): Promise<void> {
     const { value } = await Preferences.get({ key: 'workers' });
     if (value) {
       this.#workers.set(JSON.parse(value));
@@ -50,7 +58,27 @@ export default class Session {
     }
   }
 
-  addWorker(name: string) {
+  private async loadSessionData(): Promise<void> {
+    const { value } = await Preferences.get({ key: 'enric_session_data' });
+    if (value) {
+      try {
+        const data = JSON.parse(value);
+        this.sessionData.set(data);
+        this.sessionForm.patchValue(data, { emitEvent: false });
+      } catch (e) {
+        console.error('Error loading session data', e);
+      }
+    }
+  }
+
+  private async saveSessionData(data: SessionData): Promise<void> {
+    await Preferences.set({
+      key: 'enric_session_data',
+      value: JSON.stringify(data),
+    });
+  }
+
+  addWorker(name: string): void {
     const current = this.#workers();
     if (!current.includes(name)) {
       const updated = [...current, name];
@@ -59,13 +87,13 @@ export default class Session {
     }
   }
 
-  removeWorker(name: string) {
+  removeWorker(name: string): void {
     const updated = this.#workers().filter((w) => w !== name);
     this.#workers.set(updated);
     this.saveWorkers(updated);
   }
 
-  private async saveWorkers(workers: string[]) {
+  private async saveWorkers(workers: string[]): Promise<void> {
     await Preferences.set({
       key: 'workers',
       value: JSON.stringify(workers),
