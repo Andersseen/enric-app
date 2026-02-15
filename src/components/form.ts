@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   IonInput,
   IonItem,
@@ -16,6 +16,7 @@ import { ExcelService } from '@service/excel.service';
 
 @Component({
   selector: 'app-form',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     IonInput,

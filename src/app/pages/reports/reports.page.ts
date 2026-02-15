@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { ActuacionData, ExcelService } from '@service/excel.service';
 import { ReportStore } from '@service/report-store';
 import {
@@ -17,6 +17,7 @@ import { downloadOutline, cloudUploadOutline, trashBinOutline, flashOutline } fr
 
 @Component({
   selector: 'app-reports',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IonHeader,
     IonToolbar,
@@ -43,9 +44,9 @@ import { downloadOutline, cloudUploadOutline, trashBinOutline, flashOutline } fr
           <ion-button (click)="fileInput.click()" title="Importar Excel">
             <ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
           </ion-button>
-          <ion-button (click)="generateMock()" title="Generar Datos">
+          <!-- <ion-button (click)="generateMock()" title="Generar Datos">
             <ion-icon slot="icon-only" name="flash-outline"></ion-icon>
-          </ion-button>
+          </ion-button> -->
         </ion-buttons>
       </ion-toolbar>
     </ion-header>

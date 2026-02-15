@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   IonCard,
   IonCardContent,
@@ -21,6 +21,7 @@ import { NavController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'traps-form-step-twelve',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonCard, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonIcon],
   template: `
     <ion-card>
@@ -197,6 +198,7 @@ export class TrapsFormStepTwelve {
 
 @Component({
   selector: 'traps-step-twelve',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <traps-form-step-twelve />

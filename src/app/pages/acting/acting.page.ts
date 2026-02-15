@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { IonTabs } from '@ionic/angular/standalone';
 import ActionsStore from '@service/actions-store';
 import { BottomBarComponent } from '@components/bottom-bar';
 
 @Component({
   selector: 'app-acting',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonTabs, BottomBarComponent],
   template: `
     <ion-tabs>

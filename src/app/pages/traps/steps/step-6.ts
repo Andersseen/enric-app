@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import SelectionGridComponent from '@components/forms/selection-grid';
 import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
 
 @Component({
   selector: 'traps-form-step-six',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
@@ -29,6 +30,7 @@ export class TrapsFormStepSix {
 
 @Component({
   selector: 'traps-step-six',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <traps-form-step-six />

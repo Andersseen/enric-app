@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import ActionCards, { type ActionCardItem } from '@components/action-cards';
 
 @Component({
   selector: 'app-prevention-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ActionCards],
   template: `
     <div class="flex-1 overflow-y-auto p-4">

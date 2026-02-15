@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import {
   IonHeader,
   IonTitle,
@@ -15,6 +15,7 @@ import { caretBack } from 'ionicons/icons';
 
 @Component({
   selector: 'app-prevention-step-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IonHeader,
     IonTitle,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PreventionStep } from '../base-step';
 import PreventionStepZoneComponent from '../components/prevention-step-zone.component';
 import PreventionStepPage from '../prevention-step-page';
@@ -6,6 +6,7 @@ import { Zone } from '@data/zones';
 
 @Component({
   selector: 'app-dog-review-step-one',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepZoneComponent, PreventionStepPage],
   template: `
     <app-prevention-step-page title="Revisión Perros - Zona">

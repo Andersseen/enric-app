@@ -1,13 +1,14 @@
-import { Component, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import { BirdItem } from '@data/bird';
 import { IonIcon, IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-selected-sidebar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonIcon, IonButton],
   template: `
-    @if(selectedPanelOpen()){
-    <div class="fixed inset-0 z-40 bg-black/40" (click)="closePanel()" aria-hidden="true"></div>
+    @if (selectedPanelOpen()) {
+      <div class="fixed inset-0 z-40 bg-black/40" (click)="closePanel()" aria-hidden="true"></div>
     }
 
     <!-- SELECTED SIDEBAR -->
@@ -37,40 +38,40 @@ import { IonIcon, IonButton } from '@ionic/angular/standalone';
       </div>
 
       <div class="overflow-y-auto max-h-[calc(100%-72px)] pr-2">
-        @if(selected().length === 0) {
-        <p class="text-sm text-muted">No hay especies seleccionadas.</p>
+        @if (selected().length === 0) {
+          <p class="text-sm text-muted">No hay especies seleccionadas.</p>
         } @else {
-        <ul class="space-y-2">
-          @for (b of selectedBirds(); track b.id) {
-          <li class="flex items-center justify-between gap-3 rounded-md p-2 hover:bg-muted/10">
-            <div class="min-w-0">
-              <div class="font-medium truncate">{{ b.commonName }}</div>
-              <div class="text-xs text-muted truncate">{{ b.scientificName }}</div>
-            </div>
+          <ul class="space-y-2">
+            @for (b of selectedBirds(); track b.id) {
+              <li class="flex items-center justify-between gap-3 rounded-md p-2 hover:bg-muted/10">
+                <div class="min-w-0">
+                  <div class="font-medium truncate">{{ b.commonName }}</div>
+                  <div class="text-xs text-muted truncate">{{ b.scientificName }}</div>
+                </div>
 
-            <div class="flex items-center gap-2">
-              <!-- input numérico para la cantidad -->
-              <input
-                type="number"
-                min="0"
-                class="w-20 rounded border px-2 py-1 text-sm"
-                [value]="counts()[b.id]"
-                (input)="onCountInput(b.id, $event)"
-                aria-label="Cantidad de {{ b.commonName }}"
-              />
+                <div class="flex items-center gap-2">
+                  <!-- input numérico para la cantidad -->
+                  <input
+                    type="number"
+                    min="0"
+                    class="w-20 rounded border px-2 py-1 text-sm"
+                    [value]="counts()[b.id]"
+                    (input)="onCountInput(b.id, $event)"
+                    aria-label="Cantidad de {{ b.commonName }}"
+                  />
 
-              <button
-                class="p-2"
-                (click)="removeSelected(b.id)"
-                aria-label="Quitar selección"
-                title="Quitar"
-              >
-                <ion-icon name="close"></ion-icon>
-              </button>
-            </div>
-          </li>
-          }
-        </ul>
+                  <button
+                    class="p-2"
+                    (click)="removeSelected(b.id)"
+                    aria-label="Quitar selección"
+                    title="Quitar"
+                  >
+                    <ion-icon name="close"></ion-icon>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
         }
         <ion-button
           (click)="clearSelection()"
@@ -102,33 +103,33 @@ import { IonIcon, IonButton } from '@ionic/angular/standalone';
         </div>
 
         <div class="overflow-y-auto max-h-56">
-          @if(!selected().length ) {
-          <p class="text-sm text-muted">No hay especies seleccionadas.</p>
+          @if (!selected().length) {
+            <p class="text-sm text-muted">No hay especies seleccionadas.</p>
           } @else {
-          <ul class="space-y-2">
-            @for (b of selectedBirds(); track b.id) {
-            <li class="flex items-center justify-between gap-3">
-              <div>
-                <div class="font-medium truncate">{{ b.commonName }}</div>
-                <div class="text-xs text-muted truncate">{{ b.scientificName }}</div>
-              </div>
+            <ul class="space-y-2">
+              @for (b of selectedBirds(); track b.id) {
+                <li class="flex items-center justify-between gap-3">
+                  <div>
+                    <div class="font-medium truncate">{{ b.commonName }}</div>
+                    <div class="text-xs text-muted truncate">{{ b.scientificName }}</div>
+                  </div>
 
-              <div class="flex items-center gap-2">
-                <input
-                  type="number"
-                  min="0"
-                  class="w-20 rounded border px-2 py-1 text-sm"
-                  [value]="counts()[b.id]"
-                  (input)="onCountInput(b.id, $event)"
-                  aria-label="Cantidad de {{ b.commonName }}"
-                />
-                <button (click)="removeSelected(b.id)" aria-label="Quitar selección">
-                  <ion-icon name="close"></ion-icon>
-                </button>
-              </div>
-            </li>
-            }
-          </ul>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      class="w-20 rounded border px-2 py-1 text-sm"
+                      [value]="counts()[b.id]"
+                      (input)="onCountInput(b.id, $event)"
+                      aria-label="Cantidad de {{ b.commonName }}"
+                    />
+                    <button (click)="removeSelected(b.id)" aria-label="Quitar selección">
+                      <ion-icon name="close"></ion-icon>
+                    </button>
+                  </div>
+                </li>
+              }
+            </ul>
           }
           <ion-button
             (click)="clearSelection()"
