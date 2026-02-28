@@ -12,7 +12,18 @@ export default class ActionsStore extends BaseStore {
 
   override steps = this.#steps.asReadonly();
 
-  currentStateStep = computed(() => STEP_STATE[this.currentStep()]);
+  currentStateStep = computed(() => {
+    const state = { ...STEP_STATE[this.currentStep()] };
+    // Skip step-10 if method is not 'Vuelo dispersión halcón'
+    const method = this.step7Value() as string;
+    if (this.currentStep() === STEP_ID.Step9 && method !== 'Vuelo dispersión halcón') {
+      state.next = STEP_ID.Step11;
+    }
+    if (this.currentStep() === STEP_ID.Step11 && method !== 'Vuelo dispersión halcón') {
+      state.prev = STEP_ID.Step9;
+    }
+    return state;
+  });
   currentLabel = computed(() => this.state()[this.currentStep()].label);
   currentValue = computed(() => this.state()[this.currentStep()].value);
 

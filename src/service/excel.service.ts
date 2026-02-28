@@ -22,7 +22,7 @@ export interface ActuacionData {
   method: string;
   animal: string;
   efficacy: string;
-  captured: number;
+  captured: number | string;
   notes: string;
   operation?: string;
   date?: string;

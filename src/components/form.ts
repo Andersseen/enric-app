@@ -82,8 +82,8 @@ import { ExcelService } from '@service/excel.service';
           <ion-select interface="action-sheet" label="Método empleado" formControlName="method">
             <ion-select-option>Claxon</ion-select-option>
             <ion-select-option>Sonido</ion-select-option>
-            <ion-select-option>Fogueo</ion-select-option>
-            <ion-select-option>Laser</ion-select-option>
+            <ion-select-option>Pirotecnia</ion-select-option>
+            <ion-select-option>Láser</ion-select-option>
             <ion-select-option>Vuelo dispersión halcón</ion-select-option>
           </ion-select>
         </ion-item>
@@ -173,7 +173,7 @@ export default class Form {
       method: formData.method || '',
       animal: formData.animal || '',
       efficacy: formData.efficacy || '',
-      captured: formData.captured || 0,
+      captured: formData.method !== 'Vuelo dispersión halcón' ? 'No' : formData.captured || 0,
       notes: formData.notes || '',
     });
   }

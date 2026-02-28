@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   AlertController,
   IonButton,
@@ -82,7 +82,7 @@ import StepPage from '.';
           <ion-item>
             <ion-label>
               <h2>Capturas</h2>
-              <p>{{ captured() ?? '-' }}</p>
+              <p>{{ displayCaptured() }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -125,6 +125,10 @@ export class FormStepTwelve {
   animal = this.#store.step8Value;
   efficacy = this.#store.step9Value;
   captured = this.#store.step10Value;
+  displayCaptured = computed(() => {
+    if (this.method() !== 'Vuelo dispersión halcón') return 'No';
+    return this.captured() ?? '-';
+  });
   notes = this.#store.step11Value;
 
   toastController = inject(ToastController);
@@ -148,7 +152,7 @@ export class FormStepTwelve {
       method: this.method() || '',
       animal: this.animal() || '',
       efficacy: this.efficacy() || '',
-      captured: this.captured() || 0,
+      captured: this.method() !== 'Vuelo dispersión halcón' ? 'No' : this.captured() || 0,
       notes: this.notes() || '',
       operation: 'Si', // It's an operation
       date: sessionData.date || now.toLocaleDateString('es-ES'),

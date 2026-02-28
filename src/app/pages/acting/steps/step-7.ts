@@ -17,7 +17,7 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepSeven {
   #store = inject(ActionsStore);
-  options = ['Claxon', 'Sonido', 'Fogueo', 'Laser', 'Vuelo dispersión halcón'];
+  options = ['Claxon', 'Sonido', 'Pirotecnia', 'Láser', 'Vuelo dispersión halcón'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
