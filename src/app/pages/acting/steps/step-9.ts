@@ -1,30 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import StepPage from '.';
-import SelectionGridComponent from '@components/forms/selection-grid';
+import TextInputComponent from '@components/forms/text-input';
 import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'form-step-nine',
-  imports: [SelectionGridComponent],
-  template: `
-    <app-selection-grid
-      colSize="12"
-      colSizeMd="6"
-      [items]="options"
-      [selected]="selectedOption()"
-      (select)="onSelect($event)"
-    />
-  `,
+  imports: [TextInputComponent],
+  template: ` <app-text-input label="Animal empleado" (valueChange)="onInput($event)" /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepNine {
   #store = inject(ActionsStore);
-  options = ['Si', 'No'];
-  selectedOption = signal<string | null>(null);
 
-  onSelect(option: string) {
-    this.selectedOption.set(option);
-    this.#store.setValueForCurrentStep(this.selectedOption());
+  onInput(value: string) {
+    this.#store.setValueForCurrentStep(value);
   }
 }
 

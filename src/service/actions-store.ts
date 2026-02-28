@@ -14,13 +14,13 @@ export default class ActionsStore extends BaseStore {
 
   currentStateStep = computed(() => {
     const state = { ...STEP_STATE[this.currentStep()] };
-    // Skip step-10 if method is not 'Vuelo dispersión halcón'
-    const method = this.step7Value() as string;
-    if (this.currentStep() === STEP_ID.Step9 && method !== 'Vuelo dispersión halcón') {
-      state.next = STEP_ID.Step11;
+    // Skip step-11 (Captura) if method (step-8) is not 'Vuelo dispersión halcón'
+    const method = this.step8Value() as string;
+    if (this.currentStep() === STEP_ID.Step10 && method !== 'Vuelo dispersión halcón') {
+      state.next = STEP_ID.Step12;
     }
-    if (this.currentStep() === STEP_ID.Step11 && method !== 'Vuelo dispersión halcón') {
-      state.prev = STEP_ID.Step9;
+    if (this.currentStep() === STEP_ID.Step12 && method !== 'Vuelo dispersión halcón') {
+      state.prev = STEP_ID.Step10;
     }
     return state;
   });
@@ -28,7 +28,7 @@ export default class ActionsStore extends BaseStore {
   currentValue = computed(() => this.state()[this.currentStep()].value);
 
   finishStep = computed(() => {
-    if (this.acceptEmptyStep([STEP_ID.Step8, STEP_ID.Step11])) {
+    if (this.acceptEmptyStep([STEP_ID.Step9, STEP_ID.Step12])) {
       return true;
     }
     const value = this.state()[this.currentStep()].value;
@@ -41,12 +41,13 @@ export default class ActionsStore extends BaseStore {
   step4Value = computed(() => this.state()[STEP_ID.Step4].value);
   step5Value = computed(() => this.state()[STEP_ID.Step5].value);
   step6Value = computed(() => this.state()[STEP_ID.Step6].value);
-  step7Value = computed(() => this.state()[STEP_ID.Step7].value);
-  step8Value = computed(() => this.state()[STEP_ID.Step8].value);
-  step9Value = computed(() => this.state()[STEP_ID.Step9].value);
-  step10Value = computed(() => this.state()[STEP_ID.Step10].value);
-  step11Value = computed(() => this.state()[STEP_ID.Step11].value);
-  step12Value = computed(() => this.state()[STEP_ID.Step12].value);
+  step7Value = computed(() => this.state()[STEP_ID.Step7]?.value); // Operación
+  step8Value = computed(() => this.state()[STEP_ID.Step8]?.value); // Método
+  step9Value = computed(() => this.state()[STEP_ID.Step9]?.value); // Animal
+  step10Value = computed(() => this.state()[STEP_ID.Step10]?.value); // Eficacia
+  step11Value = computed(() => this.state()[STEP_ID.Step11]?.value); // Captura
+  step12Value = computed(() => this.state()[STEP_ID.Step12]?.value); // Observaciones
+  step13Value = computed(() => this.state()[STEP_ID.Step13]?.value); // Resumen
 
   constructor() {
     super();

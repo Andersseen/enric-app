@@ -8,8 +8,10 @@ import ActionsStore from '@service/actions-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
-      [items]="numbers"
-      [selected]="selectedNumber()"
+      colSize="12"
+      colSizeMd="6"
+      [items]="options"
+      [selected]="selectedOption()"
       (select)="onSelect($event)"
     />
   `,
@@ -17,12 +19,12 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepTen {
   #store = inject(ActionsStore);
-  numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 50, 100, 200, 300, 500];
-  selectedNumber = signal<number | null>(null);
+  options = ['No', 'Si'];
+  selectedOption = signal<string | null>(null);
 
-  onSelect(num: number) {
-    this.selectedNumber.set(num);
-    this.#store.setValueForCurrentStep(this.selectedNumber());
+  onSelect(option: string) {
+    this.selectedOption.set(option);
+    this.#store.setValueForCurrentStep(this.selectedOption());
   }
 }
 

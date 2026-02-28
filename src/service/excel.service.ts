@@ -159,7 +159,7 @@ export class ExcelService {
       'Actitud',
       'Tipo actuación',
       'Operación',
-      'Interacción perro/halcón',
+      'Interacción operación',
       'Método empleado',
       'Animal empleado',
       'Eficacia',

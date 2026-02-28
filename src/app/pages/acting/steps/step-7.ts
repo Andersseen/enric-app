@@ -5,19 +5,21 @@ import ActionsStore from '@service/actions-store';
 
 @Component({
   selector: 'form-step-seven',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      colSize="12"
+      colSizeMd="6"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"
     />
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepSeven {
   #store = inject(ActionsStore);
-  options = ['Claxon', 'Sonido', 'Pirotecnia', 'Láser', 'Vuelo dispersión halcón'];
+  options = ['No', 'Si'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
@@ -28,6 +30,7 @@ export class FormStepSeven {
 
 @Component({
   selector: 'step-seven',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <step-page>
       <form-step-seven />

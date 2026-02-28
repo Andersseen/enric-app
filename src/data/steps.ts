@@ -12,7 +12,8 @@ export type StepId =
   | 'step-9'
   | 'step-10'
   | 'step-11'
-  | 'step-12';
+  | 'step-12'
+  | 'step-13';
 
 export interface Step extends BaseStep<StepId> {}
 
@@ -28,7 +29,8 @@ export const STEP_STATE: BaseStepNavigationMap<StepId> = {
   'step-9': { prev: 'step-8', next: 'step-10' },
   'step-10': { prev: 'step-9', next: 'step-11' },
   'step-11': { prev: 'step-10', next: 'step-12' },
-  'step-12': { prev: 'step-11', next: null },
+  'step-12': { prev: 'step-11', next: 'step-13' },
+  'step-13': { prev: 'step-12', next: null },
 } as const;
 
 export const BASE_STEPS: Step[] = [
@@ -44,4 +46,5 @@ export const BASE_STEPS: Step[] = [
   { id: 'step-10', title: '', icon: 'camera' },
   { id: 'step-11', title: '', icon: 'document-text' },
   { id: 'step-12', title: '', icon: 'list' },
+  { id: 'step-13', title: '', icon: 'list' },
 ];
