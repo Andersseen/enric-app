@@ -108,7 +108,7 @@ export class ExcelService {
       'Método empleado',
       'Animal empleado',
       'Eficacia',
-      'Captura Efectiva',
+      'Captura (Nº indiv)',
       'Observaciones',
     ]);
 
@@ -196,7 +196,7 @@ export class ExcelService {
       'Método empleado',
       'Animal empleado',
       'Eficacia',
-      'Captura Efectiva',
+      'Captura (Nº indiv)',
       'Observaciones',
     ]);
 
@@ -281,7 +281,7 @@ export class ExcelService {
       'Método empleado',
       'Animal empleado',
       'Eficacia',
-      'Captura Efectiva',
+      'Captura (Nº indiv)',
       'Observaciones',
     ]);
 
@@ -459,7 +459,7 @@ export class ExcelService {
       'Método empleado',
       'Animal empleado',
       'Eficacia',
-      'Captura Efectiva',
+      'Captura (Nº indiv)',
       'Observaciones',
     ]);
 
