@@ -12,6 +12,7 @@ export default class PreventionStepsStore {
   // State for different flows
   trackReviewObservation = signal<string>('');
   perimeterReviewObservation = signal<string>('No se observan daños en el vallado perimetral.');
+  ppoamObservation = signal<string>('PPOAM');
 
   dogReviewZone = signal<Zone | null>(null);
   dogReviewAnimal = signal<string>('');
@@ -26,6 +27,7 @@ export default class PreventionStepsStore {
   reset() {
     this.trackReviewObservation.set('');
     this.perimeterReviewObservation.set('No se observan daños en el vallado perimetral.');
+    this.ppoamObservation.set('PPOAM');
     this.dogReviewZone.set(null);
     this.dogReviewAnimal.set('');
     this.dogReviewNotes.set('');

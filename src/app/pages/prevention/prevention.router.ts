@@ -11,6 +11,20 @@ const preventionRoutes: Routes = [
       },
 
       {
+        path: 'ppoam',
+        children: [
+          {
+            path: 'step-1',
+            loadComponent: () => import('./steps/ppoam-step'),
+          },
+          {
+            path: '',
+            redirectTo: 'step-1',
+            pathMatch: 'full',
+          },
+        ],
+      },
+      {
         path: 'track-review',
         children: [
           {
