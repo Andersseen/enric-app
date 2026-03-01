@@ -19,7 +19,7 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepTen {
   #store = inject(ActionsStore);
-  options = ['No', 'Si'];
+  options = ['Si', 'No'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
