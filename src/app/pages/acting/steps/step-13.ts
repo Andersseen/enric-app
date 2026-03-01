@@ -133,8 +133,8 @@ export class FormStepThirteen {
   efficacy = this.#store.step10Value;
   captured = this.#store.step11Value;
   displayCaptured = computed(() => {
-    if (this.method() !== 'Vuelo dispersión halcón') return 'No';
-    return this.captured() ?? '-';
+    if (this.method() !== 'Vuelo dispersión halcón') return 0;
+    return this.captured() ?? 0;
   });
   notes = this.#store.step12Value;
 
@@ -159,7 +159,7 @@ export class FormStepThirteen {
       method: this.method() || '',
       animal: this.animal() || '',
       efficacy: this.efficacy() || '',
-      captured: this.method() !== 'Vuelo dispersión halcón' ? 'No' : this.captured() || 0,
+      captured: this.method() !== 'Vuelo dispersión halcón' ? 0 : this.captured() || 0,
       notes: this.notes() || '',
       operation: this.operation() || 'No',
       date: sessionData.date || now.toLocaleDateString('es-ES'),

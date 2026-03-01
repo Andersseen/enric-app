@@ -173,7 +173,7 @@ export default class Form {
       method: formData.method || '',
       animal: formData.animal || '',
       efficacy: formData.efficacy || '',
-      captured: formData.method !== 'Vuelo dispersión halcón' ? 'No' : formData.captured || 0,
+      captured: formData.method !== 'Vuelo dispersión halcón' ? 0 : formData.captured || 0,
       notes: formData.notes || '',
     });
   }

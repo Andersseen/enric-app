@@ -22,7 +22,7 @@ export interface ActuacionData {
   method: string;
   animal: string;
   efficacy: string;
-  captured: number | string;
+  captured: number;
   notes: string;
   operation?: string;
   date?: string;
@@ -390,7 +390,7 @@ export class ExcelService {
       'Actitud',
       'Tipo actuación',
       'Operación',
-      'Interacción perro/halcón',
+      'Interacción operación',
       'Método empleado',
       'Animal empleado',
       'Eficacia',
