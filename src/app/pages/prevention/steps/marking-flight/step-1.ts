@@ -10,11 +10,15 @@ import { Zone } from '@data/zones';
   changeDetection: ChangeDetectionStrategy.OnPush,
 
   template: `
-    <app-prevention-step-page title="Vuelo de Marcaje - Zona">
+    <app-prevention-step-page
+      title="Vuelo de Marcaje - Zona"
+      [showNext]="true"
+      [canGoNext]="!!store.flightReviewZone()"
+      (nextClicked)="next()"
+    >
       <app-prevention-step-zone
         [selected]="store.flightReviewZone()"
         (select)="onSelect($event)"
-        (next)="next()"
       />
     </app-prevention-step-page>
   `,
