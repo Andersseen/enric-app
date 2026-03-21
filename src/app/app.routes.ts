@@ -7,4 +7,8 @@ export const routes: Routes = [
     path: 'reports',
     loadComponent: () => import('./pages/reports/reports.page'),
   },
+  {
+    path: 'reporte-entero',
+    loadComponent: () => import('./pages/reports/full-report.page'),
+  },
 ];
