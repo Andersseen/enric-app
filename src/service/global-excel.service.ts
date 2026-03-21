@@ -23,6 +23,204 @@ export interface GlobalReportRow {
   worker?: string;
 }
 
+export interface ScfSectionTemplate {
+  title: string;
+  headers: string[];
+  emptyRows: number;
+}
+
+export interface ScfSheetTemplate {
+  id: string;
+  title: string;
+  sections: ScfSectionTemplate[];
+}
+
+export interface ScfSectionData extends ScfSectionTemplate {
+  rows: string[][];
+}
+
+export interface ScfSheetData {
+  id: string;
+  title: string;
+  sections: ScfSectionData[];
+}
+
+export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
+  {
+    id: 'DATOS_GENERALES',
+    title: 'Datos base de asignacion y animales en servicio.',
+    sections: [
+      {
+        title: 'ASIGNACIÓN',
+        headers: ['Asignación', 'Categoría', 'Nombre', 'Alta', 'Baja'],
+        emptyRows: 4,
+      },
+      {
+        title: 'ANIMALES EN SERVICIO - AVES',
+        headers: [
+          'Nº',
+          'Especie',
+          'Anilla/Microchip',
+          'Nombre',
+          'Modalidad de vuelo',
+          'Fecha Alta',
+          'Fecha Baja',
+          'Motivo baja',
+        ],
+        emptyRows: 12,
+      },
+      {
+        title: 'ANIMALES EN SERVICIO - PERROS',
+        headers: [
+          'Nº',
+          'Especie',
+          'Microchip',
+          'Nombre',
+          'Fecha Alta',
+          'Fecha Baja',
+          'Motivo baja',
+        ],
+        emptyRows: 12,
+      },
+    ],
+  },
+  {
+    id: 'ACTUACIONES_DIARIAS',
+    title: 'Hoja operativa con los registros de actuacion.',
+    sections: [
+      {
+        title: 'ACTUACIONES_DIARIAS',
+        headers: [
+          'Fecha',
+          'Hora',
+          'Climatología',
+          'Personal',
+          'Localización',
+          'Especie',
+          'Nº',
+          'Actitud',
+          'Tipo actuación',
+          'Operación',
+          'Interacción operación',
+          'Método empleado',
+          'Animal empleado',
+          'Eficacia',
+          'Captura (Nº indiv)',
+          'Observaciones',
+        ],
+        emptyRows: 6,
+      },
+    ],
+  },
+  {
+    id: 'RETIRADAS_ANIMAL',
+    title: 'Retiradas y rescates de fauna.',
+    sections: [
+      {
+        title: 'RETIRADA DE RESTOS DE FAUNA',
+        headers: [
+          'Fecha',
+          'Hora',
+          'Localización',
+          'Cód. lugar',
+          'Especie',
+          'Nº',
+          'Causa',
+          'Observaciones',
+        ],
+        emptyRows: 6,
+      },
+      {
+        title: 'RESCATE DE OTROS ANIMALES EN EL AREA DE MOVIMIENTO',
+        headers: [
+          'Fecha',
+          'Hora',
+          'Localización',
+          'Cód. lugar',
+          'Especie',
+          'Nº',
+          'Método empleado',
+          'Observaciones',
+        ],
+        emptyRows: 6,
+      },
+    ],
+  },
+  {
+    id: 'SEGUIMIENTO',
+    title: 'Seguimientos de vegetacion y focos de atraccion.',
+    sections: [
+      {
+        title: 'SEGUIMIENTO DE LAS ACTUACIONES EN VEGETACIÓN',
+        headers: ['Fecha', 'Hora', 'Descripción'],
+        emptyRows: 6,
+      },
+      {
+        title: 'SEGUIMIENTO DE FOCOS/PUNTOS ATRACTIVOS',
+        headers: ['Foco/Punto atractivos', 'Fecha', 'Hora', 'Descripción'],
+        emptyRows: 8,
+      },
+      {
+        title: 'DETECCIÓN DE FOCOS/PUNTO DE ATRACCIÓN',
+        headers: ['Fecha', 'Hora', 'Descripción'],
+        emptyRows: 5,
+      },
+    ],
+  },
+  {
+    id: 'REVISION_VALLADO',
+    title: 'Control de incidencias y reparaciones de vallado.',
+    sections: [
+      {
+        title: 'REVISIÓN DEL VALLADO',
+        headers: [
+          'Fecha',
+          'Localización',
+          'Descripción',
+          'Comunicado a',
+          'Fecha de reparación',
+          'Tipo de reparación',
+        ],
+        emptyRows: 8,
+      },
+    ],
+  },
+  {
+    id: 'COLISIONES',
+    title: 'Registro de impactos con aeronaves.',
+    sections: [
+      {
+        title: 'IMPACTOS',
+        headers: [
+          'Fecha',
+          'Hora',
+          'Localización',
+          'Cód. lugar',
+          'Especie implicada',
+          'Nº',
+          'Detección de restos',
+          'Descripción incidente',
+          'Tipo aeronave',
+          'Matrícula',
+          'Consecuencia para la aeronave',
+        ],
+        emptyRows: 6,
+      },
+    ],
+  },
+  {
+    id: 'AVISOS_TWR',
+    title: 'Comunicaciones con torre y otros colectivos.',
+    sections: [
+      {
+        title: 'AVISOS DE/A TORRE U OTROS COLECTIVOS',
+        headers: ['Fecha', 'Hora', 'Emisor/Receptor', 'Descripción de comunicación', 'Detalles'],
+        emptyRows: 8,
+      },
+    ],
+  },
+];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,19 +228,47 @@ export class GlobalExcelService {
   private reportsStorage = inject(ReportsStorageService);
   private session = inject(Session);
 
-  async exportScfWorkbook(data: GlobalReportRow[]): Promise<void> {
+  createScfSheetsData(sourceRows: GlobalReportRow[] = []): ScfSheetData[] {
+    const actuacionesRows = this.mapGlobalRowsToActuacionesRows(sourceRows);
+
+    return SCF_SHEETS_TEMPLATE.map((sheet) => ({
+      id: sheet.id,
+      title: sheet.title,
+      sections: sheet.sections.map((section) => ({
+        ...section,
+        rows:
+          sheet.id === 'ACTUACIONES_DIARIAS' && section.title === 'ACTUACIONES_DIARIAS'
+            ? actuacionesRows
+            : [],
+      })),
+    }));
+  }
+
+  async importScfWorkbook(file: File): Promise<ScfSheetData[]> {
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(arrayBuffer);
+
+    return SCF_SHEETS_TEMPLATE.map((sheet) => {
+      const worksheet = workbook.getWorksheet(sheet.id);
+
+      return {
+        id: sheet.id,
+        title: sheet.title,
+        sections: sheet.sections.map((section, index) => ({
+          ...section,
+          rows: worksheet ? this.parseSectionRows(worksheet, sheet.sections, index) : [],
+        })),
+      };
+    });
+  }
+
+  async exportScfWorkbook(sheets: ScfSheetData[]): Promise<void> {
     const workbook = new ExcelJS.Workbook();
 
-    this.buildDatosGeneralesSheet(workbook.addWorksheet('DATOS_GENERALES'));
-
-    const actuacionesSheet = workbook.addWorksheet('ACTUACIONES_DIARIAS');
-    this.buildActuacionesDiariasSheet(actuacionesSheet, data);
-
-    this.buildRetiradasAnimalSheet(workbook.addWorksheet('RETIRADAS_ANIMAL'));
-    this.buildSeguimientoSheet(workbook.addWorksheet('SEGUIMIENTO'));
-    this.buildRevisionValladoSheet(workbook.addWorksheet('REVISION_VALLADO'));
-    this.buildColisionesSheet(workbook.addWorksheet('COLISIONES'));
-    this.buildAvisosTwrSheet(workbook.addWorksheet('AVISOS_TWR'));
+    sheets.forEach((sheet) => {
+      this.buildSheetFromData(workbook.addWorksheet(sheet.id), sheet);
+    });
 
     const filename = `SCF-${this.getScfDateStamp()}.xlsx`;
     await this.saveWorkbook(workbook, filename);
@@ -99,199 +325,48 @@ export class GlobalExcelService {
     });
   }
 
-  private buildActuacionesDiariasSheet(
-    worksheet: ExcelJS.Worksheet,
-    data: GlobalReportRow[],
-  ): void {
+  mapGlobalRowsToActuacionesRows(data: GlobalReportRow[]): string[][] {
     const sessionData = this.session.sessionForm.value;
 
-    this.createHeaderRow(worksheet, [
-      'Fecha',
-      'Hora',
-      'Climatología',
-      'Personal',
-      'Localización',
-      'Especie',
-      'Nº',
-      'Actitud',
-      'Tipo actuación',
-      'Operación',
-      'Interacción operación',
-      'Método empleado',
-      'Animal empleado',
-      'Eficacia',
-      'Captura (Nº indiv)',
-      'Observaciones',
+    return data.map((row) => [
+      row.date || sessionData.date || new Date().toLocaleDateString('es-ES'),
+      row.time ||
+        sessionData.time ||
+        new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      row.weather || sessionData.weather || '',
+      row.worker || sessionData.worker || '',
+      row.zoneId || '',
+      row.speciesId || '',
+      String(row.count || 0),
+      row.behavior || '',
+      row.actionType || '',
+      row.operation || '',
+      row.interaction || '',
+      row.method || '',
+      row.animal || '',
+      row.efficacy || '',
+      String(row.captured || 0),
+      row.notes || '',
     ]);
+  }
 
-    data.forEach((row) => {
-      this.addDataRow(worksheet, [
-        row.date || sessionData.date || new Date().toLocaleDateString('es-ES'),
-        row.time ||
-          sessionData.time ||
-          new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-        row.weather || sessionData.weather || '',
-        row.worker || sessionData.worker || '',
-        row.zoneId || '',
-        row.speciesId || '',
-        row.count || 0,
-        row.behavior || '',
-        row.actionType || '',
-        row.operation || '',
-        row.interaction || '',
-        row.method || '',
-        row.animal || '',
-        row.efficacy || '',
-        row.captured || 0,
-        row.notes || '',
-      ]);
+  private buildSheetFromData(worksheet: ExcelJS.Worksheet, sheet: ScfSheetData): void {
+    sheet.sections.forEach((section) => {
+      this.addSectionWithRows(
+        worksheet,
+        section.title,
+        section.headers,
+        section.rows,
+        section.emptyRows,
+      );
     });
-
-    worksheet.columns = [
-      { width: 12 },
-      { width: 10 },
-      { width: 14 },
-      { width: 16 },
-      { width: 16 },
-      { width: 20 },
-      { width: 6 },
-      { width: 14 },
-      { width: 18 },
-      { width: 12 },
-      { width: 18 },
-      { width: 18 },
-      { width: 16 },
-      { width: 10 },
-      { width: 14 },
-      { width: 32 },
-    ];
   }
 
-  private buildDatosGeneralesSheet(worksheet: ExcelJS.Worksheet): void {
-    this.addSectionWithHeaders(
-      worksheet,
-      'ASIGNACIÓN',
-      ['Asignación', 'Categoría', 'Nombre', 'Alta', 'Baja'],
-      4,
-    );
-    this.addSectionWithHeaders(
-      worksheet,
-      'ANIMALES EN SERVICIO - AVES',
-      [
-        'Nº',
-        'Especie',
-        'Anilla/Microchip',
-        'Nombre',
-        'Modalidad de vuelo',
-        'Fecha Alta',
-        'Fecha Baja',
-        'Motivo baja',
-      ],
-      12,
-    );
-    this.addSectionWithHeaders(
-      worksheet,
-      'ANIMALES EN SERVICIO - PERROS',
-      ['Nº', 'Especie', 'Microchip', 'Nombre', 'Fecha Alta', 'Fecha Baja', 'Motivo baja'],
-      12,
-    );
-  }
-
-  private buildRetiradasAnimalSheet(worksheet: ExcelJS.Worksheet): void {
-    this.addSectionWithHeaders(
-      worksheet,
-      'RETIRADA DE RESTOS DE FAUNA',
-      ['Fecha', 'Hora', 'Localización', 'Cód. lugar', 'Especie', 'Nº', 'Causa', 'Observaciones'],
-      6,
-    );
-    this.addSectionWithHeaders(
-      worksheet,
-      'RESCATE DE OTROS ANIMALES EN EL AREA DE MOVIMIENTO',
-      [
-        'Fecha',
-        'Hora',
-        'Localización',
-        'Cód. lugar',
-        'Especie',
-        'Nº',
-        'Método empleado',
-        'Observaciones',
-      ],
-      6,
-    );
-  }
-
-  private buildSeguimientoSheet(worksheet: ExcelJS.Worksheet): void {
-    this.addSectionWithHeaders(
-      worksheet,
-      'SEGUIMIENTO DE LAS ACTUACIONES EN VEGETACIÓN',
-      ['Fecha', 'Hora', 'Descripción'],
-      6,
-    );
-    this.addSectionWithHeaders(
-      worksheet,
-      'SEGUIMIENTO DE FOCOS/PUNTOS ATRACTIVOS',
-      ['Foco/Punto atractivos', 'Fecha', 'Hora', 'Descripción'],
-      8,
-    );
-    this.addSectionWithHeaders(
-      worksheet,
-      'DETECCIÓN DE FOCOS/PUNTO DE ATRACCIÓN',
-      ['Fecha', 'Hora', 'Descripción'],
-      5,
-    );
-  }
-
-  private buildRevisionValladoSheet(worksheet: ExcelJS.Worksheet): void {
-    this.addSectionWithHeaders(
-      worksheet,
-      'REVISIÓN DEL VALLADO',
-      [
-        'Fecha',
-        'Localización',
-        'Descripción',
-        'Comunicado a',
-        'Fecha de reparación',
-        'Tipo de reparación',
-      ],
-      8,
-    );
-  }
-
-  private buildColisionesSheet(worksheet: ExcelJS.Worksheet): void {
-    this.addSectionWithHeaders(
-      worksheet,
-      'IMPACTOS',
-      [
-        'Fecha',
-        'Hora',
-        'Localización',
-        'Cód. lugar',
-        'Especie implicada',
-        'Nº',
-        'Detección de restos',
-        'Descripción incidente',
-        'Tipo aeronave',
-        'Matrícula',
-        'Consecuencia para la aeronave',
-      ],
-      6,
-    );
-  }
-
-  private buildAvisosTwrSheet(worksheet: ExcelJS.Worksheet): void {
-    this.addSectionWithHeaders(
-      worksheet,
-      'AVISOS DE/A TORRE U OTROS COLECTIVOS',
-      ['Fecha', 'Hora', 'Emisor/Receptor', 'Descripción de comunicación', 'Detalles'],
-      8,
-    );
-  }
-
-  private addSectionWithHeaders(
+  private addSectionWithRows(
     worksheet: ExcelJS.Worksheet,
     title: string,
     headers: string[],
+    rows: string[][],
     emptyRows: number,
   ): void {
     const titleRow = worksheet.addRow([title]);
@@ -313,9 +388,13 @@ export class GlobalExcelService {
 
     this.createHeaderRow(worksheet, headers);
 
-    for (let i = 0; i < emptyRows; i++) {
-      this.addDataRow(worksheet, Array(headers.length).fill(''));
-    }
+    const rowsToRender =
+      rows.length > 0
+        ? rows
+        : Array.from({ length: emptyRows }, () => Array(headers.length).fill(''));
+    rowsToRender.forEach((row) => {
+      this.addDataRow(worksheet, row);
+    });
 
     worksheet.addRow([]);
 
@@ -323,6 +402,80 @@ export class GlobalExcelService {
       const col = worksheet.getColumn(index + 1);
       col.width = Math.max(col.width ?? 10, Math.min(Math.max(header.length + 4, 12), 32));
     });
+  }
+
+  private parseSectionRows(
+    worksheet: ExcelJS.Worksheet,
+    sections: ScfSectionTemplate[],
+    sectionIndex: number,
+  ): string[][] {
+    const section = sections[sectionIndex];
+    const startRow = this.findRowByFirstCell(worksheet, section.title);
+    if (!startRow) {
+      return [];
+    }
+
+    const nextSectionTitle = sections[sectionIndex + 1]?.title;
+    const rows: string[][] = [];
+
+    for (let rowNumber = startRow + 2; rowNumber <= worksheet.rowCount; rowNumber++) {
+      const row = worksheet.getRow(rowNumber);
+      const firstCell = this.normalizeCellValue(row.getCell(1).value);
+
+      if (nextSectionTitle && firstCell === nextSectionTitle) {
+        break;
+      }
+
+      const values = section.headers.map((_, index) =>
+        this.normalizeCellValue(row.getCell(index + 1).value),
+      );
+
+      if (values.some((value) => value !== '')) {
+        rows.push(values);
+      }
+    }
+
+    return rows;
+  }
+
+  private findRowByFirstCell(worksheet: ExcelJS.Worksheet, value: string): number | null {
+    for (let rowNumber = 1; rowNumber <= worksheet.rowCount; rowNumber++) {
+      const rowValue = this.normalizeCellValue(worksheet.getRow(rowNumber).getCell(1).value);
+      if (rowValue === value) {
+        return rowNumber;
+      }
+    }
+
+    return null;
+  }
+
+  private normalizeCellValue(value: ExcelJS.CellValue | undefined | null): string {
+    if (value == null) {
+      return '';
+    }
+
+    if (value instanceof Date) {
+      return value.toLocaleDateString('es-ES');
+    }
+
+    if (typeof value === 'object') {
+      if ('text' in value && typeof value.text === 'string') {
+        return value.text.trim();
+      }
+
+      if ('result' in value && value.result != null) {
+        return String(value.result).trim();
+      }
+
+      if ('richText' in value && Array.isArray(value.richText)) {
+        return value.richText
+          .map((part) => part.text)
+          .join('')
+          .trim();
+      }
+    }
+
+    return String(value).trim();
   }
 
   private getScfDateStamp(): string {

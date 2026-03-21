@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   IonButton,
@@ -10,22 +18,15 @@ import {
   IonToolbar,
   ToastController,
 } from '@ionic/angular/standalone';
-import { GlobalExcelService } from '@service/global-excel.service';
+import { GlobalExcelService, ScfSectionData, ScfSheetData } from '@service/global-excel.service';
 import { ReportStore } from '@service/report-store';
 import { addIcons } from 'ionicons';
-import { arrowBack, downloadOutline, swapHorizontalOutline } from 'ionicons/icons';
-
-interface SheetSection {
-  title: string;
-  headers: string[];
-  emptyRows?: number;
-}
-
-interface SheetTab {
-  id: string;
-  title: string;
-  sections: SheetSection[];
-}
+import {
+  arrowBack,
+  cloudUploadOutline,
+  downloadOutline,
+  swapHorizontalOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-full-report',
@@ -53,38 +54,55 @@ interface SheetTab {
     </ion-header>
 
     <ion-content class="ion-padding bg-background text-foreground">
-      <div
-        class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-surface p-4 rounded-lg shadow-sm border border-border"
-      >
-        <div class="text-sm text-muted min-h-6 flex items-center">
-          Registros para ACTUACIONES_DIARIAS: <span class="font-bold">{{ count() }}</span>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          @if (activeSheet().id === 'ACTUACIONES_DIARIAS') {
-            <ion-button
-              color="secondary"
-              fill="outline"
-              (click)="moveActuacionesData()"
-              [disabled]="count() === 0 || showMovedData()"
-            >
-              <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
-              Mover data
-            </ion-button>
-          }
-          <ion-button color="primary" (click)="exportScf()">
-            <ion-icon slot="start" name="download-outline"></ion-icon>
-            Exportar SCF
-          </ion-button>
-        </div>
-      </div>
       <div class="flex flex-col gap-4 text-foreground">
+        <div
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-surface p-4 rounded-lg shadow-sm border border-border"
+        >
+          <div class="text-sm text-muted min-h-6 flex items-center">
+            Filas en ACTUACIONES_DIARIAS:
+            <span class="font-bold">{{ actuacionesTableCount() }}</span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <input
+              #fileInput
+              type="file"
+              accept=".xlsx"
+              (change)="onFileSelected($event)"
+              style="display: none"
+            />
+
+            @if (activeSheet().id === 'ACTUACIONES_DIARIAS') {
+              <ion-button
+                color="secondary"
+                fill="outline"
+                (click)="moveActuacionesData()"
+                [disabled]="sourceReportCount() === 0"
+              >
+                <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
+                Mover data
+              </ion-button>
+            }
+
+            <ion-button fill="outline" color="primary" (click)="fileInput.click()">
+              <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+              Importar SCF
+            </ion-button>
+
+            <ion-button color="primary" (click)="exportScf()">
+              <ion-icon slot="start" name="download-outline"></ion-icon>
+              Exportar SCF
+            </ion-button>
+          </div>
+        </div>
+
         <div class="bg-surface border border-border rounded-xl p-2">
           <div
             role="radiogroup"
             aria-label="Hojas SCF"
             class="grid grid-cols-1 sm:grid-cols-2 gap-2"
           >
-            @for (sheet of sheets; track sheet.id) {
+            @for (sheet of scfSheets(); track sheet.id) {
               <button
                 type="button"
                 role="radio"
@@ -142,28 +160,16 @@ interface SheetTab {
                       </tr>
                     </thead>
                     <tbody>
-                      @if (shouldRenderMovedData(section)) {
-                        @for (row of actuacionesPreviewRows(); track $index) {
-                          <tr>
-                            @for (cell of row; track $index) {
-                              <td
-                                class="border-b border-r border-border px-3 py-2 bg-background text-foreground whitespace-nowrap"
-                              >
-                                {{ cell }}
-                              </td>
-                            }
-                          </tr>
-                        }
-                      } @else {
-                        @for (rowIndex of emptyRowIndexes(section.emptyRows ?? 6); track rowIndex) {
-                          <tr>
-                            @for (header of section.headers; track header) {
-                              <td class="border-b border-r border-border px-3 py-3 bg-background">
-                                &nbsp;
-                              </td>
-                            }
-                          </tr>
-                        }
+                      @for (row of visibleRows(section); track $index) {
+                        <tr>
+                          @for (cell of row; track $index) {
+                            <td
+                              class="border-b border-r border-border px-3 py-2 bg-background text-foreground whitespace-nowrap"
+                            >
+                              {{ cell || ' ' }}
+                            </td>
+                          }
+                        </tr>
                       }
                     </tbody>
                   </table>
@@ -181,217 +187,39 @@ export default class FullReportPage {
   private reportStore = inject(ReportStore);
   private toastController = inject(ToastController);
 
-  rows = this.reportStore.rows;
-  count = this.reportStore.count;
-  showMovedData = signal(false);
-  actuacionesPreviewRows = computed(() => {
-    return this.rows().map((row) => [
-      row.date || '',
-      row.time || '',
-      row.weather || '',
-      row.worker || '',
-      row.zoneId || '',
-      row.speciesId || '',
-      String(row.count ?? 0),
-      row.behavior || '',
-      row.actionType || '',
-      row.operation || '',
-      row.interaction || '',
-      row.method || '',
-      row.animal || '',
-      row.efficacy || '',
-      String(row.captured ?? 0),
-      row.notes || '',
-    ]);
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
+
+  sourceReportRows = this.reportStore.rows;
+  sourceReportCount = this.reportStore.count;
+  scfSheets = signal<ScfSheetData[]>(this.globalExcelService.createScfSheetsData());
+  selectedSheetId = signal<string>(this.scfSheets()[0]?.id ?? 'DATOS_GENERALES');
+
+  activeSheet = computed(() => {
+    return (
+      this.scfSheets().find((sheet) => sheet.id === this.selectedSheetId()) ?? this.scfSheets()[0]
+    );
   });
 
-  sheets: SheetTab[] = [
-    {
-      id: 'DATOS_GENERALES',
-      title: 'Datos base de asignación y animales en servicio.',
-      sections: [
-        {
-          title: 'ASIGNACIÓN',
-          headers: ['Asignación', 'Categoría', 'Nombre', 'Alta', 'Baja'],
-          emptyRows: 4,
-        },
-        {
-          title: 'ANIMALES EN SERVICIO - AVES',
-          headers: [
-            'Nº',
-            'Especie',
-            'Anilla/Microchip',
-            'Nombre',
-            'Modalidad de vuelo',
-            'Fecha Alta',
-            'Fecha Baja',
-            'Motivo baja',
-          ],
-          emptyRows: 12,
-        },
-        {
-          title: 'ANIMALES EN SERVICIO - PERROS',
-          headers: [
-            'Nº',
-            'Especie',
-            'Microchip',
-            'Nombre',
-            'Fecha Alta',
-            'Fecha Baja',
-            'Motivo baja',
-          ],
-          emptyRows: 12,
-        },
-      ],
-    },
-    {
-      id: 'ACTUACIONES_DIARIAS',
-      title: 'Hoja operativa con los registros de actuación.',
-      sections: [
-        {
-          title: 'ACTUACIONES_DIARIAS',
-          headers: [
-            'Fecha',
-            'Hora',
-            'Climatología',
-            'Personal',
-            'Localización',
-            'Especie',
-            'Nº',
-            'Actitud',
-            'Tipo actuación',
-            'Operación',
-            'Interacción operación',
-            'Método empleado',
-            'Animal empleado',
-            'Eficacia',
-            'Captura (Nº indiv)',
-            'Observaciones',
-          ],
-        },
-      ],
-    },
-    {
-      id: 'RETIRADAS_ANIMAL',
-      title: 'Retiradas y rescates de fauna.',
-      sections: [
-        {
-          title: 'RETIRADA DE RESTOS DE FAUNA',
-          headers: [
-            'Fecha',
-            'Hora',
-            'Localización',
-            'Cód. lugar',
-            'Especie',
-            'Nº',
-            'Causa',
-            'Observaciones',
-          ],
-          emptyRows: 6,
-        },
-        {
-          title: 'RESCATE DE OTROS ANIMALES EN EL AREA DE MOVIMIENTO',
-          headers: [
-            'Fecha',
-            'Hora',
-            'Localización',
-            'Cód. lugar',
-            'Especie',
-            'Nº',
-            'Método empleado',
-            'Observaciones',
-          ],
-          emptyRows: 6,
-        },
-      ],
-    },
-    {
-      id: 'SEGUIMIENTO',
-      title: 'Seguimientos de vegetación y focos de atracción.',
-      sections: [
-        {
-          title: 'SEGUIMIENTO DE LAS ACTUACIONES EN VEGETACIÓN',
-          headers: ['Fecha', 'Hora', 'Descripción'],
-          emptyRows: 6,
-        },
-        {
-          title: 'SEGUIMIENTO DE FOCOS/PUNTOS ATRACTIVOS',
-          headers: ['Foco/Punto atractivos', 'Fecha', 'Hora', 'Descripción'],
-          emptyRows: 8,
-        },
-        {
-          title: 'DETECCIÓN DE FOCOS/PUNTO DE ATRACCIÓN',
-          headers: ['Fecha', 'Hora', 'Descripción'],
-          emptyRows: 5,
-        },
-      ],
-    },
-    {
-      id: 'REVISION_VALLADO',
-      title: 'Control de incidencias y reparaciones de vallado.',
-      sections: [
-        {
-          title: 'REVISIÓN DEL VALLADO',
-          headers: [
-            'Fecha',
-            'Localización',
-            'Descripción',
-            'Comunicado a',
-            'Fecha de reparación',
-            'Tipo de reparación',
-          ],
-          emptyRows: 8,
-        },
-      ],
-    },
-    {
-      id: 'COLISIONES',
-      title: 'Registro de impactos con aeronaves.',
-      sections: [
-        {
-          title: 'IMPACTOS',
-          headers: [
-            'Fecha',
-            'Hora',
-            'Localización',
-            'Cód. lugar',
-            'Especie implicada',
-            'Nº',
-            'Detección de restos',
-            'Descripción incidente',
-            'Tipo aeronave',
-            'Matrícula',
-            'Consecuencia para la aeronave',
-          ],
-          emptyRows: 6,
-        },
-      ],
-    },
-    {
-      id: 'AVISOS_TWR',
-      title: 'Comunicaciones con torre y otros colectivos.',
-      sections: [
-        {
-          title: 'AVISOS DE/A TORRE U OTROS COLECTIVOS',
-          headers: ['Fecha', 'Hora', 'Emisor/Receptor', 'Descripción de comunicación', 'Detalles'],
-          emptyRows: 8,
-        },
-      ],
-    },
-  ];
-
-  selectedSheetId = signal<string>(this.sheets[0].id);
-  activeSheet = computed(() => {
-    return this.sheets.find((sheet) => sheet.id === this.selectedSheetId()) ?? this.sheets[0];
+  actuacionesTableCount = computed(() => {
+    const actuacionesSheet = this.scfSheets().find((sheet) => sheet.id === 'ACTUACIONES_DIARIAS');
+    const actuacionesSection = actuacionesSheet?.sections.find(
+      (section) => section.title === 'ACTUACIONES_DIARIAS',
+    );
+    return actuacionesSection?.rows.length ?? 0;
   });
 
   constructor() {
-    addIcons({ arrowBack, downloadOutline, swapHorizontalOutline });
+    addIcons({
+      arrowBack,
+      cloudUploadOutline,
+      downloadOutline,
+      swapHorizontalOutline,
+    });
   }
 
   async exportScf() {
     try {
-      await this.globalExcelService.exportScfWorkbook(this.rows());
+      await this.globalExcelService.exportScfWorkbook(this.scfSheets());
       this.showToast('SCF exportado correctamente', 'success');
     } catch (error) {
       console.error('SCF export error:', error);
@@ -399,31 +227,71 @@ export default class FullReportPage {
     }
   }
 
-  selectSheet(sheetId: string) {
-    this.selectedSheetId.set(sheetId);
-    if (sheetId !== 'ACTUACIONES_DIARIAS') {
-      this.showMovedData.set(false);
+  async onFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const importedSheets = await this.globalExcelService.importScfWorkbook(file);
+      this.scfSheets.set(importedSheets);
+      this.selectedSheetId.set(importedSheets[0]?.id ?? 'DATOS_GENERALES');
+      this.showToast('SCF importado correctamente', 'success');
+    } catch (error) {
+      console.error('SCF import error:', error);
+      this.showToast('Error al importar el SCF', 'danger');
+    } finally {
+      target.value = '';
     }
   }
 
+  selectSheet(sheetId: string) {
+    this.selectedSheetId.set(sheetId);
+  }
+
   moveActuacionesData() {
-    this.showMovedData.set(true);
+    const rows = this.globalExcelService.mapGlobalRowsToActuacionesRows(this.sourceReportRows());
+    this.updateSectionRows('ACTUACIONES_DIARIAS', 'ACTUACIONES_DIARIAS', rows);
   }
 
   sheetLabel(sheetId: string): string {
     return sheetId.replace(/_/g, ' ');
   }
 
-  emptyRowIndexes(rows: number): number[] {
-    return Array.from({ length: rows }, (_, index) => index);
+  visibleRows(section: ScfSectionData): string[][] {
+    if (section.rows.length > 0) {
+      return section.rows;
+    }
+
+    return Array.from({ length: section.emptyRows || 6 }, () =>
+      Array(section.headers.length).fill(''),
+    );
   }
 
-  shouldRenderMovedData(section: SheetSection): boolean {
-    return (
-      this.activeSheet().id === 'ACTUACIONES_DIARIAS' &&
-      section.title === 'ACTUACIONES_DIARIAS' &&
-      this.showMovedData() &&
-      this.actuacionesPreviewRows().length > 0
+  private updateSectionRows(sheetId: string, sectionTitle: string, rows: string[][]) {
+    this.scfSheets.update((current) =>
+      current.map((sheet) => {
+        if (sheet.id !== sheetId) {
+          return sheet;
+        }
+
+        return {
+          ...sheet,
+          sections: sheet.sections.map((section) => {
+            if (section.title !== sectionTitle) {
+              return section;
+            }
+
+            return {
+              ...section,
+              rows,
+            };
+          }),
+        };
+      }),
     );
   }
 
