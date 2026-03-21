@@ -80,11 +80,9 @@ import { ExcelService } from '@service/excel.service';
 
         <ion-item>
           <ion-select interface="action-sheet" label="Método empleado" formControlName="method">
-            <ion-select-option>Claxon</ion-select-option>
-            <ion-select-option>Sonido</ion-select-option>
-            <ion-select-option>Pirotecnia</ion-select-option>
-            <ion-select-option>Láser</ion-select-option>
-            <ion-select-option>Vuelo dispersión halcón</ion-select-option>
+            @for (methodOption of methodOptions; track methodOption) {
+              <ion-select-option>{{ methodOption }}</ion-select-option>
+            }
           </ion-select>
         </ion-item>
 
@@ -130,6 +128,15 @@ import { ExcelService } from '@service/excel.service';
 export default class Form {
   #store = inject(ActionsStore);
   #excelService = inject(ExcelService);
+
+  methodOptions = [
+    'Claxon',
+    'Ahuyentador',
+    'Pirotecnia',
+    'Láser',
+    'Perro',
+    'Vuelo dispersión halcón',
+  ];
 
   zone = computed(() => this.#store.step1Value());
   bird = computed(() => this.#store.step2Value());

@@ -3,6 +3,14 @@ import { ActuacionData } from './excel.service';
 import { Preferences } from '@capacitor/preferences';
 
 const REPORT_STORE_KEY = 'enric_report_data';
+const REPORT_BACKUP_STORE_KEY = 'enric_report_data_backups';
+const MAX_BACKUPS = 20;
+
+interface ReportBackup {
+  id: string;
+  createdAt: string;
+  rows: ActuacionData[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -10,15 +18,23 @@ const REPORT_STORE_KEY = 'enric_report_data';
 export class ReportStore {
   // Signal to hold the list of rows
   #rows = signal<ActuacionData[]>([]);
+  #backups = signal<ReportBackup[]>([]);
 
   // Public read-only access
   rows = this.#rows.asReadonly();
+  backups = this.#backups.asReadonly();
 
   // Computed: Total count
   count = computed(() => this.#rows().length);
+  hasBackups = computed(() => this.#backups().length > 0);
+  latestBackupDate = computed(() => {
+    const latest = this.#backups()[0];
+    return latest ? new Date(latest.createdAt) : null;
+  });
 
   constructor() {
     this.loadInitialData();
+    this.loadBackups();
   }
 
   /**
@@ -28,6 +44,20 @@ export class ReportStore {
     const { value } = await Preferences.get({ key: REPORT_STORE_KEY });
     if (value) {
       this.#rows.set(JSON.parse(value));
+    }
+  }
+
+  private async loadBackups() {
+    const { value } = await Preferences.get({ key: REPORT_BACKUP_STORE_KEY });
+    if (!value) return;
+
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        this.#backups.set(parsed);
+      }
+    } catch (error) {
+      console.error('Error parsing backups', error);
     }
   }
 
@@ -75,10 +105,27 @@ export class ReportStore {
   /**
    * Clear all rows
    */
-  clear() {
+  async clear() {
+    const currentRows = this.#rows();
+    if (currentRows.length > 0) {
+      await this.saveBackup(currentRows);
+    }
+
     const empty: ActuacionData[] = [];
     this.#rows.set(empty);
-    this.saveToStorage(empty);
+    await this.saveToStorage(empty);
+  }
+
+  async restoreLatestBackup(): Promise<number> {
+    const latest = this.#backups()[0];
+    if (!latest) {
+      return 0;
+    }
+
+    const restoredRows = [...latest.rows];
+    this.#rows.set(restoredRows);
+    await this.saveToStorage(restoredRows);
+    return restoredRows.length;
   }
 
   /**
@@ -88,6 +135,22 @@ export class ReportStore {
     await Preferences.set({
       key: REPORT_STORE_KEY,
       value: JSON.stringify(rows),
+    });
+  }
+
+  private async saveBackup(rows: ActuacionData[]) {
+    const snapshot: ReportBackup = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      createdAt: new Date().toISOString(),
+      rows: [...rows],
+    };
+
+    const updatedBackups = [snapshot, ...this.#backups()].slice(0, MAX_BACKUPS);
+    this.#backups.set(updatedBackups);
+
+    await Preferences.set({
+      key: REPORT_BACKUP_STORE_KEY,
+      value: JSON.stringify(updatedBackups),
     });
   }
 

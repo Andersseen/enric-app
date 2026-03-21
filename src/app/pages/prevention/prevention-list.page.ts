@@ -16,13 +16,6 @@ import ActionCards, { type ActionCardItem } from '@components/action-cards';
 export default class PreventionListPage {
   cards: ActionCardItem[] = [
     {
-      icon: '📝',
-      title: 'PPOAM',
-      description: 'Registro general.',
-      routerLink: ['ppoam'],
-      color: 'primary',
-    },
-    {
       icon: '🛣️',
       title: 'Revisión pista',
       description: 'Inspección de pista.',
@@ -48,6 +41,13 @@ export default class PreventionListPage {
       title: 'Vuelo de marcaje',
       description: 'Control mediante cetrería.',
       routerLink: ['marking-flight'],
+      color: 'primary',
+    },
+    {
+      icon: '📝',
+      title: 'PPOAM',
+      description: 'Registro general.',
+      routerLink: ['ppoam'],
       color: 'primary',
     },
   ];

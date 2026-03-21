@@ -100,10 +100,9 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             >
               <ion-select-option value="">Seleccionar...</ion-select-option>
-              <ion-select-option value="Soleado">Soleado</ion-select-option>
-              <ion-select-option value="Nublado">Nublado</ion-select-option>
-              <ion-select-option value="Lluvioso">Lluvioso</ion-select-option>
-              <ion-select-option value="Viento">Viento</ion-select-option>
+              @for (weather of weatherOptions; track weather.value) {
+                <ion-select-option [value]="weather.value">{{ weather.label }}</ion-select-option>
+              }
             </ion-select>
           </div>
 
@@ -149,6 +148,17 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
 })
 export default class SessionHeaderComponent {
   #session = inject(Session);
+
+  weatherOptions = [
+    { value: 'Soleado', label: 'Soleado' },
+    { value: 'Nublado', label: 'Nublado' },
+    { value: 'Lluvioso', label: 'Lluvioso' },
+    { value: 'Viento', label: 'Viento' },
+    { value: 'Claros', label: 'Claros' },
+    { value: 'Lluvia', label: 'Lluvia' },
+    { value: 'Tormenta', label: 'Tormenta' },
+    { value: 'Viento fuerte', label: 'Viento fuerte' },
+  ];
 
   expanded = computed(() => this.#session.expand());
 
