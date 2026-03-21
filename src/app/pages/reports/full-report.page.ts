@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonButton,
   IonButtons,
@@ -35,25 +35,16 @@ import {
 @Component({
   selector: 'app-full-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButtons,
-    IonButton,
-    IonIcon,
-    RouterLink,
-  ],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button routerLink="/home" color="dark">
+          <ion-button (click)="goHome()" color="dark">
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>Reporte SCF</ion-title>
+        <ion-title class="cursor-pointer" (click)="goHome()">Reporte SCF</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -259,6 +250,7 @@ export default class FullReportPage {
   private static readonly SCF_STATE_KEY = 'enric_scf_full_report_state';
 
   private globalExcelService = inject(GlobalExcelService);
+  private router = inject(Router);
   private reportStore = inject(ReportStore);
   private toastController = inject(ToastController);
   private alertController = inject(AlertController);
@@ -297,9 +289,14 @@ export default class FullReportPage {
   }
 
   async exportScf() {
+    const filename = await this.askExportFilename();
+    if (!filename) {
+      return;
+    }
+
     this.setLoading(true, 'Generando fichero SCF…');
     try {
-      await this.globalExcelService.exportScfWorkbook(this.scfSheets());
+      await this.globalExcelService.exportScfWorkbook(this.scfSheets(), filename);
       this.showToast('SCF exportado correctamente ✓', 'success');
     } catch (error) {
       console.error('SCF export error:', error);
@@ -307,6 +304,10 @@ export default class FullReportPage {
     } finally {
       this.setLoading(false);
     }
+  }
+
+  goHome() {
+    this.router.navigate(['/home']);
   }
 
   async onFileSelected(event: Event) {
@@ -426,6 +427,46 @@ export default class FullReportPage {
           {
             text: 'Agregar',
             handler: () => resolve('append'),
+          },
+        ],
+      });
+
+      await alert.present();
+    });
+  }
+
+  private async askExportFilename(): Promise<string | null> {
+    const suggestedFilename = this.globalExcelService.getDefaultScfFilename();
+
+    return new Promise(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Exportar SCF',
+        message: 'Confirma el nombre del archivo antes de generarlo.',
+        inputs: [
+          {
+            name: 'filename',
+            type: 'text',
+            value: suggestedFilename,
+            placeholder: 'SCF-dd-MM-yy.xlsx',
+          },
+        ],
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => resolve(null),
+          },
+          {
+            text: 'OK',
+            handler: (data) => {
+              const filename = (data?.filename ?? '').trim();
+              if (!filename) {
+                resolve(suggestedFilename);
+                return;
+              }
+
+              resolve(filename.toLowerCase().endsWith('.xlsx') ? filename : `${filename}.xlsx`);
+            },
           },
         ],
       });

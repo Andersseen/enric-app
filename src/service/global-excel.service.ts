@@ -291,7 +291,11 @@ export class GlobalExcelService {
     });
   }
 
-  async exportScfWorkbook(sheets: ScfSheetData[]): Promise<void> {
+  getDefaultScfFilename(): string {
+    return `SCF-${this.getScfDateStamp()}.xlsx`;
+  }
+
+  async exportScfWorkbook(sheets: ScfSheetData[], filename?: string): Promise<void> {
     const workbook = new ExcelJS.Workbook();
 
     workbook.creator = 'SCF App';
@@ -302,8 +306,8 @@ export class GlobalExcelService {
       this.buildSheetFromData(ws, sheet);
     });
 
-    const filename = `SCF-${this.getScfDateStamp()}.xlsx`;
-    await this.saveWorkbook(workbook, filename);
+    const safeFilename = this.normalizeExportFilename(filename);
+    await this.saveWorkbook(workbook, safeFilename);
   }
 
   mapGlobalRowsToActuacionesRows(data: GlobalReportRow[]): string[][] {
@@ -545,6 +549,16 @@ export class GlobalExcelService {
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const yy = String(now.getFullYear()).slice(-2);
     return `${dd}-${mm}-${yy}`;
+  }
+
+  private normalizeExportFilename(filename?: string): string {
+    const fallback = this.getDefaultScfFilename();
+    if (!filename || !filename.trim()) {
+      return fallback;
+    }
+
+    const trimmed = filename.trim();
+    return trimmed.toLowerCase().endsWith('.xlsx') ? trimmed : `${trimmed}.xlsx`;
   }
 
   private async saveWorkbook(workbook: ExcelJS.Workbook, filename: string): Promise<void> {
