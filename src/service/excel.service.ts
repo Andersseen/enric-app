@@ -468,8 +468,8 @@ export class ExcelService {
     data.forEach((row) => {
       this.addDataRow(worksheet, [
         row.date || sessionData.date || new Date().toLocaleDateString('es-ES'), // Fallback to session
-        sessionData.weather || '',
-        sessionData.worker || '',
+        row.weather || sessionData.weather || '',
+        row.worker || sessionData.worker || '',
         row.time ||
           sessionData.time ||
           new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
