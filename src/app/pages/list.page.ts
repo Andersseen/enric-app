@@ -86,6 +86,13 @@ export default class List {
       color: 'primary',
     },
     {
+      icon: '📚',
+      title: 'Reporte entero',
+      description: 'Nueva base para reportes ampliados por libros.',
+      routerLink: ['/reporte-entero'],
+      color: 'secondary',
+    },
+    {
       icon: '👷',
       title: 'Gestionar Trabajadores',
       description: 'Añadir o eliminar trabajadores.',

@@ -37,7 +37,7 @@ import ActionsStore from '@service/actions-store';
               <ion-button
                 (click)="goBack()"
                 shape="round"
-                class="w-14 h-14 bg-surface-variant/50 rounded-full"
+                class="w-16 h-16 bg-surface-variant/50 rounded-full"
                 size="large"
               >
                 <ion-icon slot="icon-only" name="caret-back" class="text-3xl"></ion-icon>
@@ -51,7 +51,7 @@ import ActionsStore from '@service/actions-store';
                 (click)="goForward()"
                 shape="round"
                 size="large"
-                class="w-14 h-14 bg-surface-variant/50 rounded-full"
+                class="w-16 h-16 bg-surface-variant/50 rounded-full"
               >
                 <ion-icon slot="icon-only" name="caret-forward" class="text-3xl"></ion-icon>
               </ion-button>
@@ -65,6 +65,12 @@ import ActionsStore from '@service/actions-store';
         <ng-content />
       </ion-content>
     </section>
+  `,
+  styles: `
+    .sc-ion-buttons-md-s .button-has-icon-only.button-clear {
+      width: 4rem;
+      height: 3rem;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
