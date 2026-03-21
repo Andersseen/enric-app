@@ -28,6 +28,7 @@ import {
   cloudUploadOutline,
   downloadOutline,
   swapHorizontalOutline,
+  trashBinOutline,
   alertCircleOutline,
   checkmarkCircleOutline,
 } from 'ionicons/icons';
@@ -94,6 +95,16 @@ import {
             >
               <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
               Importar SCF
+            </ion-button>
+
+            <ion-button
+              fill="outline"
+              color="danger"
+              (click)="clearAllTables()"
+              [disabled]="isLoading()"
+            >
+              <ion-icon slot="start" name="trash-bin-outline"></ion-icon>
+              Limpiar tablas
             </ion-button>
 
             <ion-button color="primary" (click)="exportScf()" [disabled]="isLoading()">
@@ -281,6 +292,7 @@ export default class FullReportPage {
       cloudUploadOutline,
       downloadOutline,
       swapHorizontalOutline,
+      trashBinOutline,
       alertCircleOutline,
       checkmarkCircleOutline,
     });
@@ -370,6 +382,19 @@ export default class FullReportPage {
     this.showToast(`${rows.length} filas ${actionText} en ACTUACIONES DIARIAS`, 'success');
   }
 
+  async clearAllTables() {
+    const confirm = await this.askClearTablesConfirmation();
+    if (!confirm) {
+      return;
+    }
+
+    this.scfSheets.set(this.globalExcelService.createScfSheetsData());
+    this.selectedSheetId.set(this.scfSheets()[0]?.id ?? 'DATOS_GENERALES');
+    await this.persistScfState();
+
+    this.showToast('Tablas limpiadas. Ya puedes reimportar todo.', 'success');
+  }
+
   sheetLabel(sheetId: string): string {
     return sheetId.replace(/_/g, ' ');
   }
@@ -427,6 +452,29 @@ export default class FullReportPage {
           {
             text: 'Agregar',
             handler: () => resolve('append'),
+          },
+        ],
+      });
+
+      await alert.present();
+    });
+  }
+
+  private async askClearTablesConfirmation(): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Limpiar tablas',
+        message: 'Se borrarán todos los datos cargados de este SCF. ¿Continuar?',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => resolve(false),
+          },
+          {
+            text: 'Limpiar',
+            role: 'destructive',
+            handler: () => resolve(true),
           },
         ],
       });

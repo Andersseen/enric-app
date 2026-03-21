@@ -285,7 +285,7 @@ export class GlobalExcelService {
         title: sheet.title,
         sections: sheet.sections.map((section, index) => ({
           ...section,
-          rows: worksheet ? this.parseSectionRows(worksheet, sheet.sections, index) : [],
+          rows: worksheet ? this.parseSectionRows(worksheet, sheet, index) : [],
         })),
       };
     });
@@ -446,44 +446,70 @@ export class GlobalExcelService {
 
   private parseSectionRows(
     worksheet: ExcelJS.Worksheet,
-    sections: ScfSectionTemplate[],
+    sheet: ScfSheetTemplate,
     sectionIndex: number,
   ): string[][] {
-    const section = sections[sectionIndex];
+    const section = sheet.sections[sectionIndex];
+    const anchors = this.getSectionAnchors(sheet.id, section, sectionIndex);
 
-    let startRow = this.findRowByFirstCell(worksheet, section.title);
+    let startRow = this.findRowByFirstCell(worksheet, anchors);
 
-    if (startRow === null) {
-      startRow = this.findRowByFirstCell(worksheet, section.headers[0]);
-      if (startRow === null) return [];
-
-      return this.extractDataRows(worksheet, section, startRow + 1, sections, sectionIndex);
+    if (startRow === null && section.headers.length > 0) {
+      startRow = this.findRowByFirstCell(worksheet, [section.headers[0]]);
     }
 
-    return this.extractDataRows(worksheet, section, startRow + 2, sections, sectionIndex);
+    if (startRow === null) {
+      return [];
+    }
+
+    const startAtHeader = this.rowLooksLikeHeader(worksheet.getRow(startRow), section.headers);
+    const firstDataRow = startAtHeader ? startRow + 1 : startRow + 2;
+
+    const stopMarkers = sheet.sections
+      .flatMap((otherSection, index) => {
+        if (index <= sectionIndex) {
+          return [];
+        }
+        return this.getSectionAnchors(sheet.id, otherSection, index);
+      })
+      .filter((marker) => marker.trim() !== '');
+
+    return this.extractDataRows(worksheet, section, firstDataRow, stopMarkers);
   }
 
   private extractDataRows(
     worksheet: ExcelJS.Worksheet,
     section: ScfSectionTemplate,
     firstDataRow: number,
-    sections: ScfSectionTemplate[],
-    sectionIndex: number,
+    stopMarkers: string[],
   ): string[][] {
-    const nextSectionTitle = sections[sectionIndex + 1]?.title;
+    const normalizedStopMarkers = new Set(
+      stopMarkers.map((marker) => this.normalizeForMatch(marker)).filter(Boolean),
+    );
     const rows: string[][] = [];
+    const normalizedHeaders = section.headers.map((header) => this.normalizeForMatch(header));
 
     for (let rowNumber = firstDataRow; rowNumber <= worksheet.rowCount; rowNumber++) {
       const row = worksheet.getRow(rowNumber);
       const firstCell = this.normalizeCellValue(row.getCell(1).value);
+      const normalizedFirstCell = this.normalizeForMatch(firstCell);
 
-      if (nextSectionTitle && firstCell === nextSectionTitle) break;
-
-      if (nextSectionTitle && firstCell.trim() === nextSectionTitle.trim()) break;
+      if (normalizedStopMarkers.has(normalizedFirstCell)) {
+        break;
+      }
 
       const values = section.headers.map((_, index) =>
         this.normalizeCellValue(row.getCell(index + 1).value),
       );
+      const normalizedValues = values.map((value) => this.normalizeForMatch(value));
+
+      const isHeaderRepeat =
+        normalizedValues.length === normalizedHeaders.length &&
+        normalizedValues.every((value, index) => value === normalizedHeaders[index]);
+
+      if (isHeaderRepeat || this.looksLikeHeaderRow(values, section.headers)) {
+        continue;
+      }
 
       if (values.some((v) => v !== '')) {
         rows.push(values);
@@ -493,15 +519,107 @@ export class GlobalExcelService {
     return rows;
   }
 
-  private findRowByFirstCell(worksheet: ExcelJS.Worksheet, value: string): number | null {
-    const normalizedTarget = value.trim().toLowerCase();
+  private looksLikeHeaderRow(values: string[], headers: string[]): boolean {
+    const normalizedValues = values.map((value) => this.normalizeLooseForMatch(value));
+    const normalizedHeaders = headers.map((header) => this.normalizeLooseForMatch(header));
+
+    let comparableCells = 0;
+    let matchingCells = 0;
+
+    for (let i = 0; i < Math.min(normalizedValues.length, normalizedHeaders.length); i++) {
+      const value = normalizedValues[i];
+      const header = normalizedHeaders[i];
+
+      if (!value || !header) {
+        continue;
+      }
+
+      comparableCells += 1;
+
+      if (value === header || value.includes(header) || header.includes(value)) {
+        matchingCells += 1;
+      }
+    }
+
+    if (comparableCells === 0) {
+      return false;
+    }
+
+    return matchingCells / comparableCells >= 0.6;
+  }
+
+  private findRowByFirstCell(worksheet: ExcelJS.Worksheet, candidates: string[]): number | null {
+    const normalizedCandidates = new Set(
+      candidates.map((value) => this.normalizeForMatch(value)).filter(Boolean),
+    );
+
     for (let rowNumber = 1; rowNumber <= worksheet.rowCount; rowNumber++) {
       const cellValue = this.normalizeCellValue(worksheet.getRow(rowNumber).getCell(1).value);
-      if (cellValue.trim().toLowerCase() === normalizedTarget) {
+      const normalizedCellValue = this.normalizeForMatch(cellValue);
+      if (normalizedCandidates.has(normalizedCellValue)) {
         return rowNumber;
       }
     }
     return null;
+  }
+
+  private rowLooksLikeHeader(row: ExcelJS.Row, headers: string[]): boolean {
+    const normalizedHeaders = headers.map((header) => this.normalizeForMatch(header));
+    const rowValues = headers.map((_, index) =>
+      this.normalizeForMatch(this.normalizeCellValue(row.getCell(index + 1).value)),
+    );
+
+    return (
+      rowValues.length === normalizedHeaders.length &&
+      rowValues.every((value, index) => value === normalizedHeaders[index])
+    );
+  }
+
+  private getSectionAnchors(
+    sheetId: string,
+    section: ScfSectionTemplate,
+    sectionIndex: number,
+  ): string[] {
+    const anchors = [section.title, section.title.replace(/_/g, ' ')];
+
+    if (sheetId === 'DATOS_GENERALES') {
+      if (sectionIndex === 0) {
+        anchors.push('ASIGNACION');
+      }
+      if (sectionIndex === 1) {
+        anchors.push('ANIMALES EN SERVICIO', 'AVES');
+      }
+      if (sectionIndex === 2) {
+        anchors.push('PERROS');
+      }
+    }
+
+    if (sheetId === 'ACTUACIONES_DIARIAS') {
+      anchors.push('ACTUACIONES DIARIAS');
+    }
+
+    if (sheetId === 'AVISOS_TWR') {
+      anchors.push('AVISOS TWR');
+    }
+
+    return anchors;
+  }
+
+  private normalizeForMatch(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[_\-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toUpperCase();
+  }
+
+  private normalizeLooseForMatch(value: string): string {
+    return this.normalizeForMatch(value)
+      .replace(/[^A-Z0-9 ]+/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   private normalizeCellValue(value: ExcelJS.CellValue | undefined | null): string {
