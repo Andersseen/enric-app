@@ -9,7 +9,7 @@ import { Zone } from '@data/zones';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepZoneComponent, PreventionStepPage],
   template: `
-    <app-prevention-step-page title="Revisión Perros - Zona">
+    <app-prevention-step-page title="Revisión perro - Zona">
       <app-prevention-step-zone
         [selected]="store.dogReviewZone()"
         (select)="onSelect($event)"

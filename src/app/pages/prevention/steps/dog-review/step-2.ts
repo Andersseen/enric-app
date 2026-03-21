@@ -11,7 +11,7 @@ import PreventionStepPage from '../prevention-step-page';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepDogDetailsComponent, PreventionStepPage],
   template: `
-    <app-prevention-step-page title="Revisión Perros - Detalles">
+    <app-prevention-step-page title="Revisión perro - Detalles">
       <app-prevention-step-dog-details
         [animal]="store.dogReviewAnimal()"
         (animalChange)="store.dogReviewAnimal.set($event)"
@@ -43,12 +43,12 @@ export default class DogReviewStepTwo extends PreventionStep {
       speciesId: '-',
       count: 0,
       behavior: '-',
-      actionType: 'Revisión Perros',
+      actionType: 'Revisión perro',
       operation: 'No',
-      interaction: '-',
+      interaction: 'No',
       method: 'Perro',
       animal: this.store.dogReviewAnimal(),
-      efficacy: '-',
+      efficacy: 'Si',
       captured: 0,
       notes: this.store.dogReviewNotes(),
       date: sessionData.date || now.toLocaleDateString('es-ES'),
