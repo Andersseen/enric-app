@@ -31,6 +31,8 @@ export interface ScfSectionTemplate {
 
 export interface ScfSheetTemplate {
   id: string;
+
+  excelName: string;
   title: string;
   sections: ScfSectionTemplate[];
 }
@@ -41,6 +43,7 @@ export interface ScfSectionData extends ScfSectionTemplate {
 
 export interface ScfSheetData {
   id: string;
+  excelName: string;
   title: string;
   sections: ScfSectionData[];
 }
@@ -48,11 +51,13 @@ export interface ScfSheetData {
 export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   {
     id: 'DATOS_GENERALES',
-    title: 'Datos base de asignacion y animales en servicio.',
+    excelName: 'DATOS_GENERALES',
+    title: 'Datos base de asignación y animales en servicio.',
     sections: [
       {
         title: 'ASIGNACIÓN',
-        headers: ['Asignación', 'Categoría', 'Nombre', 'Alta', 'Baja'],
+
+        headers: ['Asignación', 'CATEGORIA', 'NOMBRE', 'ALTA', 'BAJA'],
         emptyRows: 4,
       },
       {
@@ -86,15 +91,18 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   },
   {
     id: 'ACTUACIONES_DIARIAS',
-    title: 'Hoja operativa con los registros de actuacion.',
+
+    excelName: 'ACTUACIONES DIARIAS',
+    title: 'Hoja operativa con los registros de actuación.',
     sections: [
       {
         title: 'ACTUACIONES_DIARIAS',
+
         headers: [
           'Fecha',
-          'Hora',
           'Climatología',
           'Personal',
+          'Hora',
           'Localización',
           'Especie',
           'Nº',
@@ -114,6 +122,7 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   },
   {
     id: 'RETIRADAS_ANIMAL',
+    excelName: 'RETIRADAS_ANIMAL',
     title: 'Retiradas y rescates de fauna.',
     sections: [
       {
@@ -148,7 +157,8 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   },
   {
     id: 'SEGUIMIENTO',
-    title: 'Seguimientos de vegetacion y focos de atraccion.',
+    excelName: 'SEGUIMIENTO',
+    title: 'Seguimientos de vegetación y focos de atracción.',
     sections: [
       {
         title: 'SEGUIMIENTO DE LAS ACTUACIONES EN VEGETACIÓN',
@@ -169,6 +179,8 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   },
   {
     id: 'REVISION_VALLADO',
+
+    excelName: 'REVISIÓN_VALLADO',
     title: 'Control de incidencias y reparaciones de vallado.',
     sections: [
       {
@@ -187,6 +199,7 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   },
   {
     id: 'COLISIONES',
+    excelName: 'COLISIONES',
     title: 'Registro de impactos con aeronaves.',
     sections: [
       {
@@ -210,6 +223,8 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
   },
   {
     id: 'AVISOS_TWR',
+
+    excelName: 'AVISOS TWR',
     title: 'Comunicaciones con torre y otros colectivos.',
     sections: [
       {
@@ -220,6 +235,17 @@ export const SCF_SHEETS_TEMPLATE: ScfSheetTemplate[] = [
     ],
   },
 ];
+
+const COLOR = {
+  titleBg: '000000',
+  titleFg: 'FFFFFF',
+  headerBg: 'CFCFCF',
+  headerFg: '000000',
+  dataBg: 'E8E8E8',
+  bannerBg: 'FFF200',
+  bannerFg: '111111',
+  border: '000000',
+} as const;
 
 @Injectable({
   providedIn: 'root',
@@ -233,6 +259,7 @@ export class GlobalExcelService {
 
     return SCF_SHEETS_TEMPLATE.map((sheet) => ({
       id: sheet.id,
+      excelName: sheet.excelName,
       title: sheet.title,
       sections: sheet.sections.map((section) => ({
         ...section,
@@ -250,10 +277,11 @@ export class GlobalExcelService {
     await workbook.xlsx.load(arrayBuffer);
 
     return SCF_SHEETS_TEMPLATE.map((sheet) => {
-      const worksheet = workbook.getWorksheet(sheet.id);
+      const worksheet = workbook.getWorksheet(sheet.excelName) ?? workbook.getWorksheet(sheet.id);
 
       return {
         id: sheet.id,
+        excelName: sheet.excelName,
         title: sheet.title,
         sections: sheet.sections.map((section, index) => ({
           ...section,
@@ -266,63 +294,16 @@ export class GlobalExcelService {
   async exportScfWorkbook(sheets: ScfSheetData[]): Promise<void> {
     const workbook = new ExcelJS.Workbook();
 
+    workbook.creator = 'SCF App';
+    workbook.created = new Date();
+
     sheets.forEach((sheet) => {
-      this.buildSheetFromData(workbook.addWorksheet(sheet.id), sheet);
+      const ws = workbook.addWorksheet(sheet.excelName);
+      this.buildSheetFromData(ws, sheet);
     });
 
     const filename = `SCF-${this.getScfDateStamp()}.xlsx`;
     await this.saveWorkbook(workbook, filename);
-  }
-
-  private createHeaderRow(worksheet: ExcelJS.Worksheet, headers: string[]): void {
-    const headerRow = worksheet.addRow(headers);
-    headerRow.height = 30;
-    headerRow.eachCell((cell) => {
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'D9D9D9' },
-      };
-      cell.font = {
-        name: 'Arial',
-        size: 10,
-        bold: true,
-        color: { argb: '000000' },
-      };
-      cell.border = {
-        top: { style: 'thin', color: { argb: '000000' } },
-        left: { style: 'thin', color: { argb: '000000' } },
-        bottom: { style: 'thin', color: { argb: '000000' } },
-        right: { style: 'thin', color: { argb: '000000' } },
-      };
-      cell.alignment = {
-        vertical: 'middle',
-        horizontal: 'center',
-        wrapText: true,
-      };
-    });
-  }
-
-  private addDataRow(worksheet: ExcelJS.Worksheet, data: any[]): void {
-    const dataRow = worksheet.addRow(data);
-    dataRow.height = 20;
-    dataRow.eachCell((cell) => {
-      cell.font = {
-        name: 'Arial',
-        size: 9,
-      };
-      cell.border = {
-        top: { style: 'thin', color: { argb: '000000' } },
-        left: { style: 'thin', color: { argb: '000000' } },
-        bottom: { style: 'thin', color: { argb: '000000' } },
-        right: { style: 'thin', color: { argb: '000000' } },
-      };
-      cell.alignment = {
-        vertical: 'middle',
-        horizontal: 'center',
-        wrapText: true,
-      };
-    });
   }
 
   mapGlobalRowsToActuacionesRows(data: GlobalReportRow[]): string[][] {
@@ -330,11 +311,11 @@ export class GlobalExcelService {
 
     return data.map((row) => [
       row.date || sessionData.date || new Date().toLocaleDateString('es-ES'),
+      row.weather || sessionData.weather || '',
+      row.worker || sessionData.worker || '',
       row.time ||
         sessionData.time ||
         new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      row.weather || sessionData.weather || '',
-      row.worker || sessionData.worker || '',
       row.zoneId || '',
       row.speciesId || '',
       String(row.count || 0),
@@ -351,6 +332,10 @@ export class GlobalExcelService {
   }
 
   private buildSheetFromData(worksheet: ExcelJS.Worksheet, sheet: ScfSheetData): void {
+    if (sheet.id === 'DATOS_GENERALES') {
+      this.addExpedienteBanner(worksheet, sheet);
+    }
+
     sheet.sections.forEach((section) => {
       this.addSectionWithRows(
         worksheet,
@@ -360,6 +345,35 @@ export class GlobalExcelService {
         section.emptyRows,
       );
     });
+
+    worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+  }
+
+  private addExpedienteBanner(worksheet: ExcelJS.Worksheet, sheet: ScfSheetData): void {
+    const widestSection = sheet.sections.reduce(
+      (max, section) => Math.max(max, section.headers.length),
+      1,
+    );
+
+    const spacer = worksheet.addRow(Array(widestSection).fill(''));
+    spacer.height = 12;
+
+    const bannerRow = worksheet.addRow(['', '', '', 'Expediente xxxx']);
+    bannerRow.height = 20;
+    worksheet.mergeCells(bannerRow.number, 1, bannerRow.number, widestSection);
+
+    const bannerCell = bannerRow.getCell(1);
+    bannerCell.font = {
+      name: 'Arial',
+      size: 10,
+      bold: true,
+      color: { argb: COLOR.bannerFg },
+    };
+    bannerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.bannerBg } };
+    bannerCell.alignment = { vertical: 'middle', horizontal: 'center' };
+    this.applyBorder(bannerCell);
+
+    worksheet.addRow(Array(widestSection).fill(''));
   }
 
   private addSectionWithRows(
@@ -371,20 +385,12 @@ export class GlobalExcelService {
   ): void {
     const titleRow = worksheet.addRow([title]);
     titleRow.height = 22;
-    const startColumn = 1;
-    const endColumn = headers.length;
-    worksheet.mergeCells(titleRow.number, startColumn, titleRow.number, endColumn);
-
+    worksheet.mergeCells(titleRow.number, 1, titleRow.number, headers.length);
     const titleCell = titleRow.getCell(1);
-    titleCell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFF' } };
-    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
+    titleCell.font = { name: 'Arial', size: 10, bold: true, color: { argb: COLOR.titleFg } };
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.titleBg } };
     titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    titleCell.border = {
-      top: { style: 'thin', color: { argb: '000000' } },
-      left: { style: 'thin', color: { argb: '000000' } },
-      bottom: { style: 'thin', color: { argb: '000000' } },
-      right: { style: 'thin', color: { argb: '000000' } },
-    };
+    this.applyBorder(titleCell);
 
     this.createHeaderRow(worksheet, headers);
 
@@ -392,9 +398,7 @@ export class GlobalExcelService {
       rows.length > 0
         ? rows
         : Array.from({ length: emptyRows }, () => Array(headers.length).fill(''));
-    rowsToRender.forEach((row) => {
-      this.addDataRow(worksheet, row);
-    });
+    rowsToRender.forEach((row) => this.addDataRow(worksheet, row));
 
     worksheet.addRow([]);
 
@@ -404,33 +408,80 @@ export class GlobalExcelService {
     });
   }
 
+  private createHeaderRow(worksheet: ExcelJS.Worksheet, headers: string[]): void {
+    const row = worksheet.addRow(headers);
+    row.height = 28;
+    row.eachCell((cell) => {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.headerBg } };
+      cell.font = { name: 'Arial', size: 11, bold: true, color: { argb: COLOR.headerFg } };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      this.applyBorder(cell);
+    });
+  }
+
+  private addDataRow(worksheet: ExcelJS.Worksheet, data: unknown[]): void {
+    const row = worksheet.addRow(data);
+    row.height = 19;
+    row.eachCell((cell) => {
+      cell.font = { name: 'Arial', size: 9 };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.dataBg } };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      this.applyBorder(cell);
+    });
+  }
+
+  private applyBorder(cell: ExcelJS.Cell): void {
+    const side: ExcelJS.BorderStyle = 'thin';
+    cell.border = {
+      top: { style: side, color: { argb: COLOR.border } },
+      left: { style: side, color: { argb: COLOR.border } },
+      bottom: { style: side, color: { argb: COLOR.border } },
+      right: { style: side, color: { argb: COLOR.border } },
+    };
+  }
+
   private parseSectionRows(
     worksheet: ExcelJS.Worksheet,
     sections: ScfSectionTemplate[],
     sectionIndex: number,
   ): string[][] {
     const section = sections[sectionIndex];
-    const startRow = this.findRowByFirstCell(worksheet, section.title);
-    if (!startRow) {
-      return [];
+
+    let startRow = this.findRowByFirstCell(worksheet, section.title);
+
+    if (startRow === null) {
+      startRow = this.findRowByFirstCell(worksheet, section.headers[0]);
+      if (startRow === null) return [];
+
+      return this.extractDataRows(worksheet, section, startRow + 1, sections, sectionIndex);
     }
 
+    return this.extractDataRows(worksheet, section, startRow + 2, sections, sectionIndex);
+  }
+
+  private extractDataRows(
+    worksheet: ExcelJS.Worksheet,
+    section: ScfSectionTemplate,
+    firstDataRow: number,
+    sections: ScfSectionTemplate[],
+    sectionIndex: number,
+  ): string[][] {
     const nextSectionTitle = sections[sectionIndex + 1]?.title;
     const rows: string[][] = [];
 
-    for (let rowNumber = startRow + 2; rowNumber <= worksheet.rowCount; rowNumber++) {
+    for (let rowNumber = firstDataRow; rowNumber <= worksheet.rowCount; rowNumber++) {
       const row = worksheet.getRow(rowNumber);
       const firstCell = this.normalizeCellValue(row.getCell(1).value);
 
-      if (nextSectionTitle && firstCell === nextSectionTitle) {
-        break;
-      }
+      if (nextSectionTitle && firstCell === nextSectionTitle) break;
+
+      if (nextSectionTitle && firstCell.trim() === nextSectionTitle.trim()) break;
 
       const values = section.headers.map((_, index) =>
         this.normalizeCellValue(row.getCell(index + 1).value),
       );
 
-      if (values.some((value) => value !== '')) {
+      if (values.some((v) => v !== '')) {
         rows.push(values);
       }
     }
@@ -439,40 +490,50 @@ export class GlobalExcelService {
   }
 
   private findRowByFirstCell(worksheet: ExcelJS.Worksheet, value: string): number | null {
+    const normalizedTarget = value.trim().toLowerCase();
     for (let rowNumber = 1; rowNumber <= worksheet.rowCount; rowNumber++) {
-      const rowValue = this.normalizeCellValue(worksheet.getRow(rowNumber).getCell(1).value);
-      if (rowValue === value) {
+      const cellValue = this.normalizeCellValue(worksheet.getRow(rowNumber).getCell(1).value);
+      if (cellValue.trim().toLowerCase() === normalizedTarget) {
         return rowNumber;
       }
     }
-
     return null;
   }
 
   private normalizeCellValue(value: ExcelJS.CellValue | undefined | null): string {
-    if (value == null) {
-      return '';
-    }
+    if (value == null) return '';
 
     if (value instanceof Date) {
       return value.toLocaleDateString('es-ES');
     }
 
     if (typeof value === 'object') {
-      if ('text' in value && typeof value.text === 'string') {
-        return value.text.trim();
-      }
-
       if ('result' in value && value.result != null) {
-        return String(value.result).trim();
+        const r = value.result;
+        if (r instanceof Date) return r.toLocaleDateString('es-ES');
+        return String(r).trim();
       }
 
-      if ('richText' in value && Array.isArray(value.richText)) {
-        return value.richText
-          .map((part) => part.text)
+      if ('text' in value && typeof (value as { text: unknown }).text === 'string') {
+        return (value as { text: string }).text.trim();
+      }
+
+      if (
+        'richText' in value &&
+        Array.isArray((value as { richText: { text: string }[] }).richText)
+      ) {
+        return (value as { richText: { text: string }[] }).richText
+          .map((p) => p.text)
           .join('')
           .trim();
       }
+    }
+
+    if (typeof value === 'object' && value !== null && 'getHours' in (value as object)) {
+      const d = value as any;
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      return `${hh}:${mm}`;
     }
 
     return String(value).trim();
@@ -480,10 +541,10 @@ export class GlobalExcelService {
 
   private getScfDateStamp(): string {
     const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const year = String(now.getFullYear()).slice(-2);
-    return `${day}-${month}-${year}`;
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yy = String(now.getFullYear()).slice(-2);
+    return `${dd}-${mm}-${yy}`;
   }
 
   private async saveWorkbook(workbook: ExcelJS.Workbook, filename: string): Promise<void> {
@@ -494,15 +555,13 @@ export class GlobalExcelService {
         await this.reportsStorage.saveReport(buffer, filename, 'actuacion', {
           source: 'reporte-entero',
         });
+        return;
       } catch (error) {
         console.error('Error saving global report to device:', error);
-        const file = new Blob([buffer], { type: 'application/octet-stream' });
-        saveAs(file, filename);
       }
-      return;
     }
 
-    const file = new Blob([buffer], { type: 'application/octet-stream' });
-    saveAs(file, filename);
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    saveAs(blob, filename);
   }
 }
