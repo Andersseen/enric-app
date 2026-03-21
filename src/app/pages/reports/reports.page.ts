@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem } from '@capacitor/filesystem';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   IonButton,
   IonButtons,
@@ -39,17 +39,16 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
     IonButton,
     IonIcon,
     ActuacionTableComponent,
-    RouterLink,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button routerLink="/home" color="dark">
+          <ion-button (click)="goHome()" color="dark">
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>Reportes</ion-title>
+        <ion-title class="cursor-pointer" (click)="goHome()">Reportes</ion-title>
         <ion-buttons slot="end">
           <!-- Hidden file input -->
           <input
@@ -123,6 +122,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
   `,
 })
 export default class ReportsPage {
+  private router = inject(Router);
   private reportStore = inject(ReportStore);
   private excelService = inject(ExcelService);
   private toastController = inject(ToastController);
@@ -161,6 +161,10 @@ export default class ReportsPage {
         target.value = ''; // Reset input
       }
     }
+  }
+
+  goHome() {
+    this.router.navigate(['/home']);
   }
 
   async exportExcel() {
