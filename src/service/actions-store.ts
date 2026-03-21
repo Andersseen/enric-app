@@ -12,10 +12,23 @@ export default class ActionsStore extends BaseStore {
 
   override steps = this.#steps.asReadonly();
 
+  #methodUsesAnimal(method: string | null | undefined): boolean {
+    return method === 'Perro' || method === 'Vuelo dispersión halcón';
+  }
+
   currentStateStep = computed(() => {
     const state = { ...STEP_STATE[this.currentStep()] };
-    // Skip step-11 (Captura) if method (step-8) is not 'Vuelo dispersión halcón'
     const method = this.step8Value() as string;
+
+    // Skip step-9 (Animal) if method does not use an animal.
+    if (this.currentStep() === STEP_ID.Step8 && !this.#methodUsesAnimal(method)) {
+      state.next = STEP_ID.Step10;
+    }
+    if (this.currentStep() === STEP_ID.Step10 && !this.#methodUsesAnimal(method)) {
+      state.prev = STEP_ID.Step8;
+    }
+
+    // Skip step-11 (Captura) if method is not 'Vuelo dispersión halcón'.
     if (this.currentStep() === STEP_ID.Step10 && method !== 'Vuelo dispersión halcón') {
       state.next = STEP_ID.Step12;
     }
@@ -28,7 +41,7 @@ export default class ActionsStore extends BaseStore {
   currentValue = computed(() => this.state()[this.currentStep()].value);
 
   finishStep = computed(() => {
-    if (this.acceptEmptyStep([STEP_ID.Step9, STEP_ID.Step12])) {
+    if (this.acceptEmptyStep([STEP_ID.Step12])) {
       return true;
     }
     const value = this.state()[this.currentStep()].value;
@@ -71,9 +84,31 @@ export default class ActionsStore extends BaseStore {
   }
 
   setValueForCurrentStep(value: unknown) {
-    this.state.update((currentState) => ({
-      ...currentState,
-      [this.currentStep()]: { label: currentState[this.currentStep()].label, value },
-    }));
+    this.state.update((currentState) => {
+      const updatedState = {
+        ...currentState,
+        [this.currentStep()]: { label: currentState[this.currentStep()].label, value },
+      };
+
+      if (this.currentStep() === STEP_ID.Step8) {
+        const method = (value as string | null | undefined) ?? '';
+
+        if (!this.#methodUsesAnimal(method)) {
+          updatedState[STEP_ID.Step9] = {
+            label: currentState[STEP_ID.Step9].label,
+            value: null,
+          };
+        }
+
+        if (method !== 'Vuelo dispersión halcón') {
+          updatedState[STEP_ID.Step11] = {
+            label: currentState[STEP_ID.Step11].label,
+            value: null,
+          };
+        }
+      }
+
+      return updatedState;
+    });
   }
 }
