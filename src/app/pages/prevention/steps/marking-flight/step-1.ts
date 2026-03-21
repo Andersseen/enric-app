@@ -16,10 +16,7 @@ import { Zone } from '@data/zones';
       [canGoNext]="!!store.flightReviewZone()"
       (nextClicked)="next()"
     >
-      <app-prevention-step-zone
-        [selected]="store.flightReviewZone()"
-        (select)="onSelect($event)"
-      />
+      <app-prevention-step-zone [selected]="store.flightReviewZone()" (select)="onSelect($event)" />
     </app-prevention-step-page>
   `,
 })
