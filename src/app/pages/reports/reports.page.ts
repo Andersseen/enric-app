@@ -61,9 +61,6 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
           <ion-button (click)="fileInput.click()" title="Importar Excel">
             <ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
           </ion-button>
-          <!-- <ion-button (click)="generateMock()" title="Generar Datos">
-            <ion-icon slot="icon-only" name="flash-outline"></ion-icon>
-          </ion-button> -->
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -77,7 +74,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
           <div class="text-sm text-gray-600">
             Total registros: <span class="font-bold">{{ count() }}</span>
           </div>
-          <div class="w-full sm:w-auto">
+          <div class="w-full sm:w-auto flex flex-col gap-4">
             <ion-button
               color="success"
               class="w-full sm:w-auto"
@@ -87,6 +84,27 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
               <ion-icon slot="start" name="download-outline"></ion-icon>
               Exportar Excel
             </ion-button>
+            <div class="flex gap-4">
+              <ion-button
+                color="warning"
+                class="w-full"
+                (click)="restoreBackup()"
+                [disabled]="!hasBackups()"
+              >
+                <ion-icon slot="start" name="refresh-outline"></ion-icon>
+                Recuperar último backup
+              </ion-button>
+
+              <ion-button
+                color="danger"
+                class="w-full"
+                (click)="clearTable()"
+                [disabled]="count() === 0"
+              >
+                <ion-icon slot="start" name="trash-bin-outline"></ion-icon>
+                Limpiar
+              </ion-button>
+            </div>
           </div>
         </div>
 
@@ -94,29 +112,6 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
         <app-actuacion-table [data]="rows()" (remove)="removeRow($event)" />
 
         <!-- Backup / Clear Actions -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pb-2">
-          <ion-button
-            color="warning"
-            fill="outline"
-            class="w-full"
-            (click)="restoreBackup()"
-            [disabled]="!hasBackups()"
-          >
-            <ion-icon slot="start" name="refresh-outline"></ion-icon>
-            Recuperar último backup
-          </ion-button>
-
-          <ion-button
-            color="danger"
-            fill="outline"
-            class="w-full"
-            (click)="clearTable()"
-            [disabled]="count() === 0"
-          >
-            <ion-icon slot="start" name="trash-bin-outline"></ion-icon>
-            Limpiar
-          </ion-button>
-        </div>
       </div>
     </ion-content>
   `,
