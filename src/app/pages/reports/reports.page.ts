@@ -12,6 +12,7 @@ import {
   IonIcon,
   IonTitle,
   IonToolbar,
+  AlertController,
   ToastController,
 } from '@ionic/angular/standalone';
 import { ExcelService } from '@service/excel.service';
@@ -121,6 +122,7 @@ export default class ReportsPage {
   private reportStore = inject(ReportStore);
   private excelService = inject(ExcelService);
   private toastController = inject(ToastController);
+  private alertController = inject(AlertController);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -173,10 +175,22 @@ export default class ReportsPage {
   }
 
   async clearTable() {
-    if (confirm('¿Estás seguro de que quieres borrar todos los datos de la tabla?')) {
-      await this.reportStore.clear();
-      this.showToast('Tabla limpia. Backup guardado para recuperación.', 'medium');
-    }
+    const alert = await this.alertController.create({
+      header: 'Limpiar tabla',
+      message: '¿Estás seguro de que quieres borrar todos los datos de la tabla? Se guardará un backup.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Borrar',
+          role: 'destructive',
+          handler: async () => {
+            await this.reportStore.clear();
+            this.showToast('Tabla limpia. Backup guardado para recuperación.', 'medium');
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   async restoreBackup() {
@@ -189,10 +203,23 @@ export default class ReportsPage {
     this.showToast('No hay backups para recuperar', 'medium');
   }
 
-  removeRow(index: number) {
-    if (confirm('¿Borrar esta fila?')) {
-      this.reportStore.removeRow(index);
-    }
+  async removeRow(index: number) {
+    const alert = await this.alertController.create({
+      header: 'Borrar fila',
+      message: '¿Estás seguro de que quieres borrar esta fila?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Borrar',
+          role: 'destructive',
+          handler: () => {
+            this.reportStore.removeRow(index);
+            this.showToast('Fila eliminada', 'medium');
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   async generateMock() {

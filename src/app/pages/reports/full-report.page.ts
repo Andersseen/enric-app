@@ -234,11 +234,14 @@ export default class FullReportPage {
     this.showToast(rowIndex === null ? 'Fila añadida ✓' : 'Fila actualizada ✓', 'success');
   }
 
-  onRowDeleted() {
+  async onRowDeleted() {
     const sheetId = this.editingSheetId();
     const sectionTitle = this.editingSectionTitle();
     const rowIndex = this.editingRowIndex();
     if (!sheetId || !sectionTitle || rowIndex === null) return;
+
+    const confirm = await this.askDeleteRowConfirmation();
+    if (!confirm) return;
 
     const updatedRows = this.getSectionRows(sheetId, sectionTitle).filter(
       (_, i) => i !== rowIndex,
@@ -388,6 +391,20 @@ export default class FullReportPage {
         buttons: [
           { text: 'Cancelar', role: 'cancel', handler: () => resolve(false) },
           { text: 'Limpiar', role: 'destructive', handler: () => resolve(true) },
+        ],
+      });
+      await alert.present();
+    });
+  }
+
+  private async askDeleteRowConfirmation(): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Eliminar fila',
+        message: '¿Estás seguro de que quieres eliminar esta fila? Esta acción no se puede deshacer.',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel', handler: () => resolve(false) },
+          { text: 'Eliminar', role: 'destructive', handler: () => resolve(true) },
         ],
       });
       await alert.present();

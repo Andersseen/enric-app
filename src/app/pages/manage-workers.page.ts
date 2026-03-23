@@ -13,6 +13,7 @@ import {
   IonList,
   IonTitle,
   IonToolbar,
+  AlertController,
   ToastController,
 } from '@ionic/angular/standalone';
 import Session from '@service/session';
@@ -88,6 +89,7 @@ import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
 export default class ManageWorkersPage {
   #session = inject(Session);
   #toast = inject(ToastController);
+  #alert = inject(AlertController);
 
   workers = this.#session.workers;
   newWorkerControl = new FormControl('', [Validators.required, Validators.minLength(2)]);
@@ -113,14 +115,27 @@ export default class ManageWorkersPage {
   }
 
   async removeWorker(name: string) {
-    this.#session.removeWorker(name);
-
-    const toast = await this.#toast.create({
-      message: 'Trabajador eliminado',
-      duration: 2000,
-      color: 'medium',
-      position: 'bottom',
+    const alert = await this.#alert.create({
+      header: 'Eliminar trabajador',
+      message: `¿Estás seguro de que quieres eliminar a ${name}?`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            this.#session.removeWorker(name);
+            const toast = await this.#toast.create({
+              message: 'Trabajador eliminado',
+              duration: 2000,
+              color: 'medium',
+              position: 'bottom',
+            });
+            await toast.present();
+          },
+        },
+      ],
     });
-    await toast.present();
+    await alert.present();
   }
 }

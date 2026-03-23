@@ -80,21 +80,16 @@ import { closeOutline, trashOutline } from 'ionicons/icons';
           </div>
         </ion-content>
 
-        <ion-footer class="ion-padding flex flex-col gap-2">
-          @if (row !== null) {
-            <ion-button
-              expand="block"
-              fill="outline"
-              color="danger"
-              (click)="onDelete()"
-            >
-              <ion-icon name="trash-outline" slot="start" />
-              Eliminar fila
-            </ion-button>
-          }
-          <ion-button expand="block" color="primary" (click)="onSave()">
-            Guardar
-          </ion-button>
+        <ion-footer class="ion-padding">
+          <div class="flex flex-col gap-4">
+            @if (row !== null) {
+              <ion-button expand="block" fill="outline" color="danger" (click)="onDelete()">
+                <ion-icon name="trash-outline" slot="start" />
+                Eliminar fila
+              </ion-button>
+            }
+            <ion-button expand="block" color="primary" (click)="onSave()"> Guardar </ion-button>
+          </div>
         </ion-footer>
       </ng-template>
     </ion-modal>

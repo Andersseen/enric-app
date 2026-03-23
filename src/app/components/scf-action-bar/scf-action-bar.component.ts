@@ -37,7 +37,7 @@ import {
       </div>
 
       <!-- Botones -->
-      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <input
           #fileInput
           type="file"
