@@ -25,6 +25,7 @@ import { arrowBack } from 'ionicons/icons';
 import { ScfActionBarComponent } from '@app/components/scf-action-bar/scf-action-bar.component';
 import { ScfSheetSelectorComponent } from '@app/components/scf-sheet-selector/scf-sheet-selector.component';
 import { ScfSectionTableComponent } from '@app/components/scf-section-table/scf-section-table.component';
+import { ScfRowEditModalComponent } from '@app/components/scf-row-edit-modal/scf-row-edit-modal.component';
 
 @Component({
   selector: 'app-full-report',
@@ -40,6 +41,7 @@ import { ScfSectionTableComponent } from '@app/components/scf-section-table/scf-
     ScfActionBarComponent,
     ScfSheetSelectorComponent,
     ScfSectionTableComponent,
+    ScfRowEditModalComponent,
   ],
   template: `
     <ion-header>
@@ -89,13 +91,27 @@ import { ScfSectionTableComponent } from '@app/components/scf-section-table/scf-
 
           <div class="grid grid-cols-1 gap-4">
             @for (section of activeSheet().sections; track section.title) {
-              <app-scf-section-table [section]="section" />
+              <app-scf-section-table
+                [section]="section"
+                (rowTapped)="openEditRow(activeSheet().id, section.title, section.headers, section.rows[$event], $event)"
+                (addRowRequested)="openNewRow(activeSheet().id, section.title, section.headers)"
+              />
             }
           </div>
         </div>
 
       </div>
     </ion-content>
+
+    <!-- ── Row edit modal (single instance, page-level) ── -->
+    <app-scf-row-edit-modal
+      [isOpen]="editModalOpen()"
+      [headers]="editingHeaders()"
+      [row]="editingRow()"
+      (saved)="onRowSaved($event)"
+      (deleted)="onRowDeleted()"
+      (cancelled)="closeEditModal()"
+    />
   `,
 })
 export default class FullReportPage {
@@ -115,6 +131,16 @@ export default class FullReportPage {
   isLoading = signal(false);
   loadingMessage = signal('');
 
+  // ── Edit state ──────────────────────────────────────────────────────────────
+  editModalOpen = signal(false);
+  private editingSheetId = signal<string | null>(null);
+  private editingSectionTitle = signal<string | null>(null);
+  private editingRowIndex = signal<number | null>(null); // null = new row
+
+  editingHeaders = signal<string[]>([]);
+  editingRow = signal<string[] | null>(null); // null = new row
+
+  // ── Computed ────────────────────────────────────────────────────────────────
   activeSheet = computed(
     () => this.scfSheets().find((s) => s.id === this.selectedSheetId()) ?? this.scfSheets()[0],
   );
@@ -129,6 +155,70 @@ export default class FullReportPage {
     addIcons({ arrowBack });
     this.restoreScfState();
   }
+
+  // ── Edit modal handlers ─────────────────────────────────────────────────────
+
+  openEditRow(
+    sheetId: string,
+    sectionTitle: string,
+    headers: string[],
+    row: string[],
+    rowIndex: number,
+  ) {
+    this.editingSheetId.set(sheetId);
+    this.editingSectionTitle.set(sectionTitle);
+    this.editingRowIndex.set(rowIndex);
+    this.editingHeaders.set(headers);
+    this.editingRow.set([...row]);
+    this.editModalOpen.set(true);
+  }
+
+  openNewRow(sheetId: string, sectionTitle: string, headers: string[]) {
+    this.editingSheetId.set(sheetId);
+    this.editingSectionTitle.set(sectionTitle);
+    this.editingRowIndex.set(null);
+    this.editingHeaders.set(headers);
+    this.editingRow.set(null);
+    this.editModalOpen.set(true);
+  }
+
+  onRowSaved(values: string[]) {
+    const sheetId = this.editingSheetId();
+    const sectionTitle = this.editingSectionTitle();
+    if (!sheetId || !sectionTitle) return;
+
+    const currentRows = this.getSectionRows(sheetId, sectionTitle);
+    const rowIndex = this.editingRowIndex();
+
+    const updatedRows =
+      rowIndex === null
+        ? [...currentRows, values] // append new row
+        : currentRows.map((r, i) => (i === rowIndex ? values : r)); // replace existing
+
+    this.updateSectionRows(sheetId, sectionTitle, updatedRows);
+    this.closeEditModal();
+    this.showToast(rowIndex === null ? 'Fila añadida ✓' : 'Fila actualizada ✓', 'success');
+  }
+
+  onRowDeleted() {
+    const sheetId = this.editingSheetId();
+    const sectionTitle = this.editingSectionTitle();
+    const rowIndex = this.editingRowIndex();
+    if (!sheetId || !sectionTitle || rowIndex === null) return;
+
+    const updatedRows = this.getSectionRows(sheetId, sectionTitle).filter(
+      (_, i) => i !== rowIndex,
+    );
+    this.updateSectionRows(sheetId, sectionTitle, updatedRows);
+    this.closeEditModal();
+    this.showToast('Fila eliminada', 'warning');
+  }
+
+  closeEditModal() {
+    this.editModalOpen.set(false);
+  }
+
+  // ── Page actions ────────────────────────────────────────────────────────────
 
   async exportScf() {
     const filename = await this.askExportFilename();
@@ -217,7 +307,7 @@ export default class FullReportPage {
     return sheetId.replace(/_/g, ' ');
   }
 
-  // ── Private helpers ────────────────────────────────────────────────────────
+  // ── Private helpers ─────────────────────────────────────────────────────────
 
   private updateSectionRows(sheetId: string, sectionTitle: string, rows: string[][]) {
     this.scfSheets.update((current) =>
@@ -232,7 +322,6 @@ export default class FullReportPage {
         };
       }),
     );
-
     this.persistScfState();
   }
 

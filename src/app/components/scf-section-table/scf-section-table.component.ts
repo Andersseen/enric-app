@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ScfSectionData } from '@service/global-excel.service';
 
 @Component({
@@ -45,9 +45,11 @@ import { ScfSectionData } from '@service/global-excel.service';
           <tbody>
             @for (row of visibleRows(); track $index) {
               <tr
-                class="transition-colors"
+                class="transition-colors cursor-pointer active:bg-primary/10"
                 [class.bg-background]="$index % 2 === 0"
                 [class.bg-surface]="$index % 2 !== 0"
+                [class.opacity-40]="$index >= section.rows.length"
+                (click)="onRowTap($index)"
               >
                 <td
                   class="border-b border-r border-border px-2 py-1.5
@@ -69,24 +71,46 @@ import { ScfSectionData } from '@service/global-excel.service';
         </table>
       </div>
 
-      <!-- Footer row count -->
-      @if (section.rows.length > 10) {
-        <div
-          class="px-3 py-1.5 border-t border-border bg-surface text-xs text-muted text-right"
+      <!-- Footer: row count + add row button -->
+      <div
+        class="px-3 py-1.5 border-t border-border bg-surface
+                  flex items-center justify-between gap-2"
+      >
+        @if (section.rows.length > 10) {
+          <span class="text-xs text-muted">{{ section.rows.length }} filas</span>
+        } @else {
+          <span></span>
+        }
+
+        <button
+          type="button"
+          class="text-xs font-semibold text-primary flex items-center gap-1 py-1 px-2
+                   rounded hover:bg-primary/10 active:bg-primary/20 transition-colors"
+          (click)="addRowRequested.emit()"
         >
-          Mostrando {{ section.rows.length }} filas
-        </div>
-      }
+          + Añadir fila
+        </button>
+      </div>
     </div>
   `,
 })
 export class ScfSectionTableComponent {
   @Input({ required: true }) section!: ScfSectionData;
 
+  @Output() rowTapped = new EventEmitter<number>();
+  @Output() addRowRequested = new EventEmitter<void>();
+
   visibleRows(): string[][] {
     if (this.section.rows.length > 0) return this.section.rows;
     return Array.from({ length: Math.min(this.section.emptyRows, 4) }, () =>
       Array(this.section.headers.length).fill(''),
     );
+  }
+
+  onRowTap(index: number) {
+    // Only open edit modal for real rows, not placeholder empty rows
+    if (index < this.section.rows.length) {
+      this.rowTapped.emit(index);
+    }
   }
 }
