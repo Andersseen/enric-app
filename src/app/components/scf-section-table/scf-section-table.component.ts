@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { IonIcon } from '@ionic/angular/standalone';
 import { ScfSectionData } from '@service/global-excel.service';
+import { addIcons } from 'ionicons';
+import { createOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-scf-section-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [IonIcon],
   template: `
     <div class="rounded-lg border border-border bg-background overflow-hidden">
       <!-- Section header -->
@@ -18,6 +21,17 @@ import { ScfSectionData } from '@service/global-excel.service';
           <span class="font-medium" [class.text-green-600]="section.rows.length > 0">
             {{ section.rows.length > 0 ? section.rows.length + ' filas' : 'Sin datos' }}
           </span>
+          <!-- Edit table button -->
+          <button
+            type="button"
+            class="flex items-center gap-1 text-primary font-semibold
+                     py-1 px-2 rounded hover:bg-primary/10 active:bg-primary/20
+                     transition-colors"
+            (click)="editRequested.emit()"
+          >
+            <ion-icon name="create-outline" class="text-base" />
+            Editar
+          </button>
         </div>
       </div>
 
@@ -45,11 +59,10 @@ import { ScfSectionData } from '@service/global-excel.service';
           <tbody>
             @for (row of visibleRows(); track $index) {
               <tr
-                class="transition-colors cursor-pointer active:bg-primary/10"
+                class="transition-colors"
                 [class.bg-background]="$index % 2 === 0"
                 [class.bg-surface]="$index % 2 !== 0"
                 [class.opacity-40]="$index >= section.rows.length"
-                (click)="onRowTap($index)"
               >
                 <td
                   class="border-b border-r border-border px-2 py-1.5
@@ -71,7 +84,7 @@ import { ScfSectionData } from '@service/global-excel.service';
         </table>
       </div>
 
-      <!-- Footer: row count + add row button -->
+      <!-- Footer -->
       <div
         class="px-3 py-1.5 border-t border-border bg-surface
                   flex items-center justify-between gap-2"
@@ -81,7 +94,6 @@ import { ScfSectionData } from '@service/global-excel.service';
         } @else {
           <span></span>
         }
-
         <button
           type="button"
           class="text-xs font-semibold text-primary flex items-center gap-1 py-1 px-2
@@ -97,20 +109,18 @@ import { ScfSectionData } from '@service/global-excel.service';
 export class ScfSectionTableComponent {
   @Input({ required: true }) section!: ScfSectionData;
 
-  @Output() rowTapped = new EventEmitter<number>();
+  /** Fired when the user taps the ✏️ Editar button in the header */
+  @Output() editRequested = new EventEmitter<void>();
   @Output() addRowRequested = new EventEmitter<void>();
+
+  constructor() {
+    addIcons({ createOutline });
+  }
 
   visibleRows(): string[][] {
     if (this.section.rows.length > 0) return this.section.rows;
     return Array.from({ length: Math.min(this.section.emptyRows, 4) }, () =>
       Array(this.section.headers.length).fill(''),
     );
-  }
-
-  onRowTap(index: number) {
-    // Only open edit modal for real rows, not placeholder empty rows
-    if (index < this.section.rows.length) {
-      this.rowTapped.emit(index);
-    }
   }
 }

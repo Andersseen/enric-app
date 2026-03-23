@@ -14,6 +14,7 @@ import {
   IonIcon,
   IonTitle,
   IonToolbar,
+  ActionSheetController,
   AlertController,
   ToastController,
 } from '@ionic/angular/standalone';
@@ -93,7 +94,7 @@ import { ScfRowEditModalComponent } from '@app/components/scf-row-edit-modal/scf
             @for (section of activeSheet().sections; track section.title) {
               <app-scf-section-table
                 [section]="section"
-                (rowTapped)="openEditRow(activeSheet().id, section.title, section.headers, section.rows[$event], $event)"
+                (editRequested)="onSectionEditRequested(activeSheet().id, section.title, section.headers, section.rows)"
                 (addRowRequested)="openNewRow(activeSheet().id, section.title, section.headers)"
               />
             }
@@ -119,6 +120,7 @@ export default class FullReportPage {
 
   private globalExcelService = inject(GlobalExcelService);
   private router = inject(Router);
+  private actionSheetController = inject(ActionSheetController);
   private reportStore = inject(ReportStore);
   private toastController = inject(ToastController);
   private alertController = inject(AlertController);
@@ -157,6 +159,38 @@ export default class FullReportPage {
   }
 
   // ── Edit modal handlers ─────────────────────────────────────────────────────
+
+  /** Tap on ✏️ Editar in section header → ActionSheet lists rows → edit modal */
+  async onSectionEditRequested(
+    sheetId: string,
+    sectionTitle: string,
+    headers: string[],
+    rows: string[][],
+  ) {
+    const MAX_ROWS = 25;
+    const rowButtons = rows.slice(0, MAX_ROWS).map((row, i) => ({
+      text: `${i + 1}. ${row[0] || '—'}  ${row[1] ? '· ' + row[1] : ''}`,
+      handler: () => this.openEditRow(sheetId, sectionTitle, headers, row, i),
+    }));
+
+    const sheet = await this.actionSheetController.create({
+      header: sectionTitle,
+      subHeader: rows.length === 0 ? 'Sin filas — añade una nueva' : `${rows.length} fila${rows.length !== 1 ? 's' : ''}`,
+      buttons: [
+        ...rowButtons,
+        ...(rows.length > MAX_ROWS
+          ? [{ text: `… y ${rows.length - MAX_ROWS} filas más (edita desplazándote)`, disabled: true }]
+          : []),
+        {
+          text: '+ Añadir fila nueva',
+          icon: 'add-circle-outline',
+          handler: () => this.openNewRow(sheetId, sectionTitle, headers),
+        },
+        { text: 'Cancelar', role: 'cancel' },
+      ],
+    });
+    await sheet.present();
+  }
 
   openEditRow(
     sheetId: string,

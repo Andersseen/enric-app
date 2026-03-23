@@ -45,8 +45,9 @@ import { closeOutline, trashOutline } from 'ionicons/icons';
   template: `
     <ion-modal
       [isOpen]="isOpen"
-      [breakpoints]="[0, 0.6, 0.9]"
-      [initialBreakpoint]="0.6"
+      [breakpoints]="[0, 0.9, 1]"
+      [initialBreakpoint]="0.9"
+      [handle]="true"
       (ionModalDidDismiss)="cancelled.emit()"
     >
       <ng-template>
