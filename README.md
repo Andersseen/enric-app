@@ -1,62 +1,35 @@
-# EnricApp
+# Fauna Tech
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
+Mobile app for wildlife control at an airport (runway, perimeter and traps). Field staff record
+sightings and actions step by step, and the app produces the Excel files the client delivers,
+including the official **SCF** workbook.
 
-## Development server
+Built with Angular 22 (standalone, signals, zoneless), Ionic 9 and Capacitor 8 (Android).
+All data is stored on the device (Capacitor Preferences and Filesystem); there is no backend.
 
-To start a local development server, run:
+## Main features
 
-```bash
-ng serve
-```
+- **Actuación**, **Trampas** and **Prevención** (runway, perimeter, dog review, marking flight,
+  PPOAM) step-by-step records, plus **No actividad** for zones without sightings.
+- **Mis Reportes**: table of saved records, Excel export/import, backups.
+- **Reporte SCF**: the full SCF workbook (all sheets), import an existing SCF, move the records
+  into `ACTUACIONES DIARIAS` and export it.
+- Workers, falcons and dogs are managed from the home screen.
+- **Spanish and Catalan** UI ([Etyma](https://github.com/Andersseen/etyma)), chosen on the home
+  screen and remembered. Stored values and Excel/SCF headers always stay in Spanish.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Development
 
 ```bash
-ng generate --help
+pnpm install
+pnpm start                 # http://localhost:4200
+pnpm test                  # unit tests (Vitest)
+pnpm run i18n:validate     # check that es.json and ca.json match
+pnpm run build
 ```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Translations live in `src/i18n/` (`es.json` is the source, `ca.json` is loaded on demand).
+Option labels map the stored Spanish value to a translation key in `src/i18n/options.ts`.
 
 ## Android
 
@@ -74,3 +47,19 @@ pnpm run android:apk        # debug APK in android/app/build/outputs/apk/debug/
 
 After changing web code, `npx cap sync android` copies the build into the native project.
 App icons are generated from `assets/` with `npx capacitor-assets generate --android`.
+
+### Release APK (signed)
+
+The release build is signed with a private keystore that is **never committed**
+(`*.jks`, `*.keystore` and `keystore.properties` are git-ignored in `android/`).
+
+1. Create the keystore once and keep it safe (losing it means the installed app can no longer be
+   updated, only reinstalled):
+   ```bash
+   keytool -genkeypair -v -keystore android/fauna-tech-release.jks -alias fauna-tech -keyalg RSA -keysize 2048 -validity 10000
+   ```
+2. Copy `android/keystore.properties.example` to `android/keystore.properties` and fill in the
+   passwords.
+3. Build: `pnpm run android:apk:prod` → `android/app/build/outputs/apk/release/app-release.apk`.
+
+Bump `versionCode`/`versionName` in `android/app/build.gradle` for every release.

@@ -92,6 +92,10 @@
               {
                 "input": "src/theme/variables.css"
               }
+            ],
+            "allowedCommonJsDependencies": [
+              "exceljs",
+              "file-saver"
             ]
           },
           "configurations": {
