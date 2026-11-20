@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
+import { AlertController, ToastController } from '@ionic/angular';
+import { BackupService } from '@service/backup.service';
 import {
+  IonButton,
   IonContent,
   IonFab,
   IonFabButton,
@@ -11,7 +14,7 @@ import {
 import LocaleService from '@service/locale.service';
 import { APP_LOCALES, AppLocale } from '@i18n/i18n';
 import { addIcons } from 'ionicons';
-import { moonOutline, sunnyOutline } from 'ionicons/icons';
+import { cloudDownloadOutline, cloudUploadOutline, moonOutline, sunnyOutline } from 'ionicons/icons';
 import ActionCards, { type ActionCardItem } from '@components/action-cards';
 import SessionHeaderComponent from '@components/session-header';
 import ThemeService from '@service/theme.service';
@@ -24,6 +27,7 @@ import { i18n } from '@i18n/i18n';
   imports: [
     ActionCards,
     SessionHeaderComponent,
+    IonButton,
     IonContent,
     IonFab,
     IonFabButton,
@@ -68,6 +72,33 @@ import { i18n } from '@i18n/i18n';
         <app-action-cards [items]="reportsSection()" />
       </div>
 
+      <!-- Copia de seguridad -->
+      <div class="mt-8 pt-6 pb-16 border-t border-border">
+        <h3 class="text-lg font-semibold tracking-tight mb-1 text-center md:text-left text-foreground">
+          {{ t('backup.title') }}
+        </h3>
+        <p class="text-sm text-muted-foreground mb-3 text-center md:text-left">
+          {{ t('backup.description') }}
+        </p>
+        <div class="flex gap-2">
+          <ion-button class="flex-1" fill="outline" (click)="exportBackup()">
+            <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+            {{ t('backup.export') }}
+          </ion-button>
+          <ion-button class="flex-1" fill="outline" color="medium" (click)="backupInput.click()">
+            <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
+            {{ t('backup.import') }}
+          </ion-button>
+        </div>
+        <input
+          #backupInput
+          type="file"
+          accept="application/json,.json"
+          class="hidden"
+          (change)="importBackup($event)"
+        />
+      </div>
+
       <!-- Theme Toggle FAB -->
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button
@@ -87,6 +118,9 @@ export default class List {
   themeService = inject(ThemeService);
   localeService = inject(LocaleService);
   locales = APP_LOCALES;
+  #backup = inject(BackupService);
+  #alerts = inject(AlertController);
+  #toasts = inject(ToastController);
 
   // Computed signal for reactive icon
   themeIcon = computed(() =>
@@ -94,7 +128,7 @@ export default class List {
   );
 
   constructor() {
-    addIcons({ moonOutline, sunnyOutline });
+    addIcons({ moonOutline, sunnyOutline, cloudDownloadOutline, cloudUploadOutline });
   }
 
   mainActions = computed<ActionCardItem[]>(() => [
@@ -167,6 +201,49 @@ export default class List {
     if (APP_LOCALES.includes(value as AppLocale)) {
       this.localeService.setLocale(value as AppLocale);
     }
+  }
+
+  async exportBackup(): Promise<void> {
+    try {
+      await this.#backup.export();
+      this.#toast(this.t('backup.exported'), 'success');
+    } catch (error) {
+      // Cerrar el menú de compartir sin elegir nada no es un error
+      if (String(error).toLowerCase().includes('cancel')) return;
+      console.error('Backup export error:', error);
+      this.#toast(this.t('backup.exportError'), 'danger');
+    }
+  }
+
+  async importBackup(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    const alert = await this.#alerts.create({
+      message: this.t('backup.confirmImport'),
+      buttons: [
+        { text: this.t('common.cancel'), role: 'cancel' },
+        { text: this.t('backup.restore'), role: 'confirm' },
+      ],
+    });
+    await alert.present();
+    if ((await alert.onDidDismiss()).role !== 'confirm') return;
+
+    try {
+      await this.#backup.import(file);
+      // Se recarga la app para que todas las pantallas lean los datos restaurados
+      window.location.reload();
+    } catch (error) {
+      console.error('Backup import error:', error);
+      this.#toast(this.t('backup.importError'), 'danger');
+    }
+  }
+
+  async #toast(message: string, color: string): Promise<void> {
+    const toast = await this.#toasts.create({ message, color, duration: 2500, position: 'bottom' });
+    await toast.present();
   }
 
   toggleTheme(): void {

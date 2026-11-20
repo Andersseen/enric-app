@@ -284,5 +284,16 @@
     "openWith": "Obrir amb...",
     "shareText": "Informe: {$filename}",
     "saveFailed": "No s'ha pogut desar el fitxer en cap ubicació."
+  },
+  "backup": {
+    "title": "Còpia de seguretat",
+    "description": "Desar o restaurar totes les dades de l'app.",
+    "export": "Desar còpia",
+    "import": "Restaurar còpia",
+    "exported": "Còpia de seguretat llesta.",
+    "exportError": "No s'ha pogut crear la còpia.",
+    "importError": "L'arxiu no és una còpia vàlida.",
+    "confirmImport": "Es reemplaçaran les dades actuals per les de la còpia. Vols continuar?",
+    "restore": "Restaurar"
   }
 }
