@@ -150,6 +150,7 @@
   },
   "noActivity": {
     "title": "Sense activitat",
+    "defaultNotes": "Romanem en observació",
     "saved": "Sense activitat afegida a la taula"
   },
   "prevention": {
