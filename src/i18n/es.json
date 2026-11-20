@@ -150,6 +150,7 @@
   },
   "noActivity": {
     "title": "No actividad",
+    "defaultNotes": "Permanecemos en observación",
     "saved": "No actividad añadida a la tabla"
   },
   "prevention": {
