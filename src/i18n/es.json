@@ -150,6 +150,7 @@
   },
   "noActivity": {
     "title": "No actividad",
+    "defaultNotes": "Permanecemos en observación",
     "saved": "No actividad añadida a la tabla"
   },
   "prevention": {
@@ -283,5 +284,16 @@
     "openWith": "Abrir con...",
     "shareText": "Reporte: {$filename}",
     "saveFailed": "No se pudo guardar el archivo en ninguna ubicación."
+  },
+  "backup": {
+    "title": "Copia de seguridad",
+    "description": "Guardar o restaurar todos los datos de la app.",
+    "export": "Guardar copia",
+    "import": "Restaurar copia",
+    "exported": "Copia de seguridad lista.",
+    "exportError": "No se pudo crear la copia.",
+    "importError": "El archivo no es una copia válida.",
+    "confirmImport": "Se reemplazarán los datos actuales por los de la copia. ¿Continuar?",
+    "restore": "Restaurar"
   }
 }

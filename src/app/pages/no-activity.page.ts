@@ -95,7 +95,8 @@ export default class NoActivityPage {
   #nav = inject(NavController);
 
   zone = signal<Zone | null>(null);
-  notes = signal('Permanecemos en observación');
+  // Texto por defecto, editable o borrable
+  notes = signal(this.t('noActivity.defaultNotes'));
 
   constructor() {
     addIcons({ arrowBack, saveOutline });
