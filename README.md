@@ -50,16 +50,16 @@ App icons are generated from `assets/` with `npx capacitor-assets generate --and
 
 ### Release APK (signed)
 
-The release build is signed with a private keystore that is **never committed**
-(`*.jks`, `*.keystore` and `keystore.properties` are git-ignored in `android/`).
+**Always sign with the same key as the app already installed on the phones**, otherwise Android
+refuses the update and the app has to be uninstalled (losing all local data).
 
-1. Create the keystore once and keep it safe (losing it means the installed app can no longer be
-   updated, only reinstalled):
-   ```bash
-   keytool -genkeypair -v -keystore android/fauna-tech-release.jks -alias fauna-tech -keyalg RSA -keysize 2048 -validity 10000
-   ```
-2. Copy `android/keystore.properties.example` to `android/keystore.properties` and fill in the
-   passwords.
-3. Build: `pnpm run android:apk:prod` → `android/app/build/outputs/apk/release/app-release.apk`.
+The installed app is signed with the original key `android/original-debug.keystore` (the Android
+Studio debug key created on 18/01/2026). Keystores and `keystore*.properties` are git-ignored, so
+**keep a backup of that file outside the repo**; without it the app can never be updated in place.
 
-Bump `versionCode`/`versionName` in `android/app/build.gradle` for every release.
+1. `android/keystore.properties` (see `keystore.properties.example`) must point to that key:
+   `storeFile=original-debug.keystore`, `keyAlias=androiddebugkey`, passwords `android`.
+2. Bump `versionCode`/`versionName` in `android/app/build.gradle`.
+3. Build: `pnpm run android:apk:prod` (with JDK 21) →
+   `android/app/build/outputs/apk/release/app-release.apk`.
+4. Users install the new APK over the old one; their data is kept.
