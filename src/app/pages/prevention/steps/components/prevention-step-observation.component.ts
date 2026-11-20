@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonCard,
@@ -13,6 +20,7 @@ import { saveOutline } from 'ionicons/icons';
 @Component({
   selector: 'app-prevention-step-observation',
   imports: [IonCard, IonCardContent, IonButton, IonIcon, IonTextarea, FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-card>
       <ion-card-content>

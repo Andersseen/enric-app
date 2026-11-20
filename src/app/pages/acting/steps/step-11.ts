@@ -38,6 +38,7 @@ export class FormStepEleven {
       <form-step-eleven />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepEleven],
 })
 export default class StepEleven {}

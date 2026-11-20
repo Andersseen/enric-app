@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import MapZones from '@components/map-zones';
 import { Zone } from '@data/zones';
 import { IonCard, IonCardContent } from '@ionic/angular/standalone';
@@ -8,6 +8,7 @@ import { arrowForwardOutline } from 'ionicons/icons';
 @Component({
   selector: 'app-prevention-step-zone',
   imports: [IonCard, IonCardContent, MapZones],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-card>
       <ion-card-content>

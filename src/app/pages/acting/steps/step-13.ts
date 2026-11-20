@@ -146,7 +146,6 @@ export class FormStepThirteen {
   }
 
   async generate() {
-
     this.#reportStore.addRow({
       zoneId: this.zone()?.name || '',
       speciesId: this.bird()?.commonName || '',
@@ -207,6 +206,7 @@ export class FormStepThirteen {
       <form-step-thirteen />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepThirteen],
 })
 export default class StepThirteen {}

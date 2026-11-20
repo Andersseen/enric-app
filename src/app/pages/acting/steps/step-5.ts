@@ -35,6 +35,7 @@ export class FormStepFive {
       <form-step-five />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepFive],
 })
 export default class StepFive {}

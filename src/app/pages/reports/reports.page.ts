@@ -1,4 +1,13 @@
-import { Component, ElementRef, inject, ViewChild, OnInit, computed, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  ViewChild,
+  OnInit,
+  computed,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
@@ -39,6 +48,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
     IonIcon,
     ActuacionTableComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-header>
       <ion-toolbar>

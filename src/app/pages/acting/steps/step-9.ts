@@ -31,6 +31,7 @@ export class FormStepNine {
       <form-step-nine />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepNine],
 })
 export default class StepNine {}

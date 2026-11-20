@@ -7,6 +7,7 @@ import ActionsStore from '@service/actions-store';
 @Component({
   selector: 'form-step-three',
   imports: [SelectionGridComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-selection-grid
       compact

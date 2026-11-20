@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import StepPanel from '@components/step-panel';
 import ActionsStore from '@service/actions-store';
 
@@ -9,6 +9,7 @@ import ActionsStore from '@service/actions-store';
       <ng-content />
     </app-step-panel>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPanel],
 })
 export default class StepPage {
