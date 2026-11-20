@@ -7,7 +7,7 @@ import {
   IonContent,
   IonIcon,
   IonButton,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 import { Router } from '@angular/router';

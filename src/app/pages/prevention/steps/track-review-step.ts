@@ -3,7 +3,7 @@ import { PreventionStep } from './base-step';
 import PreventionStepObservationComponent from './components/prevention-step-observation.component';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
-import { ToastController, NavController } from '@ionic/angular/standalone';
+import { ToastController, NavController } from '@ionic/angular';
 import PreventionStepPage from './prevention-step-page';
 
 @Component({

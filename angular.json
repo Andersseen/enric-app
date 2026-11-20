@@ -3,7 +3,6 @@
   "version": 1,
   "cli": {
     "packageManager": "pnpm",
-    "schematicCollections": ["@ionic/angular-toolkit", "@ionic/angular-toolkit"],
     "analytics": false
   },
   "newProjectRoot": "projects",
@@ -120,7 +119,9 @@
               "aot": false,
               "optimization": false,
               "extractLicenses": false,
-              "styles": ["src/styles.css"]
+              "styles": [
+                "src/styles.css"
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -147,40 +148,8 @@
             "buildTarget": ":build:testing",
             "runner": "vitest"
           }
-        },
-        "ionic-cordova-serve": {
-          "builder": "@ionic/angular-toolkit:cordova-serve",
-          "options": {
-            "cordovaBuildTarget": "enric-app:ionic-cordova-build",
-            "devServerTarget": "enric-app:serve"
-          },
-          "configurations": {
-            "production": {
-              "cordovaBuildTarget": "enric-app:ionic-cordova-build:production",
-              "devServerTarget": "enric-app:serve:production"
-            }
-          }
-        },
-        "ionic-cordova-build": {
-          "builder": "@ionic/angular-toolkit:cordova-build",
-          "options": {
-            "browserTarget": "enric-app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "enric-app:build:production"
-            }
-          }
         }
       }
-    }
-  },
-  "schematics": {
-    "@ionic/angular-toolkit:component": {
-      "styleext": "scss"
-    },
-    "@ionic/angular-toolkit:page": {
-      "styleext": "scss"
     }
   }
 }

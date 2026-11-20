@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonRippleEffect } from '@ionic/angular/standalone';
+import { IonRippleEffect } from '@ionic/angular';
 
 type CardColor = 'primary' | 'secondary';
 

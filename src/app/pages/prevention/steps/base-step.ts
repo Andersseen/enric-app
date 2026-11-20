@@ -1,6 +1,6 @@
 import { Directive, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular';
 import PreventionStepsStore from '@service/prevention-steps-store';
 
 @Directive()

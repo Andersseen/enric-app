@@ -6,7 +6,7 @@ import {
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';

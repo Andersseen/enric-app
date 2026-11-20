@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonInput } from '@ionic/angular/standalone';
+import { IonInput } from '@ionic/angular';
 import AnimalsStore, { AnimalKind } from '@service/animals-store';
 import SelectionGridComponent from './selection-grid';
 

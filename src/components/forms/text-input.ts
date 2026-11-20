@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
+import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular';
 
 @Component({
   selector: 'app-text-input',

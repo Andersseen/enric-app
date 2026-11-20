@@ -18,7 +18,7 @@ import {
   IonToolbar,
   AlertController,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { GlobalExcelService, ScfSectionData, ScfSheetData } from '@service/global-excel.service';
 import { ReportStore } from '@service/report-store';
 import { Preferences } from '@capacitor/preferences';

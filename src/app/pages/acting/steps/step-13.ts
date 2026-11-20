@@ -10,7 +10,7 @@ import {
   IonList,
   NavController,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import ActionsStore from '@service/actions-store';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';

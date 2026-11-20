@@ -5,7 +5,7 @@ import {
   input,
   output,
 } from '@angular/core';
-import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular/standalone';
+import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-selection-grid',

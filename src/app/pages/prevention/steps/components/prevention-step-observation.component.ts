@@ -13,7 +13,7 @@ import {
   IonButton,
   IonIcon,
   IonTextarea,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { saveOutline } from 'ionicons/icons';
 

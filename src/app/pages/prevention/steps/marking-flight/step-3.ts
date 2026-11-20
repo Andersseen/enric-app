@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { IonButton, IonCard, IonCardContent, IonIcon } from '@ionic/angular/standalone';
+import { IonButton, IonCard, IonCardContent, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowForward } from 'ionicons/icons';
 import { PreventionStep } from '../base-step';

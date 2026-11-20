@@ -3,7 +3,7 @@ import { PreventionStep } from '../base-step';
 import PreventionStepDogDetailsComponent from '../components/prevention-step-dog-details.component';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
-import { ToastController } from '@ionic/angular/standalone';
+import { ToastController } from '@ionic/angular';
 import PreventionStepPage from '../prevention-step-page';
 
 @Component({

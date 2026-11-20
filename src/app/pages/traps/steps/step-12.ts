@@ -7,17 +7,17 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ExcelService } from '@service/excel.service';
 import { saveAs } from 'file-saver';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
-import { ToastController, AlertController } from '@ionic/angular/standalone';
+import { ToastController, AlertController } from '@ionic/angular';
 import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
-import { NavController } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'traps-form-step-twelve',

@@ -15,7 +15,7 @@ import {
   IonIcon,
   IonButton,
   NavController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 

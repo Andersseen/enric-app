@@ -7,7 +7,7 @@ import {
   IonIcon,
   IonTextarea,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
 import { addIcons } from 'ionicons';

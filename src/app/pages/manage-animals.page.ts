@@ -14,7 +14,7 @@ import {
   IonTitle,
   IonToolbar,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import AnimalsStore, { AnimalKind } from '@service/animals-store';
 import { addIcons } from 'ionicons';
 import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';

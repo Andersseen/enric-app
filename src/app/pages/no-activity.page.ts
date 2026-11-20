@@ -14,7 +14,7 @@ import {
   IonToolbar,
   NavController,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import MapZones from '@components/map-zones';
 import { Zone } from '@data/zones';
 import { ReportStore } from '@service/report-store';

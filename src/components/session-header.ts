@@ -9,7 +9,7 @@ import {
   IonIcon,
   IonSelect,
   IonSelectOption,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import Session from '@service/session';
 import { WEATHER_OPTIONS } from '@data/weather';
 import { addIcons } from 'ionicons';

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BottomBarComponent } from '@components/bottom-bar';
-import { IonTabs } from '@ionic/angular/standalone';
+import { IonTabs } from '@ionic/angular';
 import ActionsStore from '@service/actions-store';
 import TrapsActionsStore from '@service/traps-store';
 

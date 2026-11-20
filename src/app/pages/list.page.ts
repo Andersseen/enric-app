@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
-import { IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { moonOutline, sunnyOutline } from 'ionicons/icons';
 import ActionCards, { type ActionCardItem } from '@components/action-cards';

@@ -22,7 +22,7 @@ import {
   IonTitle,
   IonToolbar,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { ExcelService } from '@service/excel.service';
 import { ReportStore } from '@service/report-store';
 import { addIcons } from 'ionicons';
