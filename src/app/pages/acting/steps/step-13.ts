@@ -10,13 +10,16 @@ import {
   IonList,
   NavController,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import ActionsStore from '@service/actions-store';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
 import StepPage from '.';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
+import { OptionGroup, optionLabel } from '@i18n/options';
 
 @Component({
   selector: 'form-step-thirteen',
@@ -27,73 +30,73 @@ import StepPage from '.';
         <ion-list lines="none">
           <ion-item>
             <ion-label>
-              <h2>Zona</h2>
+              <h2>{{ t('summary.zone') }}</h2>
               <p>{{ zone()?.name || '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Especie</h2>
+              <h2>{{ t('summary.species') }}</h2>
               <p>{{ bird()?.commonName || '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Cantidad</h2>
+              <h2>{{ t('summary.count') }}</h2>
               <p>{{ count() ?? '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Comportamiento</h2>
-              <p>{{ behavior() || '-' }}</p>
+              <h2>{{ t('summary.behavior') }}</h2>
+              <p>{{ opt('behavior', behavior()) }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Actuación</h2>
-              <p>{{ actionType() || '-' }}</p>
+              <h2>{{ t('summary.actionType') }}</h2>
+              <p>{{ opt('actionType', actionType()) }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Interacción</h2>
-              <p>{{ interaction() || '-' }}</p>
+              <h2>{{ t('summary.operation') }}</h2>
+              <p>{{ opt('yesNo', operation()) }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Operación</h2>
-              <p>{{ operation() || '-' }}</p>
+              <h2>{{ t('summary.interaction') }}</h2>
+              <p>{{ opt('yesNo', interaction()) }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Método</h2>
-              <p>{{ method() || '-' }}</p>
+              <h2>{{ t('summary.method') }}</h2>
+              <p>{{ opt('method', method()) }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Animal</h2>
+              <h2>{{ t('summary.animal') }}</h2>
               <p>{{ animal() || '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Eficacia</h2>
-              <p>{{ efficacy() || '-' }}</p>
+              <h2>{{ t('summary.efficacy') }}</h2>
+              <p>{{ opt('yesNo', efficacy()) }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Capturas</h2>
+              <h2>{{ t('summary.captured') }}</h2>
               <p>{{ displayCaptured() }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Observaciones</h2>
+              <h2>{{ t('summary.observations') }}</h2>
               <p>{{ notes() || '-' }}</p>
             </ion-label>
           </ion-item>
@@ -102,12 +105,12 @@ import StepPage from '.';
         <div class="mt-4 space-y-3">
           <ion-button expand="block" (click)="generate()">
             <ion-icon slot="start" name="download-outline"></ion-icon>
-            Guardar en Tabla
+            {{ t('common.saveToTable') }}
           </ion-button>
 
           <ion-button expand="block" color="medium" fill="outline" (click)="finish()">
             <ion-icon slot="start" name="home-outline"></ion-icon>
-            Finalizar y Volver
+            {{ t('common.finishAndBack') }}
           </ion-button>
         </div>
       </ion-card-content>
@@ -116,6 +119,12 @@ import StepPage from '.';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormStepThirteen {
+  protected t = injectT(i18n);
+
+  /** Texto traducido de un valor guardado ("-" si está vacío). */
+  protected opt(group: OptionGroup, value: unknown): string {
+    return optionLabel(this.t, group, value);
+  }
   #store = inject(ActionsStore);
   #reportStore = inject(ReportStore);
   #session = inject(Session);
@@ -126,8 +135,8 @@ export class FormStepThirteen {
   count = this.#store.step3Value;
   behavior = this.#store.step4Value;
   actionType = this.#store.step5Value;
-  interaction = this.#store.step6Value;
-  operation = this.#store.step7Value;
+  operation = this.#store.step6Value; // Paso 6: Operación
+  interaction = this.#store.step7Value; // Paso 7: Interacción operación
   method = this.#store.step8Value;
   animal = this.#store.step9Value;
   efficacy = this.#store.step10Value;
@@ -146,9 +155,6 @@ export class FormStepThirteen {
   }
 
   async generate() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
-
     this.#reportStore.addRow({
       zoneId: this.zone()?.name || '',
       speciesId: this.bird()?.commonName || '',
@@ -162,15 +168,11 @@ export class FormStepThirteen {
       captured: this.method() !== 'Vuelo dispersión halcón' ? 0 : this.captured() || 0,
       notes: this.notes() || '',
       operation: this.operation() || 'No',
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.toastController.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',
@@ -184,16 +186,15 @@ export class FormStepThirteen {
 
   async finish() {
     const alert = await this.alertController.create({
-      header: '¿Finalizar?',
-      message:
-        '¿Estás seguro de que quieres finalizar? Se perderán los datos actuales del formulario.',
+      header: this.t('summary.finishTitle'),
+      message: this.t('summary.finishMessage'),
       buttons: [
         {
-          text: 'Cancelar',
+          text: this.t('common.cancel'),
           role: 'cancel',
         },
         {
-          text: 'Finalizar',
+          text: this.t('common.finish'),
           role: 'confirm',
           handler: () => {
             this.#store.reset();
@@ -213,6 +214,7 @@ export class FormStepThirteen {
       <form-step-thirteen />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepThirteen],
 })
 export default class StepThirteen {}

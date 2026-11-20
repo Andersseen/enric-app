@@ -18,7 +18,7 @@ import {
   IonToolbar,
   AlertController,
   ToastController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { GlobalExcelService, ScfSectionData, ScfSheetData } from '@service/global-excel.service';
 import { ReportStore } from '@service/report-store';
 import { Preferences } from '@capacitor/preferences';
@@ -32,6 +32,8 @@ import {
   alertCircleOutline,
   checkmarkCircleOutline,
 } from 'ionicons/icons';
+import { injectI18n } from '@etyma/angular';
+import { i18n, type MessageKey } from '@i18n/i18n';
 
 @Component({
   selector: 'app-full-report',
@@ -45,7 +47,7 @@ import {
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title class="cursor-pointer" (click)="goHome()">Reporte SCF</ion-title>
+        <ion-title class="cursor-pointer" (click)="goHome()">{{ t('scf.title') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -58,7 +60,7 @@ import {
         >
           <!-- Contador de filas -->
           <div class="text-sm text-muted min-h-6 flex items-center gap-1">
-            Filas en ACTUACIONES DIARIAS:
+            {{ t('scf.rowsInDaily') }}
             <span class="font-bold text-foreground">{{ actuacionesTableCount() }}</span>
             @if (actuacionesTableCount() > 0) {
               <ion-icon name="checkmark-circle-outline" class="text-green-500 text-base"></ion-icon>
@@ -83,7 +85,7 @@ import {
                 [disabled]="sourceReportCount() === 0"
               >
                 <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>
-                Mover data ({{ sourceReportCount() }})
+                {{ t('scf.moveData', { count: sourceReportCount() }) }}
               </ion-button>
             }
 
@@ -94,7 +96,7 @@ import {
               [disabled]="isLoading()"
             >
               <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-              Importar SCF
+              {{ t('scf.import') }}
             </ion-button>
 
             <ion-button
@@ -104,12 +106,12 @@ import {
               [disabled]="isLoading()"
             >
               <ion-icon slot="start" name="trash-bin-outline"></ion-icon>
-              Limpiar tablas
+              {{ t('scf.clearTables') }}
             </ion-button>
 
             <ion-button color="primary" (click)="exportScf()" [disabled]="isLoading()">
               <ion-icon slot="start" name="download-outline"></ion-icon>
-              Exportar SCF
+              {{ t('scf.export') }}
             </ion-button>
           </div>
         </div>
@@ -128,7 +130,7 @@ import {
         <div class="bg-surface border border-border rounded-xl p-2">
           <div
             role="radiogroup"
-            aria-label="Hojas SCF"
+            [attr.aria-label]="t('scf.sheets')"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
           >
             @for (sheet of scfSheets(); track sheet.id) {
@@ -154,9 +156,9 @@ import {
                     <p class="text-sm font-semibold text-foreground leading-5">
                       {{ sheetLabel(sheet.id) }}
                     </p>
-                    <p class="text-xs text-muted leading-4 truncate">{{ sheet.title }}</p>
+                    <p class="text-xs text-muted leading-4 truncate">{{ sheetDescription(sheet.id) }}</p>
                     <p class="text-xs text-muted leading-4">
-                      {{ sheetRowCount(sheet) }} fila{{ sheetRowCount(sheet) !== 1 ? 's' : '' }}
+                      {{ t('scf.rows', { count: sheetRowCount(sheet) }) }}
                     </p>
                   </div>
                 </div>
@@ -186,9 +188,13 @@ import {
                 >
                   <p class="font-semibold text-sm text-foreground">{{ section.title }}</p>
                   <div class="flex items-center gap-3 text-xs text-muted">
-                    <span>{{ section.headers.length }} col.</span>
+                    <span>{{ t('scf.columns', { count: section.headers.length }) }}</span>
                     <span class="font-medium" [class.text-green-600]="section.rows.length > 0">
-                      {{ section.rows.length > 0 ? section.rows.length + ' filas' : 'Sin datos' }}
+                      {{
+                        section.rows.length > 0
+                          ? t('scf.rows', { count: section.rows.length })
+                          : t('scf.noData')
+                      }}
                     </span>
                   </div>
                 </div>
@@ -246,7 +252,7 @@ import {
                   <div
                     class="px-3 py-1.5 border-t border-border bg-surface text-xs text-muted text-right"
                   >
-                    Mostrando {{ section.rows.length }} filas
+                    {{ t('scf.showingRows', { count: section.rows.length }) }}
                   </div>
                 }
               </div>
@@ -256,8 +262,18 @@ import {
       </div>
     </ion-content>
   `,
+  styles: `
+    /* Ionic pone padding: 0 en th/td y gana a las clases de Tailwind */
+    th,
+    td {
+      padding: 0.375rem 0.625rem;
+    }
+  `,
 })
 export default class FullReportPage {
+  #i18n = injectI18n(i18n);
+  protected t = this.#i18n.t;
+  private has = (key: string) => this.#i18n.has(key as MessageKey);
   private static readonly SCF_STATE_KEY = 'enric_scf_full_report_state';
 
   private globalExcelService = inject(GlobalExcelService);
@@ -306,13 +322,13 @@ export default class FullReportPage {
       return;
     }
 
-    this.setLoading(true, 'Generando fichero SCF…');
+    this.setLoading(true, this.t('scf.generating'));
     try {
       await this.globalExcelService.exportScfWorkbook(this.scfSheets(), filename);
-      this.showToast('SCF exportado correctamente ✓', 'success');
+      this.showToast(this.t('scf.exported'), 'success');
     } catch (error) {
       console.error('SCF export error:', error);
-      this.showToast('Error al exportar el SCF', 'danger');
+      this.showToast(this.t('scf.exportError'), 'danger');
     } finally {
       this.setLoading(false);
     }
@@ -328,23 +344,28 @@ export default class FullReportPage {
     if (!file) return;
 
     if (!file.name.toLowerCase().endsWith('.xlsx')) {
-      this.showToast('Solo se aceptan ficheros .xlsx', 'danger');
+      this.showToast(this.t('scf.onlyXlsx'), 'danger');
       target.value = '';
       return;
     }
 
-    this.setLoading(true, `Importando ${file.name}…`);
+    this.setLoading(true, this.t('scf.importing', { name: file.name }));
     try {
       const importedSheets = await this.globalExcelService.importScfWorkbook(file);
+      if (this.countAllRows(importedSheets) === 0) {
+        // No se sustituye lo que ya hay por tablas vacías
+        this.showToast(this.t('scf.noScfData'), 'warning');
+        return;
+      }
       this.scfSheets.set(importedSheets);
       this.selectedSheetId.set(importedSheets[0]?.id ?? 'DATOS_GENERALES');
       await this.persistScfState();
 
       const totalRows = this.countAllRows(importedSheets);
-      this.showToast(`SCF importado — ${totalRows} filas cargadas ✓`, 'success');
+      this.showToast(this.t('scf.imported', { count: totalRows }), 'success');
     } catch (error) {
       console.error('SCF import error:', error);
-      this.showToast('Error al importar el SCF. Comprueba el formato del fichero.', 'danger');
+      this.showToast(this.t('scf.importError'), 'danger');
     } finally {
       target.value = '';
       this.setLoading(false);
@@ -358,7 +379,7 @@ export default class FullReportPage {
   async moveActuacionesData() {
     const rows = this.globalExcelService.mapGlobalRowsToActuacionesRows(this.sourceReportRows());
     if (rows.length === 0) {
-      this.showToast('No hay datos de reportes para mover', 'warning');
+      this.showToast(this.t('scf.nothingToMove'), 'warning');
       return;
     }
 
@@ -366,7 +387,8 @@ export default class FullReportPage {
 
     if (currentRows.length === 0) {
       this.updateSectionRows('ACTUACIONES_DIARIAS', 'ACTUACIONES_DIARIAS', rows);
-      this.showToast(`${rows.length} filas movidas a ACTUACIONES DIARIAS`, 'success');
+      await this.clearMovedSourceRows();
+      this.showToast(this.t('scf.moved', { count: rows.length }), 'success');
       return;
     }
 
@@ -377,9 +399,13 @@ export default class FullReportPage {
 
     const mergedRows = decision === 'replace' ? rows : [...currentRows, ...rows];
     this.updateSectionRows('ACTUACIONES_DIARIAS', 'ACTUACIONES_DIARIAS', mergedRows);
+    await this.clearMovedSourceRows();
 
-    const actionText = decision === 'replace' ? 'reemplazadas' : 'agregadas';
-    this.showToast(`${rows.length} filas ${actionText} en ACTUACIONES DIARIAS`, 'success');
+    const message =
+      decision === 'replace'
+        ? this.t('scf.replaced', { count: rows.length })
+        : this.t('scf.appended', { count: rows.length });
+    this.showToast(message, 'success');
   }
 
   async clearAllTables() {
@@ -392,7 +418,7 @@ export default class FullReportPage {
     this.selectedSheetId.set(this.scfSheets()[0]?.id ?? 'DATOS_GENERALES');
     await this.persistScfState();
 
-    this.showToast('Tablas limpiadas. Ya puedes reimportar todo.', 'success');
+    this.showToast(this.t('scf.cleared'), 'success');
   }
 
   sheetLabel(sheetId: string): string {
@@ -427,6 +453,15 @@ export default class FullReportPage {
     this.persistScfState();
   }
 
+  /**
+   * Tras mover los registros al SCF se vacía la lista de origen (Mis Reportes)
+   * para no poder moverlos dos veces. Se guarda una copia de seguridad que se
+   * puede recuperar desde Mis Reportes.
+   */
+  private async clearMovedSourceRows() {
+    await this.reportStore.clear();
+  }
+
   private getSectionRows(sheetId: string, sectionTitle: string): string[][] {
     const sheet = this.scfSheets().find((s) => s.id === sheetId);
     const section = sheet?.sections.find((s) => s.title === sectionTitle);
@@ -436,21 +471,21 @@ export default class FullReportPage {
   private async askMoveMode(): Promise<'replace' | 'append' | 'cancel'> {
     return new Promise(async (resolve) => {
       const alert = await this.alertController.create({
-        header: 'ACTUACIONES DIARIAS',
-        message: 'Ya existen datos en la tabla. ¿Quieres reemplazar o agregar?',
+        header: this.t('scf.moveTitle'),
+        message: this.t('scf.moveQuestion'),
         buttons: [
           {
-            text: 'Cancelar',
+            text: this.t('common.cancel'),
             role: 'cancel',
             handler: () => resolve('cancel'),
           },
           {
-            text: 'Reemplazar',
+            text: this.t('scf.replace'),
             role: 'destructive',
             handler: () => resolve('replace'),
           },
           {
-            text: 'Agregar',
+            text: this.t('scf.append'),
             handler: () => resolve('append'),
           },
         ],
@@ -463,16 +498,16 @@ export default class FullReportPage {
   private async askClearTablesConfirmation(): Promise<boolean> {
     return new Promise(async (resolve) => {
       const alert = await this.alertController.create({
-        header: 'Limpiar tablas',
-        message: 'Se borrarán todos los datos cargados de este SCF. ¿Continuar?',
+        header: this.t('scf.clearTitle'),
+        message: this.t('scf.clearQuestion'),
         buttons: [
           {
-            text: 'Cancelar',
+            text: this.t('common.cancel'),
             role: 'cancel',
             handler: () => resolve(false),
           },
           {
-            text: 'Limpiar',
+            text: this.t('common.clear'),
             role: 'destructive',
             handler: () => resolve(true),
           },
@@ -488,8 +523,8 @@ export default class FullReportPage {
 
     return new Promise(async (resolve) => {
       const alert = await this.alertController.create({
-        header: 'Exportar SCF',
-        message: 'Confirma el nombre del archivo antes de generarlo.',
+        header: this.t('scf.exportTitle'),
+        message: this.t('scf.exportQuestion'),
         inputs: [
           {
             name: 'filename',
@@ -500,7 +535,7 @@ export default class FullReportPage {
         ],
         buttons: [
           {
-            text: 'Cancelar',
+            text: this.t('common.cancel'),
             role: 'cancel',
             handler: () => resolve(null),
           },
@@ -563,6 +598,11 @@ export default class FullReportPage {
   private setLoading(active: boolean, message = '') {
     this.isLoading.set(active);
     this.loadingMessage.set(message);
+  }
+
+  sheetDescription(sheetId: string): string {
+    const key = `scf.sheetDescriptions.${sheetId}`;
+    return this.has(key) ? this.t(key as MessageKey) : '';
   }
 
   private async showToast(message: string, color: 'success' | 'danger' | 'warning') {

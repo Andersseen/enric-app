@@ -3,7 +3,7 @@ import { PreventionStep } from '../base-step';
 import PreventionStepDogDetailsComponent from '../components/prevention-step-dog-details.component';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
-import { ToastController } from '@ionic/angular/standalone';
+import { ToastController } from '@ionic/angular';
 import PreventionStepPage from '../prevention-step-page';
 
 @Component({
@@ -11,7 +11,7 @@ import PreventionStepPage from '../prevention-step-page';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepDogDetailsComponent, PreventionStepPage],
   template: `
-    <app-prevention-step-page title="Revisión perro - Detalles">
+    <app-prevention-step-page [title]="t('prevention.dogDetails')">
       <app-prevention-step-dog-details
         [animal]="store.dogReviewAnimal()"
         (animalChange)="store.dogReviewAnimal.set($event)"
@@ -32,8 +32,6 @@ export default class DogReviewStepTwo extends PreventionStep {
   }
 
   async save() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
     const zone = this.store.dogReviewZone();
 
     if (!zone) return; // Should not happen
@@ -51,15 +49,11 @@ export default class DogReviewStepTwo extends PreventionStep {
       efficacy: 'Si',
       captured: 0,
       notes: this.store.dogReviewNotes(),
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

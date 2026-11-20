@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { IonApp, IonRouterOutlet } from '@ionic/angular';
+import ThemeService from '@service/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,8 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
     </ion-app>
   `,
 })
-export default class App {}
+export default class App {
+  // Se inyecta aquí para aplicar el tema guardado (claro/oscuro) en cualquier
+  // pantalla de entrada, no solo al pasar por la pantalla de inicio.
+  #theme = inject(ThemeService);
+}

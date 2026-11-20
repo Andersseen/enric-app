@@ -13,6 +13,11 @@ const homeRoutes: Routes = [
         path: 'manage-workers',
         loadComponent: () => import('./manage-workers.page'),
       },
+      { path: 'no-activity', loadComponent: () => import('./no-activity.page') },
+      {
+        path: 'manage-animals',
+        loadComponent: () => import('./manage-animals.page'),
+      },
     ],
   },
 ];

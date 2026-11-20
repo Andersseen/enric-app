@@ -8,6 +8,7 @@ import ActionsStore from '@service/actions-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="yesNo"
       colSize="12"
       colSizeMd="6"
       [items]="options"
@@ -35,6 +36,7 @@ export class FormStepTen {
       <form-step-ten />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepTen],
 })
 export default class StepTen {}

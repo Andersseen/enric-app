@@ -1,40 +1,81 @@
 import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
-import { IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
+} from '@ionic/angular';
+import LocaleService from '@service/locale.service';
+import { APP_LOCALES, AppLocale } from '@i18n/i18n';
 import { addIcons } from 'ionicons';
 import { moonOutline, sunnyOutline } from 'ionicons/icons';
 import ActionCards, { type ActionCardItem } from '@components/action-cards';
 import SessionHeaderComponent from '@components/session-header';
 import ThemeService from '@service/theme.service';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionCards, SessionHeaderComponent, IonContent, IonFab, IonFabButton, IonIcon],
+  imports: [
+    ActionCards,
+    SessionHeaderComponent,
+    IonContent,
+    IonFab,
+    IonFabButton,
+    IonIcon,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+  ],
   template: `
     <ion-content class="ion-padding">
+      <!-- Idioma -->
+      <ion-segment
+        class="mb-4"
+        [value]="localeService.locale()"
+        [attr.aria-label]="t('language.label')"
+        (ionChange)="changeLocale($event.detail.value)"
+      >
+        @for (locale of locales; track locale) {
+          <ion-segment-button [value]="locale">
+            <ion-label>{{ localeName(locale) }}</ion-label>
+          </ion-segment-button>
+        }
+      </ion-segment>
+
       <!-- Session Configuration -->
       <app-session-header class="mb-6" />
 
       <h2
         class="text-xl font-semibold tracking-tight mb-4 text-center md:text-left text-foreground"
       >
-        Acciones principales
+        {{ t('home.mainActions') }}
       </h2>
 
-      <app-action-cards [items]="mainActions" />
+      <app-action-cards [items]="mainActions()" />
 
       <div class="mt-8 pt-6 border-t border-border">
         <h3
           class="text-lg font-semibold tracking-tight mb-3 text-center md:text-left text-foreground"
         >
-          Reportes
+          {{ t('home.reports') }}
         </h3>
-        <app-action-cards [items]="reportsSection" />
+        <app-action-cards [items]="reportsSection()" />
       </div>
 
       <!-- Theme Toggle FAB -->
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button (click)="toggleTheme()" color="medium" size="small">
+        <ion-fab-button
+          (click)="toggleTheme()"
+          color="medium"
+          size="small"
+          [attr.aria-label]="t('home.toggleTheme')"
+        >
           <ion-icon [name]="themeIcon()"></ion-icon>
         </ion-fab-button>
       </ion-fab>
@@ -42,7 +83,10 @@ import ThemeService from '@service/theme.service';
   `,
 })
 export default class List {
+  protected t = injectT(i18n);
   themeService = inject(ThemeService);
+  localeService = inject(LocaleService);
+  locales = APP_LOCALES;
 
   // Computed signal for reactive icon
   themeIcon = computed(() =>
@@ -53,53 +97,77 @@ export default class List {
     addIcons({ moonOutline, sunnyOutline });
   }
 
-  mainActions: ActionCardItem[] = [
+  mainActions = computed<ActionCardItem[]>(() => [
     {
       icon: '🧰',
-      title: 'Prevención',
-      description: 'Medidas preventivas de fauna en pista.',
+      title: this.t('home.cards.prevention.title'),
+      description: this.t('home.cards.prevention.description'),
       routerLink: ['prevention'],
       color: 'primary',
     },
     {
       icon: '🚨',
-      title: 'Actuación',
-      description: 'Registrar acciones ejecutadas en campo.',
+      title: this.t('home.cards.acting.title'),
+      description: this.t('home.cards.acting.description'),
       routerLink: ['action'],
       color: 'secondary',
     },
     {
       icon: '🎯',
-      title: 'Trampas',
-      description: 'Revisión y control de trampas activas.',
+      title: this.t('home.cards.traps.title'),
+      description: this.t('home.cards.traps.description'),
       routerLink: ['traps'],
       color: 'primary',
     },
-  ];
+    {
+      icon: '⏸️',
+      title: this.t('home.cards.noActivity.title'),
+      description: this.t('home.cards.noActivity.description'),
+      routerLink: ['no-activity'],
+      color: 'secondary',
+    },
+  ]);
 
-  reportsSection: ActionCardItem[] = [
+  reportsSection = computed<ActionCardItem[]>(() => [
     {
       icon: '📊',
-      title: 'Mis Reportes',
-      description: 'Ver, filtrar y compartir reportes generados.',
+      title: this.t('home.cards.myReports.title'),
+      description: this.t('home.cards.myReports.description'),
       routerLink: ['/reports'],
       color: 'primary',
     },
     {
       icon: '📚',
-      title: 'Reporte entero',
-      description: 'Nueva base para reportes ampliados por libros.',
+      title: this.t('home.cards.fullReport.title'),
+      description: this.t('home.cards.fullReport.description'),
       routerLink: ['/reporte-entero'],
       color: 'secondary',
     },
     {
       icon: '👷',
-      title: 'Gestionar Trabajadores',
-      description: 'Añadir o eliminar trabajadores.',
+      title: this.t('home.cards.workers.title'),
+      description: this.t('home.cards.workers.description'),
       routerLink: ['/home/manage-workers'],
       color: 'secondary',
     },
-  ];
+    {
+      icon: '🦅',
+      title: this.t('home.cards.animals.title'),
+      description: this.t('home.cards.animals.description'),
+      routerLink: ['/home/manage-animals'],
+      color: 'secondary',
+    },
+  ]);
+
+  localeName(locale: AppLocale): string {
+    return this.t(`language.${locale}`);
+  }
+
+  changeLocale(value: unknown): void {
+    if (APP_LOCALES.includes(value as AppLocale)) {
+      this.localeService.setLocale(value as AppLocale);
+    }
+  }
 
   toggleTheme(): void {
     this.themeService.toggleTheme();

@@ -8,8 +8,9 @@ import ActionsStore from '@service/actions-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
-      colSize="12"
-      colSizeMd="6"
+      group="actionType"
+      colSize="6"
+      colSizeMd="4"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"
@@ -19,7 +20,7 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepFive {
   #store = inject(ActionsStore);
-  options = ['Dispersión', 'Observación'];
+  options = ['Dispersión', 'Observación', 'Revisión', 'Retirar', 'FOD Fauna', 'Otras'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
@@ -35,6 +36,7 @@ export class FormStepFive {
       <form-step-five />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepFive],
 })
 export default class StepFive {}

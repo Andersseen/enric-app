@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import TextInputComponent from '@components/forms/text-input';
 import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'traps-form-step-eleven',
@@ -9,13 +11,14 @@ import StepPage from '.';
   imports: [TextInputComponent],
   template: `
     <app-text-input
-      label="Observaciones"
-      placeholder="Escribe tus observaciones aquí..."
+      [label]="t('common.observations')"
+      [placeholder]="t('common.writeObservations')"
       (valueChange)="onInput($event)"
     />
   `,
 })
 export class TrapsFormStepEleven {
+  protected t = injectT(i18n);
   #store = inject(TrapsActionsStore);
 
   onInput(value: string) {

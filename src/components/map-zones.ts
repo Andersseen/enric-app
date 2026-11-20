@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, input, output } from '@angular/core';
 import { Zone, zones } from '@data/zones';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-map-zones',
@@ -20,11 +22,12 @@ import { Zone, zones } from '@data/zones';
     </div>
 
     @if (selected()) {
-      <h2 class="mt-4 text-xl">Seleccionada: {{ selected()!.name }}</h2>
+      <h2 class="mt-4 text-xl">{{ t('common.selectedZone', { zone: selected()!.name }) }}</h2>
     }
   `,
 })
 export default class MapZones {
+  protected t = injectT(i18n);
   selected = input<Zone | null>(null);
   select = output<Zone>();
 

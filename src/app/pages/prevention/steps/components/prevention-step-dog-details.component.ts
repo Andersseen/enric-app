@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonCard,
@@ -6,35 +13,46 @@ import {
   IonButton,
   IonIcon,
   IonTextarea,
-  IonInput,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
+import AnimalPickerComponent from '@components/forms/animal-picker';
 import { addIcons } from 'ionicons';
 import { saveOutline } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-prevention-step-dog-details',
-  imports: [IonCard, IonCardContent, IonButton, IonIcon, IonTextarea, IonInput, FormsModule],
+  imports: [
+    IonCard,
+    IonCardContent,
+    IonButton,
+    IonIcon,
+    IonTextarea,
+    FormsModule,
+    AnimalPickerComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-card>
       <ion-card-content>
-        <h2 class="text-xl font-bold mb-4">Detalles</h2>
+        <h2 class="text-xl font-bold mb-4">{{ t('common.details') }}</h2>
 
         <div class="flex flex-col gap-4">
-          <ion-input
-            label="Animal empleado"
-            labelPlacement="floating"
-            fill="outline"
-            placeholder="Nombre del perro"
-            [(ngModel)]="animal"
-            (ngModelChange)="animalChange.emit($event)"
-          ></ion-input>
+          <div>
+            <p class="text-sm font-medium mb-1">{{ t('common.animalUsed') }}</p>
+            <app-animal-picker
+              kind="dog"
+              [value]="animal"
+              (valueChange)="animal = $event; animalChange.emit($event)"
+            />
+          </div>
 
           <ion-textarea
-            label="Observaciones"
+            [label]="t('common.observations')"
             labelPlacement="floating"
             fill="outline"
             rows="5"
-            placeholder="Escribe aquí los detalles..."
+            [placeholder]="t('common.writeDetails')"
             [(ngModel)]="notes"
             (ngModelChange)="notesChange.emit($event)"
           ></ion-textarea>
@@ -42,7 +60,7 @@ import { saveOutline } from 'ionicons/icons';
 
         <div class="mt-6">
           <ion-button expand="block" (click)="save.emit()" [disabled]="!isValid()">
-            Guardar en Tabla
+            {{ t('common.saveToTable') }}
             <ion-icon slot="end" name="save-outline"></ion-icon>
           </ion-button>
         </div>
@@ -51,6 +69,7 @@ import { saveOutline } from 'ionicons/icons';
   `,
 })
 export default class PreventionStepDogDetailsComponent {
+  protected t = injectT(i18n);
   @Input() animal: string = '';
   @Output() animalChange = new EventEmitter<string>();
 

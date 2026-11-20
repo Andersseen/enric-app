@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonRouterOutlet } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -8,8 +8,4 @@ import { IonRouterOutlet } from '@ionic/angular/standalone';
   host: { class: 'flex flex-col h-full w-full font-sans antialiased' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class Home {
-  onSessionChange(data: unknown): void {
-    console.log('Session updated', data);
-  }
-}
+export default class Home {}

@@ -7,8 +7,7 @@ import {
   IonContent,
   IonIcon,
   IonButton,
-} from '@ionic/angular/standalone';
-import SessionHeaderComponent from './session-header';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 import { Router } from '@angular/router';
@@ -22,7 +21,6 @@ import ActionsStore from '@service/actions-store';
     IonHeader,
     IonTitle,
     IonToolbar,
-    SessionHeaderComponent,
     IonButtons,
     IonContent,
     IonIcon,
@@ -58,8 +56,6 @@ import ActionsStore from '@service/actions-store';
             </ion-buttons>
           }
         </ion-toolbar>
-
-        <app-session-header />
       </ion-header>
       <ion-content>
         <ng-content />

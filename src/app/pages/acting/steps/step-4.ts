@@ -6,8 +6,10 @@ import ActionsStore from '@service/actions-store';
 @Component({
   selector: 'form-step-four',
   imports: [SelectionGridComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-selection-grid
+      group="behavior"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"
@@ -16,7 +18,7 @@ import ActionsStore from '@service/actions-store';
 })
 export class FormStepFour {
   #store = inject(ActionsStore);
-  options = ['Posado', 'Volando', 'Cruzando', 'Alimentación', 'Atrapado'];
+  options = ['Posado', 'Volando', 'Cruzando', 'Alimentación', 'Corriendo', 'Parado', 'Atrapado'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {

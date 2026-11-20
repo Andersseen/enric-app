@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { COUNT_OPTIONS } from '@data/count-options';
 import SelectionGridComponent from '@components/forms/selection-grid';
 import TrapsActionsStore from '@service/traps-store';
 import StepPage from '.';
@@ -9,6 +10,10 @@ import StepPage from '.';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      compact
+      colSize="3"
+      colSizeMd="2"
+      colSizeLg="2"
       [items]="numbers"
       [selected]="selectedNumber()"
       (select)="onSelect($event)"
@@ -17,7 +22,7 @@ import StepPage from '.';
 })
 export class TrapsFormStepTen {
   #store = inject(TrapsActionsStore);
-  numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 50, 100, 200, 300, 500];
+  numbers = COUNT_OPTIONS;
   selectedNumber = signal<number | null>(null);
 
   onSelect(num: number) {

@@ -8,6 +8,7 @@ import ActionsStore from '@service/actions-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="method"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"
@@ -18,7 +19,7 @@ import ActionsStore from '@service/actions-store';
 export class FormStepEight {
   #store = inject(ActionsStore);
   options = [
-    'Claxon',
+    'Bocina',
     'Ahuyentador',
     'Pirotecnia',
     'Láser',
@@ -41,6 +42,7 @@ export class FormStepEight {
       <form-step-eight />
     </step-page>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [StepPage, FormStepEight],
 })
 export default class StepEight {}

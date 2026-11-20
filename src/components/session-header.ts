@@ -7,13 +7,16 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonIcon,
-  IonInput,
   IonSelect,
   IonSelectOption,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import Session from '@service/session';
+import { WEATHER_OPTIONS } from '@data/weather';
+import { optionKey } from '@i18n/options';
 import { addIcons } from 'ionicons';
 import { chevronDown, chevronUp } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-session-header',
@@ -23,7 +26,6 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
     IonCardTitle,
     IonCardContent,
     IonIcon,
-    IonInput,
     IonSelect,
     IonSelectOption,
     ReactiveFormsModule,
@@ -41,19 +43,17 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
         >
           <div class="flex flex-col gap-1">
             <ion-card-title class="text-xl font-bold flex items-center gap-2">
-              Datos de sesión
+              {{ t('session.title') }}
               @if (!expanded()) {
-                <span class="text-sm font-normal text-gray-500"> (Click para editar) </span>
+                <span class="text-sm font-normal text-muted"> {{ t('session.tapToEdit') }} </span>
               }
             </ion-card-title>
-            <div class="text-base text-gray-600">
+            <div class="text-base text-muted">
               <span class="font-medium">{{
-                sessionForm.get('worker')?.value || 'Sin asignar'
+                sessionForm.get('worker')?.value || t('session.unassigned')
               }}</span>
               <span class="mx-2">·</span>
-              <span>{{ sessionForm.get('date')?.value }}</span>
-              <span class="mx-2">·</span>
-              <span>{{ sessionForm.get('time')?.value }}</span>
+              <span>{{ weatherLabel(sessionForm.get('weather')?.value) || t('session.noWeather') }}</span>
             </div>
           </div>
           <ion-button shape="round" size="large" [class.rotate-180]="expanded()">
@@ -70,38 +70,20 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
         [attr.aria-hidden]="!expanded()"
       >
         <form
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 text-sm"
           [formGroup]="sessionForm"
         >
           <div class="flex flex-col">
-            <ion-input
-              label="Fecha"
-              formControlName="date"
-              type="date"
-              class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
-            />
-          </div>
-
-          <div class="flex flex-col">
-            <ion-input
-              label="Hora"
-              formControlName="time"
-              type="time"
-              class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
-            />
-          </div>
-
-          <div class="flex flex-col">
             <ion-select
-              label="Climatología"
+              [label]="t('session.weather')"
               interface="action-sheet"
               formControlName="weather"
-              placeholder="Seleccionar..."
+              [placeholder]="t('common.select')"
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             >
-              <ion-select-option value="">Seleccionar...</ion-select-option>
+              <ion-select-option value="">{{ t('common.select') }}</ion-select-option>
               @for (weather of weatherOptions; track weather.value) {
-                <ion-select-option [value]="weather.value">{{ weather.label }}</ion-select-option>
+                <ion-select-option [value]="weather.value">{{ weatherLabel(weather.value) }}</ion-select-option>
               }
             </ion-select>
           </div>
@@ -109,12 +91,12 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
           <div class="flex flex-col">
             <ion-select
               interface="action-sheet"
-              label="Trabajador"
+              [label]="t('session.worker')"
               formControlName="worker"
-              placeholder="Seleccionar..."
+              [placeholder]="t('common.select')"
               class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
             >
-              <ion-select-option value="">Seleccionar...</ion-select-option>
+              <ion-select-option value="">{{ t('common.select') }}</ion-select-option>
               @for (worker of workers(); track worker) {
                 <ion-select-option [value]="worker">{{ worker }}</ion-select-option>
               }
@@ -147,18 +129,17 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
   host: { class: 'block w-full' },
 })
 export default class SessionHeaderComponent {
+  protected t = injectT(i18n);
   #session = inject(Session);
 
-  weatherOptions = [
-    { value: 'Soleado', label: 'Soleado' },
-    { value: 'Nublado', label: 'Nublado' },
-    { value: 'Lluvioso', label: 'Lluvioso' },
-    { value: 'Viento', label: 'Viento' },
-    { value: 'Claros', label: 'Claros' },
-    { value: 'Lluvia', label: 'Lluvia' },
-    { value: 'Tormenta', label: 'Tormenta' },
-    { value: 'Viento fuerte', label: 'Viento fuerte' },
-  ];
+  weatherOptions = WEATHER_OPTIONS.map((w) => ({ value: w }));
+
+  /** Texto traducido de una climatología (el valor guardado sigue en castellano). */
+  weatherLabel(value: string | null | undefined): string {
+    if (!value) return '';
+    const key = optionKey('weather', value);
+    return key ? this.t(key) : value;
+  }
 
   expanded = computed(() => this.#session.expand());
 

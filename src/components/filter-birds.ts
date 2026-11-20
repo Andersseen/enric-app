@@ -6,13 +6,15 @@ import {
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { BIRDS, type BirdItem } from '@data/bird';
 import { addIcons } from 'ionicons';
 import { starOutline, star, checkmark, close, chevronForward } from 'ionicons/icons';
 import SearchBar from '@components/searchbar';
 import ActionsStore from '@service/actions-store';
 import { BirdStore } from '@service/bird-store';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-filter-birds',
@@ -31,7 +33,7 @@ import { BirdStore } from '@service/bird-store';
             role="button"
             tabindex="0"
             (click)="onCardClick(bird)"
-            [attr.aria-label]="'Seleccionar ' + bird.commonName"
+            [attr.aria-label]="t('birds.selectBird', { name: bird.commonName })"
             [class.border-4]="selectedBird().id === bird.id"
             [class.border-primary]="selectedBird().id === bird.id"
           >
@@ -49,8 +51,8 @@ import { BirdStore } from '@service/bird-store';
               <ion-button
                 fill="clear"
                 (click)="toggleFavorite(bird.id); $event.stopPropagation()"
-                aria-label="Favorito"
-                title="Marcar favorito"
+                [attr.aria-label]="t('birds.favorite')"
+                [title]="t('birds.markFavorite')"
               >
                 @if (bird.favorite) {
                   <ion-icon name="star" color="primary" size="large" />
@@ -68,6 +70,7 @@ import { BirdStore } from '@service/bird-store';
   host: { class: 'block h-full w-full font-sans antialiased' },
 })
 export default class FilterBirds {
+  protected t = injectT(i18n);
   #store = inject(ActionsStore);
   #birdStore = inject(BirdStore);
 

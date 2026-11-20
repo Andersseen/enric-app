@@ -11,7 +11,7 @@ import { Zone } from '@data/zones';
 
   template: `
     <app-prevention-step-page
-      title="Vuelo de Marcaje - Zona"
+      [title]="t('prevention.flightZone')"
       [showNext]="true"
       [canGoNext]="!!store.flightReviewZone()"
       (nextClicked)="next()"

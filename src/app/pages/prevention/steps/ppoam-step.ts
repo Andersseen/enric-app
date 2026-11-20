@@ -3,7 +3,7 @@ import { PreventionStep } from './base-step';
 import PreventionStepObservationComponent from './components/prevention-step-observation.component';
 import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
-import { ToastController } from '@ionic/angular/standalone';
+import { ToastController } from '@ionic/angular';
 import PreventionStepPage from './prevention-step-page';
 
 @Component({
@@ -30,8 +30,6 @@ export default class PpoamStepPage extends PreventionStep {
   }
 
   async save() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
 
     this.#reportStore.addRow({
       zoneId: '-',
@@ -46,15 +44,11 @@ export default class PpoamStepPage extends PreventionStep {
       efficacy: 'Si',
       captured: 0,
       notes: this.store.ppoamObservation(),
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

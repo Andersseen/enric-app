@@ -9,9 +9,10 @@ import PreventionStepPage from '../prevention-step-page';
   changeDetection: ChangeDetectionStrategy.OnPush,
 
   template: `
-    <app-prevention-step-page title="Método">
+    <app-prevention-step-page [title]="t('common.method')">
       <div class="p-4">
         <app-selection-grid
+          group="flightMethod"
           [items]="options"
           [selected]="store.flightReviewMethod()"
           (select)="onSelect($event)"

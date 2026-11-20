@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { IonTabs } from '@ionic/angular/standalone';
+import { IonTabs } from '@ionic/angular';
 import ActionsStore from '@service/actions-store';
 import { BottomBarComponent } from '@components/bottom-bar';
 

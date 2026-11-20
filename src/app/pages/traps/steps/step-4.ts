@@ -9,6 +9,7 @@ import TrapsActionsStore from '@service/traps-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="behavior"
       colSize="12"
       colSizeMd="6"
       [items]="options"

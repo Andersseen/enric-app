@@ -1,8 +1,4 @@
-import { Component, ElementRef, inject, ViewChild, OnInit, computed, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Capacitor } from '@capacitor/core';
-import { Filesystem } from '@capacitor/filesystem';
+import { Component, ElementRef, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonButton,
@@ -13,7 +9,8 @@ import {
   IonTitle,
   IonToolbar,
   ToastController,
-} from '@ionic/angular/standalone';
+  AlertController,
+} from '@ionic/angular';
 import { ExcelService } from '@service/excel.service';
 import { ReportStore } from '@service/report-store';
 import { addIcons } from 'ionicons';
@@ -21,11 +18,12 @@ import {
   arrowBack,
   cloudUploadOutline,
   downloadOutline,
-  flashOutline,
   refreshOutline,
   trashBinOutline,
 } from 'ionicons/icons';
 import ActuacionTableComponent from '../../components/actuacion-table/actuacion-table.component';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-reports',
@@ -40,6 +38,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
     IonIcon,
     ActuacionTableComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-header>
       <ion-toolbar>
@@ -48,7 +47,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title class="cursor-pointer" (click)="goHome()">Reportes</ion-title>
+        <ion-title class="cursor-pointer" (click)="goHome()">{{ t('reports.title') }}</ion-title>
         <ion-buttons slot="end">
           <!-- Hidden file input -->
           <input
@@ -58,12 +57,9 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
             (change)="onFileSelected($event)"
             style="display: none"
           />
-          <ion-button (click)="fileInput.click()" title="Importar Excel">
+          <ion-button (click)="fileInput.click()" [title]="t('reports.import')">
             <ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
           </ion-button>
-          <!-- <ion-button (click)="generateMock()" title="Generar Datos">
-            <ion-icon slot="icon-only" name="flash-outline"></ion-icon>
-          </ion-button> -->
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -72,10 +68,10 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
       <div class="flex flex-col gap-4 h-full">
         <!-- Control Bar -->
         <div
-          class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-lg shadow-sm"
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-surface p-4 rounded-lg shadow-sm border border-border"
         >
-          <div class="text-sm text-gray-600">
-            Total registros: <span class="font-bold">{{ count() }}</span>
+          <div class="text-sm text-muted">
+            {{ t('reports.total', { count: count() }) }}
           </div>
           <div class="w-full sm:w-auto">
             <ion-button
@@ -85,7 +81,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
               [disabled]="count() === 0"
             >
               <ion-icon slot="start" name="download-outline"></ion-icon>
-              Exportar Excel
+              {{ t('reports.export') }}
             </ion-button>
           </div>
         </div>
@@ -103,7 +99,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
             [disabled]="!hasBackups()"
           >
             <ion-icon slot="start" name="refresh-outline"></ion-icon>
-            Recuperar último backup
+            {{ t('reports.restore') }}
           </ion-button>
 
           <ion-button
@@ -114,7 +110,7 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
             [disabled]="count() === 0"
           >
             <ion-icon slot="start" name="trash-bin-outline"></ion-icon>
-            Limpiar
+            {{ t('reports.clear') }}
           </ion-button>
         </div>
       </div>
@@ -122,10 +118,12 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
   `,
 })
 export default class ReportsPage {
+  protected t = injectT(i18n);
   private router = inject(Router);
   private reportStore = inject(ReportStore);
   private excelService = inject(ExcelService);
   private toastController = inject(ToastController);
+  private alertController = inject(AlertController);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -139,7 +137,6 @@ export default class ReportsPage {
       downloadOutline,
       cloudUploadOutline,
       trashBinOutline,
-      flashOutline,
       arrowBack,
       refreshOutline,
     });
@@ -153,10 +150,10 @@ export default class ReportsPage {
       try {
         const importedData = await this.excelService.importActuacionExcel(file);
         this.reportStore.addRows(importedData);
-        this.showToast(`Importadas ${importedData.length} filas correctamente`, 'success');
+        this.showToast(this.t('reports.imported', { count: importedData.length }), 'success');
       } catch (error) {
         console.error('Import error:', error);
-        this.showToast('Error al importar el archivo. Verifica el formato.', 'danger');
+        this.showToast(this.t('reports.importError'), 'danger');
       } finally {
         target.value = ''; // Reset input
       }
@@ -170,39 +167,48 @@ export default class ReportsPage {
   async exportExcel() {
     try {
       await this.excelService.exportGlobalExcel(this.rows());
-      this.showToast('Excel exportado correctamente', 'success');
+      this.showToast(this.t('reports.exported'), 'success');
     } catch (error) {
       console.error('Export error:', error);
-      this.showToast('Error al exportar el archivo', 'danger');
+      this.showToast(this.t('reports.exportError'), 'danger');
     }
   }
 
   async clearTable() {
-    if (confirm('¿Estás seguro de que quieres borrar todos los datos de la tabla?')) {
+    if (await this.confirm(this.t('reports.confirmClear'), this.t('common.clear'))) {
       await this.reportStore.clear();
-      this.showToast('Tabla limpia. Backup guardado para recuperación.', 'medium');
+      this.showToast(this.t('reports.cleared'), 'medium');
     }
   }
 
   async restoreBackup() {
     const restored = await this.reportStore.restoreLatestBackup();
     if (restored > 0) {
-      this.showToast(`Backup recuperado (${restored} registros)`, 'success');
+      this.showToast(this.t('reports.restored', { count: restored }), 'success');
       return;
     }
 
-    this.showToast('No hay backups para recuperar', 'medium');
+    this.showToast(this.t('reports.noBackups'), 'medium');
   }
 
-  removeRow(index: number) {
-    if (confirm('¿Borrar esta fila?')) {
+  async removeRow(index: number) {
+    if (await this.confirm(this.t('reports.confirmDeleteRow'), this.t('common.delete'))) {
       this.reportStore.removeRow(index);
     }
   }
 
-  async generateMock() {
-    this.reportStore.generateMockData();
-    this.showToast('Datos de prueba generados', 'medium');
+  /** Diálogo de confirmación de Ionic (en lugar del confirm() del navegador). */
+  private async confirm(message: string, confirmText: string): Promise<boolean> {
+    const alert = await this.alertController.create({
+      message,
+      buttons: [
+        { text: this.t('common.cancel'), role: 'cancel' },
+        { text: confirmText, role: 'confirm' },
+      ],
+    });
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+    return role === 'confirm';
   }
 
   private async showToast(message: string, color: 'success' | 'danger' | 'medium') {

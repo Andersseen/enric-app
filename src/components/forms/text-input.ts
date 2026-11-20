@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
+import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-text-input',
@@ -12,7 +14,7 @@ import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone'
           class="flex-1 text-xl font-medium"
           [label]="label()"
           labelPlacement="floating"
-          [placeholder]="placeholder()"
+          [placeholder]="placeholder() ?? t('common.writeHere')"
           [autoGrow]="true"
           [rows]="6"
           [value]="value()"
@@ -29,8 +31,9 @@ import { IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone'
   `,
 })
 export default class TextInputComponent {
+  protected t = injectT(i18n);
   label = input.required<string>();
-  placeholder = input<string>('Escribe aquí...');
+  placeholder = input<string | null>(null);
   value = input<string | null>(null);
 
   valueChange = output<string>();
