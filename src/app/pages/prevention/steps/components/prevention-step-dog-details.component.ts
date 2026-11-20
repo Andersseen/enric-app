@@ -6,28 +6,28 @@ import {
   IonButton,
   IonIcon,
   IonTextarea,
-  IonInput,
 } from '@ionic/angular/standalone';
+import AnimalPickerComponent from '@components/forms/animal-picker';
 import { addIcons } from 'ionicons';
 import { saveOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-prevention-step-dog-details',
-  imports: [IonCard, IonCardContent, IonButton, IonIcon, IonTextarea, IonInput, FormsModule],
+  imports: [IonCard, IonCardContent, IonButton, IonIcon, IonTextarea, FormsModule, AnimalPickerComponent],
   template: `
     <ion-card>
       <ion-card-content>
         <h2 class="text-xl font-bold mb-4">Detalles</h2>
 
         <div class="flex flex-col gap-4">
-          <ion-input
-            label="Animal empleado"
-            labelPlacement="floating"
-            fill="outline"
-            placeholder="Nombre del perro"
-            [(ngModel)]="animal"
-            (ngModelChange)="animalChange.emit($event)"
-          ></ion-input>
+          <div>
+            <p class="text-sm font-medium mb-1">Animal empleado</p>
+            <app-animal-picker
+              kind="dog"
+              [value]="animal"
+              (valueChange)="animal = $event; animalChange.emit($event)"
+            />
+          </div>
 
           <ion-textarea
             label="Observaciones"

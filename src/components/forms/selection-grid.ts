@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular/standalone';
 
 @Component({
@@ -9,9 +15,18 @@ import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular
     <ion-grid>
       <ion-row class="justify-center">
         @for (item of items(); track item) {
-          <ion-col [size]="colSize()" [sizeMd]="colSizeMd()" [sizeLg]="colSizeLg()" class="p-2">
+          <ion-col
+            [size]="colSize()"
+            [sizeMd]="colSizeMd()"
+            [sizeLg]="colSizeLg()"
+            [class.p-2]="!compact()"
+            [class.p-1]="compact()"
+          >
             <ion-card
-              class="ion-text-center h-full min-h-32 flex items-center justify-center cursor-pointer transition-all duration-300 transform active:scale-95 hover:shadow-lg rounded-2xl border-2"
+              [class.min-h-32]="!compact()"
+              [class.min-h-16]="compact()"
+              [class.m-0]="compact()"
+              class="ion-text-center h-full flex items-center justify-center cursor-pointer transition-all duration-300 transform active:scale-95 hover:shadow-lg rounded-2xl border-2"
               [class.bg-primary]="selected() === item"
               [class.text-white]="selected() === item"
               [class.border-primary]="selected() === item"
@@ -49,6 +64,9 @@ export default class SelectionGridComponent {
   colSize = input<string>('6');
   colSizeMd = input<string>('4');
   colSizeLg = input<string>('3');
+
+  // Tarjetas más bajas, para listas largas (p. ej. números)
+  compact = input(false, { transform: booleanAttribute });
 
   select = output<any>();
 }

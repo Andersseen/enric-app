@@ -18,7 +18,7 @@ import ActionsStore from '@service/actions-store';
 export class FormStepEight {
   #store = inject(ActionsStore);
   options = [
-    'Claxon',
+    'Bocina',
     'Ahuyentador',
     'Pirotecnia',
     'Láser',

@@ -57,14 +57,14 @@ import StepPage from '.';
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Interacción</h2>
-              <p>{{ interaction() || '-' }}</p>
+              <h2>Operación</h2>
+              <p>{{ operation() || '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              <h2>Operación</h2>
-              <p>{{ operation() || '-' }}</p>
+              <h2>Interacción</h2>
+              <p>{{ interaction() || '-' }}</p>
             </ion-label>
           </ion-item>
           <ion-item>
@@ -126,8 +126,8 @@ export class FormStepThirteen {
   count = this.#store.step3Value;
   behavior = this.#store.step4Value;
   actionType = this.#store.step5Value;
-  interaction = this.#store.step6Value;
-  operation = this.#store.step7Value;
+  operation = this.#store.step6Value; // Paso 6: Operación
+  interaction = this.#store.step7Value; // Paso 7: Interacción operación
   method = this.#store.step8Value;
   animal = this.#store.step9Value;
   efficacy = this.#store.step10Value;

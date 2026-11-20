@@ -150,15 +150,18 @@ export default class SessionHeaderComponent {
   #session = inject(Session);
 
   weatherOptions = [
-    { value: 'Soleado', label: 'Soleado' },
-    { value: 'Nublado', label: 'Nublado' },
-    { value: 'Lluvioso', label: 'Lluvioso' },
-    { value: 'Viento', label: 'Viento' },
-    { value: 'Claros', label: 'Claros' },
-    { value: 'Lluvia', label: 'Lluvia' },
-    { value: 'Tormenta', label: 'Tormenta' },
-    { value: 'Viento fuerte', label: 'Viento fuerte' },
-  ];
+    'Despejado',
+    'Despejado/viento',
+    'Claros',
+    'Claros/viento',
+    'Nublado',
+    'Nublado/viento',
+    'Lluvioso',
+    'Lluvioso/viento',
+    'Lluvia',
+    'Lluvia/viento',
+    'Tormenta',
+  ].map((w) => ({ value: w, label: w }));
 
   expanded = computed(() => this.#session.expand());
 

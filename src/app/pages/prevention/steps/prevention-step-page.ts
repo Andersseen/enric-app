@@ -16,7 +16,6 @@ import {
   IonButton,
   NavController,
 } from '@ionic/angular/standalone';
-import SessionHeaderComponent from '../../../../components/session-header';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
 
@@ -27,7 +26,6 @@ import { caretBack, caretForward } from 'ionicons/icons';
     IonHeader,
     IonTitle,
     IonToolbar,
-    SessionHeaderComponent,
     IonButtons,
     IonContent,
     IonIcon,
@@ -51,8 +49,6 @@ import { caretBack, caretForward } from 'ionicons/icons';
             </ion-buttons>
           }
         </ion-toolbar>
-
-        <app-session-header />
       </ion-header>
       <ion-content>
         <ng-content />

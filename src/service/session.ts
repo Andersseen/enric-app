@@ -62,9 +62,17 @@ export default class Session {
     const { value } = await Preferences.get({ key: 'enric_session_data' });
     if (value) {
       try {
-        const data = JSON.parse(value);
+        const stored = JSON.parse(value) as SessionData;
+        // Si la sesión guardada es de otro día, se renuevan fecha y hora
+        // (se mantienen trabajador y climatología).
+        const fresh = this.initial();
+        const data: SessionData =
+          stored.date === fresh.date ? stored : { ...stored, date: fresh.date, time: fresh.time };
         this.sessionData.set(data);
         this.sessionForm.patchValue(data, { emitEvent: false });
+        if (data !== stored) {
+          this.saveSessionData(data);
+        }
       } catch (e) {
         console.error('Error loading session data', e);
       }

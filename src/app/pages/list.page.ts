@@ -75,6 +75,13 @@ export default class List {
       routerLink: ['traps'],
       color: 'primary',
     },
+    {
+      icon: '⏸️',
+      title: 'No actividad',
+      description: 'Registrar una zona sin avistamientos.',
+      routerLink: ['no-activity'],
+      color: 'secondary',
+    },
   ];
 
   reportsSection: ActionCardItem[] = [
@@ -97,6 +104,13 @@ export default class List {
       title: 'Gestionar Trabajadores',
       description: 'Añadir o eliminar trabajadores.',
       routerLink: ['/home/manage-workers'],
+      color: 'secondary',
+    },
+    {
+      icon: '🦅',
+      title: 'Gestionar Animales',
+      description: 'Añadir o eliminar halcones y perros.',
+      routerLink: ['/home/manage-animals'],
       color: 'secondary',
     },
   ];

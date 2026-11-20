@@ -130,7 +130,7 @@ export default class Form {
   #excelService = inject(ExcelService);
 
   methodOptions = [
-    'Claxon',
+    'Bocina',
     'Ahuyentador',
     'Pirotecnia',
     'Láser',
