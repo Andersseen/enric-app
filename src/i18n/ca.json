@@ -49,7 +49,11 @@
     "weather": "Climatologia",
     "worker": "Treballador",
     "unassigned": "Sense assignar",
-    "noWeather": "Sense climatologia"
+    "noWeather": "Sense climatologia",
+    "date": "Data",
+    "time": "Hora",
+    "now": "Ara",
+    "manualDateTime": "data i hora fixades"
   },
   "nav": {
     "home": "Inici",
@@ -150,7 +154,6 @@
   },
   "noActivity": {
     "title": "Sense activitat",
-    "defaultNotes": "Romanem en observació",
     "saved": "Sense activitat afegida a la taula"
   },
   "prevention": {

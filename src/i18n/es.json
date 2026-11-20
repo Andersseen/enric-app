@@ -49,7 +49,11 @@
     "weather": "Climatología",
     "worker": "Trabajador",
     "unassigned": "Sin asignar",
-    "noWeather": "Sin climatología"
+    "noWeather": "Sin climatología",
+    "date": "Fecha",
+    "time": "Hora",
+    "now": "Ahora",
+    "manualDateTime": "fecha y hora fijadas"
   },
   "nav": {
     "home": "Inicio",
@@ -150,7 +154,6 @@
   },
   "noActivity": {
     "title": "No actividad",
-    "defaultNotes": "Permanecemos en observación",
     "saved": "No actividad añadida a la tabla"
   },
   "prevention": {
