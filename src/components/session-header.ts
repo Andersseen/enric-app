@@ -7,6 +7,7 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonIcon,
+  IonInput,
   IonSelect,
   IonSelectOption,
 } from '@ionic/angular';
@@ -14,7 +15,7 @@ import Session from '@service/session';
 import { WEATHER_OPTIONS } from '@data/weather';
 import { optionKey } from '@i18n/options';
 import { addIcons } from 'ionicons';
-import { chevronDown, chevronUp } from 'ionicons/icons';
+import { chevronDown, chevronUp, timeOutline } from 'ionicons/icons';
 import { injectT } from '@etyma/angular';
 import { i18n } from '@i18n/i18n';
 
@@ -26,6 +27,7 @@ import { i18n } from '@i18n/i18n';
     IonCardTitle,
     IonCardContent,
     IonIcon,
+    IonInput,
     IonSelect,
     IonSelectOption,
     ReactiveFormsModule,
@@ -55,6 +57,12 @@ import { i18n } from '@i18n/i18n';
               <span class="mx-2">·</span>
               <span>{{ weatherLabel(sessionForm.get('weather')?.value) || t('session.noWeather') }}</span>
             </div>
+            <div class="text-base" [class.text-muted]="!manual()" [class.text-primary]="manual()" [class.font-semibold]="manual()">
+              {{ displayDate() }} · {{ sessionForm.get('time')?.value }}
+              @if (manual()) {
+                <span class="text-sm"> ({{ t('session.manualDateTime') }})</span>
+              }
+            </div>
           </div>
           <ion-button shape="round" size="large" [class.rotate-180]="expanded()">
             <ion-icon name="chevron-down" size="large"></ion-icon>
@@ -73,6 +81,28 @@ import { i18n } from '@i18n/i18n';
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 text-sm"
           [formGroup]="sessionForm"
         >
+          <div class="flex flex-col">
+            <ion-input
+              [label]="t('session.date')"
+              formControlName="date"
+              type="date"
+              class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
+            />
+          </div>
+
+          <div class="flex gap-2 items-center">
+            <ion-input
+              [label]="t('session.time')"
+              formControlName="time"
+              type="time"
+              class="flex-1 rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
+            />
+            <ion-button fill="outline" size="small" [disabled]="!manual()" (click)="useNow()">
+              <ion-icon slot="start" name="time-outline"></ion-icon>
+              {{ t('session.now') }}
+            </ion-button>
+          </div>
+
           <div class="flex flex-col">
             <ion-select
               [label]="t('session.weather')"
@@ -147,8 +177,20 @@ export default class SessionHeaderComponent {
 
   workers = this.#session.workers;
 
+  manual = this.#session.manualDateTime;
+
+  /** `2026-11-20` → `20/11/2026` */
+  displayDate(): string {
+    const [y, m, d] = (this.sessionForm.get('date')?.value ?? '').split('-');
+    return d ? `${d}/${m}/${y}` : '';
+  }
+
+  useNow(): void {
+    this.#session.useCurrentDateTime();
+  }
+
   constructor() {
-    addIcons({ chevronUp, chevronDown });
+    addIcons({ chevronUp, chevronDown, timeOutline });
   }
 
   toggle(): void {

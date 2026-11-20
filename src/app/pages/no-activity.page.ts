@@ -95,8 +95,9 @@ export default class NoActivityPage {
   #nav = inject(NavController);
 
   zone = signal<Zone | null>(null);
-  // Texto por defecto, editable o borrable
-  notes = signal(this.t('noActivity.defaultNotes'));
+  // Texto por defecto, editable o borrable. Siempre en castellano porque se
+  // guarda y sale tal cual en el Excel, que es para otra empresa.
+  notes = signal('Permanecemos en observación');
 
   constructor() {
     addIcons({ arrowBack, saveOutline });

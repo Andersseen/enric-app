@@ -19,28 +19,62 @@ export default class Session {
   sessionForm = inject(FormBuilder).nonNullable.group({
     weather: [''],
     worker: [''],
+    date: [format(new Date(), 'yyyy-MM-dd')],
+    time: [format(new Date(), 'HH:mm')],
   });
+
+  /**
+   * false: la fecha y la hora siguen al reloj (cada registro lleva la hora real).
+   * true: el usuario las ha cambiado (p. ej. para un reporte a posteriori) y se
+   * usan las que ha puesto hasta que pulse "Ahora".
+   */
+  #manualDateTime = signal(false);
+  manualDateTime = this.#manualDateTime.asReadonly();
 
   constructor() {
     this.loadWorkers();
     this.loadSessionData();
 
-    this.sessionForm.valueChanges.subscribe(() => this.saveSessionData());
+    this.sessionForm.controls.weather.valueChanges.subscribe(() => this.saveSessionData());
+    this.sessionForm.controls.worker.valueChanges.subscribe(() => this.saveSessionData());
+    // Cualquier cambio de fecha u hora hecho por el usuario la deja fija
+    this.sessionForm.controls.date.valueChanges.subscribe(() => this.#manualDateTime.set(true));
+    this.sessionForm.controls.time.valueChanges.subscribe(() => this.#manualDateTime.set(true));
+
+    // Mientras no se haya cambiado a mano, la fecha y hora mostradas van con el reloj
+    setInterval(() => {
+      if (!this.#manualDateTime()) this.#syncDateTime();
+    }, 15_000);
+  }
+
+  /** Vuelve a la fecha y hora actuales (y a que se actualicen solas). */
+  useCurrentDateTime(): void {
+    this.#manualDateTime.set(false);
+    this.#syncDateTime();
   }
 
   /**
-   * Datos comunes de una fila: trabajador y climatología de la sesión,
-   * y la fecha y hora reales del momento en que se guarda.
+   * Datos comunes de una fila: trabajador y climatología de la sesión, y la
+   * fecha y hora elegidas a mano o, si no se han cambiado, las del momento.
    */
   recordMeta(): RecordMeta {
+    if (!this.#manualDateTime()) this.#syncDateTime();
+    const { weather, worker, date, time } = this.sessionForm.getRawValue();
     const now = new Date();
-    const { weather, worker } = this.sessionForm.getRawValue();
     return {
-      date: format(now, 'yyyy-MM-dd'),
-      time: format(now, 'HH:mm'),
+      date: date || format(now, 'yyyy-MM-dd'),
+      time: time || format(now, 'HH:mm'),
       weather,
       worker,
     };
+  }
+
+  #syncDateTime(): void {
+    const now = new Date();
+    this.sessionForm.patchValue(
+      { date: format(now, 'yyyy-MM-dd'), time: format(now, 'HH:mm') },
+      { emitEvent: false },
+    );
   }
 
   setExpand(value: boolean): void {
@@ -90,7 +124,9 @@ export default class Session {
   }
 
   private async saveSessionData(): Promise<void> {
-    const data: SessionData = this.sessionForm.getRawValue();
+    // Fecha y hora no se guardan: al abrir la app se vuelve a la hora actual
+    const { weather, worker } = this.sessionForm.getRawValue();
+    const data: SessionData = { weather, worker };
     await Preferences.set({ key: SESSION_STORAGE_KEY, value: JSON.stringify(data) });
   }
 
