@@ -256,6 +256,13 @@ import {
       </div>
     </ion-content>
   `,
+  styles: `
+    /* Ionic pone padding: 0 en th/td y gana a las clases de Tailwind */
+    th,
+    td {
+      padding: 0.375rem 0.625rem;
+    }
+  `,
 })
 export default class FullReportPage {
   private static readonly SCF_STATE_KEY = 'enric_scf_full_report_state';
@@ -336,6 +343,11 @@ export default class FullReportPage {
     this.setLoading(true, `Importando ${file.name}…`);
     try {
       const importedSheets = await this.globalExcelService.importScfWorkbook(file);
+      if (this.countAllRows(importedSheets) === 0) {
+        // No se sustituye lo que ya hay por tablas vacías
+        this.showToast('El fichero no contiene datos de SCF reconocibles. No se ha cambiado nada.', 'warning');
+        return;
+      }
       this.scfSheets.set(importedSheets);
       this.selectedSheetId.set(importedSheets[0]?.id ?? 'DATOS_GENERALES');
       await this.persistScfState();

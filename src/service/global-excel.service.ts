@@ -2,6 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ReportsStorageService } from './reports-storage.service';
+import {
+  cellToText,
+  columnWidthFor,
+  rowHeightFor,
+  toDisplayDate,
+  toExcelValue,
+} from './excel-cells';
 
 export interface GlobalReportRow {
   zoneId: string;
@@ -275,7 +282,11 @@ export class GlobalExcelService {
     await workbook.xlsx.load(arrayBuffer);
 
     return SCF_SHEETS_TEMPLATE.map((sheet) => {
-      const worksheet = workbook.getWorksheet(sheet.excelName) ?? workbook.getWorksheet(sheet.id);
+      const worksheet =
+        workbook.getWorksheet(sheet.excelName) ??
+        workbook.getWorksheet(sheet.id) ??
+        // El Excel de "Mis Reportes" tiene las mismas columnas que ACTUACIONES DIARIAS
+        (sheet.id === 'ACTUACIONES_DIARIAS' ? workbook.getWorksheet('Actuación') : undefined);
 
       return {
         id: sheet.id,
@@ -310,7 +321,7 @@ export class GlobalExcelService {
 
   mapGlobalRowsToActuacionesRows(data: GlobalReportRow[]): string[][] {
     return data.map((row) => [
-      row.date || '',
+      toDisplayDate(row.date),
       row.weather || '',
       row.worker || '',
       row.time || '',
@@ -343,8 +354,6 @@ export class GlobalExcelService {
         section.emptyRows,
       );
     });
-
-    worksheet.views = [{ state: 'frozen', ySplit: 1 }];
   }
 
   private addExpedienteBanner(worksheet: ExcelJS.Worksheet, sheet: ScfSheetData): void {
@@ -390,20 +399,22 @@ export class GlobalExcelService {
     titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
     this.applyBorder(titleCell);
 
+    // Los anchos se fijan antes de las filas para calcular el alto de cada una
+    headers.forEach((header, index) => {
+      const col = worksheet.getColumn(index + 1);
+      col.width = Math.max(col.width ?? 10, columnWidthFor(header));
+    });
+    const widths = headers.map((_, index) => worksheet.getColumn(index + 1).width ?? 10);
+
     this.createHeaderRow(worksheet, headers);
 
     const rowsToRender =
       rows.length > 0
         ? rows
         : Array.from({ length: emptyRows }, () => Array(headers.length).fill(''));
-    rowsToRender.forEach((row) => this.addDataRow(worksheet, row));
+    rowsToRender.forEach((row) => this.addDataRow(worksheet, row, widths));
 
     worksheet.addRow([]);
-
-    headers.forEach((header, index) => {
-      const col = worksheet.getColumn(index + 1);
-      col.width = Math.max(col.width ?? 10, Math.min(Math.max(header.length + 4, 12), 32));
-    });
   }
 
   private createHeaderRow(worksheet: ExcelJS.Worksheet, headers: string[]): void {
@@ -417,9 +428,13 @@ export class GlobalExcelService {
     });
   }
 
-  private addDataRow(worksheet: ExcelJS.Worksheet, data: unknown[]): void {
-    const row = worksheet.addRow(data);
-    row.height = 19;
+  private addDataRow(worksheet: ExcelJS.Worksheet, data: unknown[], widths: number[]): void {
+    // Fechas en formato dd/MM/yyyy y enteros como número
+    const values = data.map((value) =>
+      toExcelValue(typeof value === 'string' ? toDisplayDate(value) : value),
+    );
+    const row = worksheet.addRow(values);
+    row.height = rowHeightFor(values, widths);
     row.eachCell((cell) => {
       cell.font = { name: 'Arial', size: 9 };
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.dataBg } };
@@ -447,16 +462,20 @@ export class GlobalExcelService {
     const anchors = this.getSectionAnchors(sheet.id, section, sectionIndex);
 
     let startRow = this.findRowByFirstCell(worksheet, anchors);
+    let foundByHeader = false;
 
     if (startRow === null && section.headers.length > 0) {
+      // Sin fila de título (p. ej. el Excel de "Mis Reportes"): se busca la cabecera
       startRow = this.findRowByFirstCell(worksheet, [section.headers[0]]);
+      foundByHeader = startRow !== null;
     }
 
     if (startRow === null) {
       return [];
     }
 
-    const startAtHeader = this.rowLooksLikeHeader(worksheet.getRow(startRow), section.headers);
+    const startAtHeader =
+      foundByHeader || this.rowLooksLikeHeader(worksheet.getRow(startRow), section.headers);
     const firstDataRow = startAtHeader ? startRow + 1 : startRow + 2;
 
     const stopMarkers = sheet.sections
@@ -617,42 +636,7 @@ export class GlobalExcelService {
   }
 
   private normalizeCellValue(value: ExcelJS.CellValue | undefined | null): string {
-    if (value == null) return '';
-
-    if (value instanceof Date) {
-      return value.toLocaleDateString('es-ES');
-    }
-
-    if (typeof value === 'object') {
-      if ('result' in value && value.result != null) {
-        const r = value.result;
-        if (r instanceof Date) return r.toLocaleDateString('es-ES');
-        return String(r).trim();
-      }
-
-      if ('text' in value && typeof (value as { text: unknown }).text === 'string') {
-        return (value as { text: string }).text.trim();
-      }
-
-      if (
-        'richText' in value &&
-        Array.isArray((value as { richText: { text: string }[] }).richText)
-      ) {
-        return (value as { richText: { text: string }[] }).richText
-          .map((p) => p.text)
-          .join('')
-          .trim();
-      }
-    }
-
-    if (typeof value === 'object' && value !== null && 'getHours' in (value as object)) {
-      const d = value as any;
-      const hh = String(d.getHours()).padStart(2, '0');
-      const mm = String(d.getMinutes()).padStart(2, '0');
-      return `${hh}:${mm}`;
-    }
-
-    return String(value).trim();
+    return cellToText(value);
   }
 
   private getScfDateStamp(): string {
@@ -676,15 +660,13 @@ export class GlobalExcelService {
   private async saveWorkbook(workbook: ExcelJS.Workbook, filename: string): Promise<void> {
     const buffer = await workbook.xlsx.writeBuffer();
 
+    // En el móvil, si falla el guardado se lanza el error para que la pantalla
+    // lo muestre (la descarga de navegador no funciona dentro de la app).
     if (this.reportsStorage.isNative()) {
-      try {
-        await this.reportsStorage.saveReport(buffer, filename, 'actuacion', {
-          source: 'reporte-entero',
-        });
-        return;
-      } catch (error) {
-        console.error('Error saving global report to device:', error);
-      }
+      await this.reportsStorage.saveReport(buffer as ArrayBuffer, filename, 'actuacion', {
+        source: 'reporte-entero',
+      });
+      return;
     }
 
     const blob = new Blob([buffer], { type: 'application/octet-stream' });

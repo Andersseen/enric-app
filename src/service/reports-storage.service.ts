@@ -38,22 +38,25 @@ export class ReportsStorageService {
     // Convert ArrayBuffer to base64
     const base64Data = await this.arrayBufferToBase64(buffer);
 
-    let result;
-    let finalDirectory = Directory.Documents;
-    let savePath = `${REPORTS_DIR}/${filename}`;
+    let result: { uri: string };
+    let finalDirectory: Directory;
+
+    // Escribe el archivo sin sobrescribir uno existente con el mismo nombre
+    // (se añade " (2)", " (3)"… al nombre).
+    const writeTo = async (directory: Directory) => {
+      filename = await this.uniqueFilename(filename, directory);
+      return Filesystem.writeFile({
+        path: `${REPORTS_DIR}/${filename}`,
+        data: base64Data,
+        directory,
+        recursive: true,
+      });
+    };
 
     // TIER 1: Documents (Preferred)
     try {
-      // Create 'reports' directory if it doesn't exist (recursive handles it usually, but good to be safe)
-      // Attempt save
-      result = await Filesystem.writeFile({
-        path: savePath,
-        data: base64Data,
-        directory: Directory.Documents,
-        recursive: true,
-      });
-
       finalDirectory = Directory.Documents;
+      result = await writeTo(finalDirectory);
       await this.showToast('Guardado correctamente en Documentos', 'success');
       await this.presentSuccessAlert(filename, 'Documentos/reports', finalDirectory);
     } catch (docError) {
@@ -63,13 +66,7 @@ export class ReportsStorageService {
       try {
         finalDirectory = Directory.External;
         // On Android 11+: Android/data/com.package/files/reports
-        result = await Filesystem.writeFile({
-          path: savePath,
-          data: base64Data,
-          directory: Directory.External,
-          recursive: true,
-        });
-
+        result = await writeTo(finalDirectory);
         await this.showToast('Guardado en carpeta de la App (Android/data)', 'medium');
         await this.presentSuccessAlert(filename, 'Android/data/.../reports', finalDirectory);
       } catch (extError) {
@@ -78,13 +75,7 @@ export class ReportsStorageService {
         // TIER 3: Cache (Temporary)
         try {
           finalDirectory = Directory.Cache;
-          result = await Filesystem.writeFile({
-            path: savePath,
-            data: base64Data,
-            directory: Directory.Cache,
-            recursive: true,
-          });
-
+          result = await writeTo(finalDirectory);
           await this.showToast('Guardado temporalmente (Cache)', 'warning');
           // Auto-share because it's temporary
           await this.shareReportFile(filename, finalDirectory);
@@ -278,6 +269,26 @@ export class ReportsStorageService {
     const reports = await this.getReports();
     reports.push(report);
     localStorage.setItem(REPORTS_STORAGE_KEY, JSON.stringify(reports));
+  }
+
+  /**
+   * Devuelve un nombre libre en la carpeta de reportes: si "x.xlsx" ya existe,
+   * prueba "x (2).xlsx", "x (3).xlsx"…
+   */
+  private async uniqueFilename(filename: string, directory: Directory): Promise<string> {
+    const dot = filename.lastIndexOf('.');
+    const base = dot > 0 ? filename.slice(0, dot) : filename;
+    const ext = dot > 0 ? filename.slice(dot) : '';
+
+    for (let i = 1; i < 100; i++) {
+      const candidate = i === 1 ? filename : `${base} (${i})${ext}`;
+      try {
+        await Filesystem.stat({ path: `${REPORTS_DIR}/${candidate}`, directory });
+      } catch {
+        return candidate; // no existe
+      }
+    }
+    return `${base}_${Date.now()}${ext}`;
   }
 
   /**
