@@ -44,6 +44,12 @@ importers:
       '@capacitor/share':
         specifier: ^8.0.3
         version: 8.0.3(@capacitor/core@8.6.2)
+      '@etyma/angular':
+        specifier: ^1.0.0
+        version: 1.0.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))
+      '@etyma/core':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@ionic/angular':
         specifier: ^9.0.12
         version: 9.0.12(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/forms@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)))(rxjs@7.8.2))(@angular/router@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)))(rxjs@7.8.2))(rxjs@7.8.2)
@@ -90,6 +96,9 @@ importers:
       '@capacitor/cli':
         specifier: ^8.6.2
         version: 8.6.2
+      '@etyma/cli':
+        specifier: ^1.0.0
+        version: 1.0.0(@angular/compiler@22.3.0)
       '@types/file-saver':
         specifier: ^2.0.7
         version: 2.0.7
@@ -526,6 +535,37 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@etyma/angular@1.0.0':
+    resolution: {integrity: sha512-H3eobNzrEfgkPMKfjR2MZBh2SX9KWoluIS/i8AT8CDZN9uFmRkYdJk5ubQYxbglB2RNwJpvao2u9gKLHSkhkew==}
+    engines: {node: '>=22.22.0'}
+    peerDependencies:
+      '@angular/common': ^21.0.0 || ^22.0.0
+      '@angular/core': ^21.0.0 || ^22.0.0
+
+  '@etyma/cli@1.0.0':
+    resolution: {integrity: sha512-5MJtmEfUpmxVJ4D/qzxbGgGGRL/DLknLElPXqzUYiJ/h9bq9iXgLrEDxa2tV4KhZGNgoyyQhs4cH4WGlwboxgA==}
+    engines: {node: '>=22.22.0'}
+    hasBin: true
+
+  '@etyma/core@1.0.0':
+    resolution: {integrity: sha512-+S3jdc4FMxoKW8dHwRT1xzMOPd+sXKPB3SswNsu+KPZ+0wxpPLzzDTGuclIO9MTKmQyDZErFW1BEOZco1r5j8g==}
+    engines: {node: '>=22.22.0'}
+
+  '@etyma/tooling@1.0.0':
+    resolution: {integrity: sha512-WPLrPgpATXfe3BPnCYSarroXCQcg0ExcVkLse9BiRmeuSv2tgksO+sl3kXvWGf+JiRNl4zugtdPm6jf32CwaxQ==}
+    engines: {node: '>=22.22.0'}
+    peerDependencies:
+      '@angular/compiler': ^21.0.0 || ^22.0.0
+      '@astrojs/compiler': ^4.0.0
+      '@astrojs/compiler-rs': ^0.5.0
+    peerDependenciesMeta:
+      '@angular/compiler':
+        optional: true
+      '@astrojs/compiler':
+        optional: true
+      '@astrojs/compiler-rs':
+        optional: true
 
   '@exodus/bytes@1.16.0':
     resolution: {integrity: sha512-IcpW84uEn3N7ETtNZMlxKhfl6Pec8rUNGOTBtWbK1FKhJxIFAptZyVrvVRVBimAJxJCgc3PxepxkdWWG4DVzfA==}
@@ -2870,6 +2910,10 @@ packages:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
 
+  messageformat@4.0.0:
+    resolution: {integrity: sha512-XKmJ/ffTWToWOlHJzt85ZChQgVGC0LHzNWuNK8zuYpNySsB0nIEmytOdSAOW9ETKtkajAUJf520m5gFHHnrTYg==}
+    engines: {node: ^20.19 || ^22.12 || >=24}
+
   mimic-function@5.0.1:
     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
     engines: {node: '>=18'}
@@ -3602,6 +3646,11 @@ packages:
     resolution: {integrity: sha512-r+7YvGfM5TkTiDQ5EqWi/Z4L4KP3jUI+YCmTtWg1tmTHUw6xladLJqzR2heMaHBIM0TTFLZmn/EkIaEHYs/bIA==}
     engines: {node: '>= 0.4'}
 
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
@@ -4318,6 +4367,33 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.2':
     optional: true
+
+  '@etyma/angular@1.0.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))':
+    dependencies:
+      '@angular/common': 22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)
+      '@etyma/core': 1.0.0
+      tslib: 2.9.1
+
+  '@etyma/cli@1.0.0(@angular/compiler@22.3.0)':
+    dependencies:
+      '@etyma/tooling': 1.0.0(@angular/compiler@22.3.0)
+    transitivePeerDependencies:
+      - '@angular/compiler'
+      - '@astrojs/compiler'
+      - '@astrojs/compiler-rs'
+
+  '@etyma/core@1.0.0':
+    dependencies:
+      messageformat: 4.0.0
+
+  '@etyma/tooling@1.0.0(@angular/compiler@22.3.0)':
+    dependencies:
+      '@etyma/core': 1.0.0
+      messageformat: 4.0.0
+      typescript: 5.9.3
+    optionalDependencies:
+      '@angular/compiler': 22.3.0
 
   '@exodus/bytes@1.16.0': {}
 
@@ -6469,6 +6545,8 @@ snapshots:
 
   math-intrinsics@1.1.0: {}
 
+  messageformat@4.0.0: {}
+
   mimic-function@5.0.1: {}
 
   minimatch@11.0.9:
@@ -7305,6 +7383,8 @@ snapshots:
       math-intrinsics: 1.1.0
       typed-array-buffer: 1.0.3
       typed-array-byte-offset: 1.0.5
+
+  typescript@5.9.3: {}
 
   typescript@6.0.3: {}
 

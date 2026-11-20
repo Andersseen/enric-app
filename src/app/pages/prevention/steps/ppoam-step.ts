@@ -48,7 +48,7 @@ export default class PpoamStepPage extends PreventionStep {
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

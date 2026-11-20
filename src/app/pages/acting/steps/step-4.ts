@@ -9,6 +9,7 @@ import ActionsStore from '@service/actions-store';
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-selection-grid
+      group="behavior"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"

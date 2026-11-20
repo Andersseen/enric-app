@@ -18,6 +18,8 @@ import {
 import Session from '@service/session';
 import { addIcons } from 'ionicons';
 import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-manage-workers',
@@ -30,7 +32,7 @@ import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>Gestionar Trabajadores</ion-title>
+        <ion-title>{{ t('workers.title') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -39,7 +41,7 @@ import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
         <div class="flex gap-2 mb-6 items-end">
           <ion-input
             [formControl]="newWorkerControl"
-            label="Nuevo Trabajador"
+            [label]="t('workers.newWorker')"
             labelPlacement="floating"
             fill="outline"
             class="flex-1"
@@ -61,7 +63,7 @@ import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
           } @empty {
             <ion-item lines="none">
               <ion-label class="text-center text-muted italic">
-                No hay trabajadores registrados
+                {{ t('workers.empty') }}
               </ion-label>
             </ion-item>
           }
@@ -86,6 +88,7 @@ import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
   ],
 })
 export default class ManageWorkersPage {
+  protected t = injectT(i18n);
   #session = inject(Session);
   #toast = inject(ToastController);
 
@@ -103,7 +106,7 @@ export default class ManageWorkersPage {
       this.newWorkerControl.reset();
 
       const toast = await this.#toast.create({
-        message: 'Trabajador añadido correctamente',
+        message: this.t('workers.added'),
         duration: 2000,
         color: 'success',
         position: 'bottom',
@@ -116,7 +119,7 @@ export default class ManageWorkersPage {
     this.#session.removeWorker(name);
 
     const toast = await this.#toast.create({
-      message: 'Trabajador eliminado',
+      message: this.t('workers.removed'),
       duration: 2000,
       color: 'medium',
       position: 'bottom',

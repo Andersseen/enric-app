@@ -21,6 +21,8 @@ import {
   aperture,
   apertureOutline,
 } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 @Component({
   selector: 'app-bottom-bar',
@@ -31,7 +33,7 @@ import {
       @for (item of tabs; track item.tab) {
         <ion-tab-button (click)="navigate(item.path)" [class.selected-tab]="isActive(item.path)">
           <ion-icon [name]="isActive(item.path) ? item.selectedIcon : item.icon"></ion-icon>
-          <ion-label>{{ item.label }}</ion-label>
+          <ion-label>{{ t(item.label) }}</ion-label>
         </ion-tab-button>
       }
     </ion-tab-bar>
@@ -46,6 +48,7 @@ import {
   ],
 })
 export class BottomBarComponent {
+  protected t = injectT(i18n);
   router = inject(Router);
   alertCtrl = inject(AlertController);
   actionsStore = inject(ActionsStore);
@@ -56,28 +59,28 @@ export class BottomBarComponent {
     {
       tab: 'home',
       path: '/home',
-      label: 'Inicio',
+      label: 'nav.home' as const,
       icon: 'home-outline',
       selectedIcon: 'home',
     },
     {
       tab: 'prevention',
       path: '/home/prevention',
-      label: 'Prevención',
+      label: 'nav.prevention' as const,
       icon: 'shield-checkmark-outline',
       selectedIcon: 'shield-checkmark',
     },
     {
       tab: 'action',
       path: '/home/action',
-      label: 'Actuación',
+      label: 'nav.acting' as const,
       icon: 'flash-outline',
       selectedIcon: 'flash',
     },
     {
       tab: 'traps',
       path: '/home/traps',
-      label: 'Trampas',
+      label: 'nav.traps' as const,
       icon: 'aperture-outline',
       selectedIcon: 'aperture',
     },
@@ -148,15 +151,15 @@ export class BottomBarComponent {
 
     if (isActing || isPrevention || isTraps) {
       const alert = await this.alertCtrl.create({
-        header: '¿Salir del proceso?',
-        message: 'Si sales ahora, perderás los datos introducidos.',
+        header: this.t('nav.exitTitle'),
+        message: this.t('nav.exitMessage'),
         buttons: [
           {
-            text: 'Cancelar',
+            text: this.t('common.cancel'),
             role: 'cancel',
           },
           {
-            text: 'Salir',
+            text: this.t('common.exit'),
             role: 'confirm',
             handler: () => {
               navigateFn();

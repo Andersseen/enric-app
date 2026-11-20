@@ -14,11 +14,13 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
+    "resolveJsonModule": true,
     "paths": {
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
       "@data/*": ["./src/data/*"],
-      "@service/*": ["./src/service/*"]
+      "@service/*": ["./src/service/*"],
+      "@i18n/*": ["./src/i18n/*"]
     }
   },
   "angularCompilerOptions": {

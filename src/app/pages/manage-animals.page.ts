@@ -16,14 +16,17 @@ import {
   ToastController,
 } from '@ionic/angular';
 import AnimalsStore, { AnimalKind } from '@service/animals-store';
+import type { MessageKey } from '@i18n/i18n';
 import { addIcons } from 'ionicons';
 import { addOutline, arrowBack, trashOutline } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 interface AnimalSection {
   kind: AnimalKind;
-  title: string;
-  inputLabel: string;
-  empty: string;
+  title: MessageKey;
+  inputLabel: MessageKey;
+  empty: MessageKey;
   control: FormControl<string | null>;
 }
 
@@ -38,7 +41,7 @@ interface AnimalSection {
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>Gestionar Animales</ion-title>
+        <ion-title>{{ t('animals.title') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -46,12 +49,12 @@ interface AnimalSection {
       <div class="max-w-md mx-auto flex flex-col gap-8">
         @for (section of sections; track section.kind) {
           <section>
-            <h2 class="text-lg font-semibold mb-3 text-foreground">{{ section.title }}</h2>
+            <h2 class="text-lg font-semibold mb-3 text-foreground">{{ t(section.title) }}</h2>
 
             <div class="flex gap-2 mb-4 items-end">
               <ion-input
                 [formControl]="section.control"
-                [label]="section.inputLabel"
+                [label]="t(section.inputLabel)"
                 labelPlacement="floating"
                 fill="outline"
                 class="flex-1"
@@ -77,7 +80,7 @@ interface AnimalSection {
                 </ion-item>
               } @empty {
                 <ion-item lines="none">
-                  <ion-label class="text-center text-muted italic">{{ section.empty }}</ion-label>
+                  <ion-label class="text-center text-muted italic">{{ t(section.empty) }}</ion-label>
                 </ion-item>
               }
             </ion-list>
@@ -103,22 +106,23 @@ interface AnimalSection {
   ],
 })
 export default class ManageAnimalsPage {
+  protected t = injectT(i18n);
   animals = inject(AnimalsStore);
   #toast = inject(ToastController);
 
   sections: AnimalSection[] = [
     {
       kind: 'falcon',
-      title: 'Halcones',
-      inputLabel: 'Nuevo halcón',
-      empty: 'No hay halcones registrados',
+      title: 'animals.falcons',
+      inputLabel: 'animals.newFalcon',
+      empty: 'animals.noFalcons',
       control: new FormControl('', [Validators.required, Validators.minLength(2)]),
     },
     {
       kind: 'dog',
-      title: 'Perros',
-      inputLabel: 'Nuevo perro',
-      empty: 'No hay perros registrados',
+      title: 'animals.dogs',
+      inputLabel: 'animals.newDog',
+      empty: 'animals.noDogs',
       control: new FormControl('', [Validators.required, Validators.minLength(2)]),
     },
   ];
@@ -134,14 +138,14 @@ export default class ManageAnimalsPage {
     const added = this.animals.add(section.kind, name);
     section.control.reset();
     await this.#showToast(
-      added ? `${name} añadido` : `${name} ya está en la lista`,
+      added ? this.t('animals.added', { name }) : this.t('animals.exists', { name }),
       added ? 'success' : 'warning',
     );
   }
 
   async remove(section: AnimalSection, name: string) {
     this.animals.remove(section.kind, name);
-    await this.#showToast(`${name} eliminado`, 'medium');
+    await this.#showToast(this.t('animals.removed', { name }), 'medium');
   }
 
   async #showToast(message: string, color: string) {

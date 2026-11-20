@@ -21,6 +21,8 @@ import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
 import { addIcons } from 'ionicons';
 import { arrowBack, saveOutline } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 /**
  * "NO ACTIVIDAD": registra una fila en ACTUACIONES DIARIAS sin avistamientos.
@@ -52,14 +54,14 @@ import { arrowBack, saveOutline } from 'ionicons/icons';
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>No actividad</ion-title>
+        <ion-title>{{ t('noActivity.title') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <ion-card>
         <ion-card-content>
-          <h2 class="text-xl font-bold mb-4">Seleccionar zona</h2>
+          <h2 class="text-xl font-bold mb-4">{{ t('common.selectZone') }}</h2>
           <app-map-zones [selected]="zone()" (select)="zone.set($event)" />
         </ion-card-content>
       </ion-card>
@@ -67,17 +69,17 @@ import { arrowBack, saveOutline } from 'ionicons/icons';
       <ion-card>
         <ion-card-content class="flex flex-col gap-4">
           <ion-textarea
-            label="Observaciones"
+            [label]="t('common.observations')"
             labelPlacement="floating"
             fill="outline"
             rows="4"
-            placeholder="Escribe aquí los detalles..."
+            [placeholder]="t('common.writeDetails')"
             [ngModel]="notes()"
             (ngModelChange)="notes.set($event)"
           ></ion-textarea>
 
           <ion-button expand="block" (click)="save()" [disabled]="!zone()">
-            Guardar en Tabla
+            {{ t('common.saveToTable') }}
             <ion-icon slot="end" name="save-outline"></ion-icon>
           </ion-button>
         </ion-card-content>
@@ -86,6 +88,7 @@ import { arrowBack, saveOutline } from 'ionicons/icons';
   `,
 })
 export default class NoActivityPage {
+  protected t = injectT(i18n);
   #reportStore = inject(ReportStore);
   #session = inject(Session);
   #toast = inject(ToastController);
@@ -119,7 +122,7 @@ export default class NoActivityPage {
     });
 
     const toast = await this.#toast.create({
-      message: 'No actividad añadida a la tabla',
+      message: this.t('noActivity.saved'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

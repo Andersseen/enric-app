@@ -11,7 +11,7 @@ import PreventionStepPage from './prevention-step-page';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepObservationComponent, PreventionStepPage],
   template: `
-    <app-prevention-step-page title="Revisión Perímetro">
+    <app-prevention-step-page [title]="t('prevention.perimeterReview')">
       <app-prevention-step-observation
         [value]="store.perimeterReviewObservation()"
         (valueChange)="store.perimeterReviewObservation.set($event)"
@@ -48,7 +48,7 @@ export default class PerimeterReviewStepPage extends PreventionStep {
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

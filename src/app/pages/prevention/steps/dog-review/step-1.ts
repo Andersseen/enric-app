@@ -10,7 +10,7 @@ import { Zone } from '@data/zones';
   imports: [PreventionStepZoneComponent, PreventionStepPage],
   template: `
     <app-prevention-step-page
-      title="Revisión perro - Zona"
+      [title]="t('prevention.dogZone')"
       [showNext]="true"
       [canGoNext]="!!store.dogReviewZone()"
       (nextClicked)="next()"

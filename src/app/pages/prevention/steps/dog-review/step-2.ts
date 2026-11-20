@@ -11,7 +11,7 @@ import PreventionStepPage from '../prevention-step-page';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepDogDetailsComponent, PreventionStepPage],
   template: `
-    <app-prevention-step-page title="Revisión perro - Detalles">
+    <app-prevention-step-page [title]="t('prevention.dogDetails')">
       <app-prevention-step-dog-details
         [animal]="store.dogReviewAnimal()"
         (animalChange)="store.dogReviewAnimal.set($event)"
@@ -53,7 +53,7 @@ export default class DogReviewStepTwo extends PreventionStep {
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

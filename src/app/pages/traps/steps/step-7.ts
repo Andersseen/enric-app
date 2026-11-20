@@ -9,6 +9,7 @@ import StepPage from '.';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="trapMethod"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"

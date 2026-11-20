@@ -8,6 +8,7 @@ import ActionsStore from '@service/actions-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="actionType"
       colSize="6"
       colSizeMd="4"
       [items]="options"

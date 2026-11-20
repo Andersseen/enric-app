@@ -11,7 +11,7 @@ import PreventionStepPage from './prevention-step-page';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PreventionStepObservationComponent, PreventionStepPage],
   template: `
-    <app-prevention-step-page title="Revisión Pista">
+    <app-prevention-step-page [title]="t('prevention.trackReview')">
       <app-prevention-step-observation
         [value]="store.trackReviewObservation()"
         (valueChange)="store.trackReviewObservation.set($event)"
@@ -48,7 +48,7 @@ export default class TrackReviewStepPage extends PreventionStep {
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

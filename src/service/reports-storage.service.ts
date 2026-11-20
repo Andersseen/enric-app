@@ -4,6 +4,8 @@ import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { Report, ReportFilter } from '../models/report.model';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
 
 const REPORTS_STORAGE_KEY = 'enric_reports';
 const REPORTS_DIR = 'reports';
@@ -12,6 +14,7 @@ const REPORTS_DIR = 'reports';
   providedIn: 'root',
 })
 export class ReportsStorageService {
+  protected t = injectT(i18n);
   private toastController = inject(ToastController);
   private alertController = inject(AlertController);
 
@@ -57,7 +60,7 @@ export class ReportsStorageService {
     try {
       finalDirectory = Directory.Documents;
       result = await writeTo(finalDirectory);
-      await this.showToast('Guardado correctamente en Documentos', 'success');
+      await this.showToast(this.t('storage.savedDocuments'), 'success');
       await this.presentSuccessAlert(filename, 'Documentos/reports', finalDirectory);
     } catch (docError) {
       console.warn('Tier 1 (Documents) failed:', docError);
@@ -67,7 +70,7 @@ export class ReportsStorageService {
         finalDirectory = Directory.External;
         // On Android 11+: Android/data/com.package/files/reports
         result = await writeTo(finalDirectory);
-        await this.showToast('Guardado en carpeta de la App (Android/data)', 'medium');
+        await this.showToast(this.t('storage.savedAppFolder'), 'medium');
         await this.presentSuccessAlert(filename, 'Android/data/.../reports', finalDirectory);
       } catch (extError) {
         console.warn('Tier 2 (External) failed:', extError);
@@ -76,12 +79,12 @@ export class ReportsStorageService {
         try {
           finalDirectory = Directory.Cache;
           result = await writeTo(finalDirectory);
-          await this.showToast('Guardado temporalmente (Cache)', 'warning');
+          await this.showToast(this.t('storage.savedCache'), 'warning');
           // Auto-share because it's temporary
           await this.shareReportFile(filename, finalDirectory);
         } catch (cacheError) {
           console.error('Tier 3 (Cache) failed:', cacheError);
-          throw new Error('No se pudo guardar el archivo en ninguna ubicación.');
+          throw new Error(this.t('storage.saveFailed'));
         }
       }
     }
@@ -211,9 +214,9 @@ export class ReportsStorageService {
 
     await Share.share({
       title: report.filename,
-      text: `Reporte: ${report.filename}`,
+      text: this.t('storage.shareText', { filename: report.filename }),
       url: report.fileUri,
-      dialogTitle: 'Compartir reporte',
+      dialogTitle: this.t('storage.shareTitle'),
     });
   }
 
@@ -238,7 +241,7 @@ export class ReportsStorageService {
       title: report.filename,
       text: `Abrir ${report.filename}`,
       url: report.fileUri,
-      dialogTitle: 'Abrir con...',
+      dialogTitle: this.t('storage.openWith'),
     });
   }
 
@@ -322,15 +325,15 @@ export class ReportsStorageService {
    */
   private async presentSuccessAlert(filename: string, path: string, directory: Directory) {
     const alert = await this.alertController.create({
-      header: 'Archivo Guardado',
-      message: `El archivo ${filename} se ha guardado en: \n\n${path}\n\n¿Quieres abrirlo o compartirlo?`,
+      header: this.t('storage.savedTitle'),
+      message: this.t('storage.savedMessage', { filename, path }),
       buttons: [
         {
-          text: 'Cerrar',
+          text: this.t('common.close'),
           role: 'cancel',
         },
         {
-          text: 'Compartir / Abrir',
+          text: this.t('storage.shareOrOpen'),
           handler: () => {
             this.shareReportFile(filename, directory);
           },
@@ -347,10 +350,10 @@ export class ReportsStorageService {
     });
 
     await Share.share({
-      title: 'Compartir Reporte',
-      text: `Reporte: ${filename}`,
+      title: this.t('storage.shareTitle'),
+      text: this.t('storage.shareText', { filename }),
       url: uriResult.uri,
-      dialogTitle: 'Abrir con...',
+      dialogTitle: this.t('storage.openWith'),
     });
   }
 

@@ -8,6 +8,7 @@ import ActionsStore from '@service/actions-store';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="method"
       [items]="options"
       [selected]="selectedOption()"
       (select)="onSelect($event)"

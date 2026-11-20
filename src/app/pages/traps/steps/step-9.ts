@@ -9,6 +9,7 @@ import StepPage from '.';
   imports: [SelectionGridComponent],
   template: `
     <app-selection-grid
+      group="yesNo"
       colSize="12"
       colSizeMd="6"
       [items]="options"

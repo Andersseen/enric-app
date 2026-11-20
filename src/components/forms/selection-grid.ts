@@ -6,6 +6,9 @@ import {
   output,
 } from '@angular/core';
 import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
+import { OptionGroup, optionKey } from '@i18n/options';
 
 @Component({
   selector: 'app-selection-grid',
@@ -37,7 +40,7 @@ import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular
               (click)="select.emit(item)"
             >
               <ion-card-content>
-                <h2 class="text-2xl font-bold tracking-tight">{{ item }}</h2>
+                <h2 class="text-2xl font-bold tracking-tight">{{ label(item) }}</h2>
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -69,5 +72,16 @@ export default class SelectionGridComponent {
   // Tarjetas más bajas, para listas largas (p. ej. números)
   compact = input(false, { transform: booleanAttribute });
 
+  /** Grupo de opciones: se muestra el texto traducido, pero se emite el valor guardado. */
+  group = input<OptionGroup | null>(null);
+
   select = output<any>();
+
+  #t = injectT(i18n);
+
+  label(item: unknown): string {
+    const group = this.group();
+    const key = group ? optionKey(group, item) : null;
+    return key ? this.#t(key) : String(item);
+  }
 }

@@ -11,7 +11,7 @@ import AnimalPickerComponent from '@components/forms/animal-picker';
   imports: [PreventionStepPage, AnimalPickerComponent, IonButton, IonIcon, IonCard, IonCardContent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-prevention-step-page title="Animal Empleado">
+    <app-prevention-step-page [title]="t('prevention.flightAnimal')">
       <div class="p-4 flex flex-col gap-4">
         <ion-card>
           <ion-card-content>
@@ -29,7 +29,7 @@ import AnimalPickerComponent from '@components/forms/animal-picker';
           [disabled]="!animalName || animalName.trim() === ''"
           class="mt-4"
         >
-          Siguiente
+          {{ t('common.next') }}
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>
       </div>

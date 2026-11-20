@@ -27,16 +27,16 @@ import PreventionStepPage from '../prevention-step-page';
     IonCardContent,
   ],
   template: `
-    <app-prevention-step-page title="Observaciones">
+    <app-prevention-step-page [title]="t('prevention.flightObservations')">
       <div class="p-4 flex flex-col gap-4">
         <ion-card>
           <ion-card-content>
             <ion-textarea
-              label="Observaciones (opcional)"
+              [label]="t('common.observationsOptional')"
               labelPlacement="floating"
               fill="outline"
               rows="5"
-              placeholder="Escribe aquí los detalles..."
+              [placeholder]="t('common.writeDetails')"
               [(ngModel)]="notes"
               (ngModelChange)="updateNotes($event)"
             ></ion-textarea>
@@ -44,7 +44,7 @@ import PreventionStepPage from '../prevention-step-page';
         </ion-card>
 
         <ion-button expand="block" (click)="save()" class="mt-4">
-          Guardar
+          {{ t('common.save') }}
           <ion-icon slot="end" name="save-outline"></ion-icon>
         </ion-button>
       </div>
@@ -93,7 +93,7 @@ export default class FlightStepFour extends PreventionStep {
     });
 
     const toast = await this.#toast.create({
-      message: 'Añadido a la tabla correctamente',
+      message: this.t('common.addedToTable'),
       duration: 2000,
       position: 'bottom',
       color: 'success',

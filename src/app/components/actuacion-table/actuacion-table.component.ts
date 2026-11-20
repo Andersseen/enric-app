@@ -3,6 +3,9 @@ import { ActuacionData } from '@service/excel.service';
 import { IonButton, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
+import { injectT } from '@etyma/angular';
+import { i18n } from '@i18n/i18n';
+import { OptionGroup, optionLabel } from '@i18n/options';
 
 @Component({
   selector: 'app-actuacion-table',
@@ -11,28 +14,28 @@ import { trashOutline } from 'ionicons/icons';
   template: `
     @if (data.length === 0) {
       <div class="w-full border border-border rounded-lg px-4 py-6 text-center text-sm text-muted">
-        No hay datos. Añade una actuación o importa un Excel.
+        {{ t('reports.empty') }}
       </div>
     } @else {
       <div class="overflow-x-auto w-full shrink-0 border border-border rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-muted">
           <thead class="text-xs text-foreground uppercase bg-surface">
             <tr>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Fecha/Hora</th>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Clima/Personal</th>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Zona</th>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Especie</th>
-              <th scope="col" class="px-3 py-2">Nº</th>
-              <th scope="col" class="px-3 py-2 min-w-[120px]">Comportamiento</th>
-              <th scope="col" class="px-3 py-2 min-w-[120px]">Tipo</th>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Operación</th>
-              <th scope="col" class="px-3 py-2 min-w-[150px]">Interacción</th>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Método</th>
-              <th scope="col" class="px-3 py-2 min-w-[100px]">Animal</th>
-              <th scope="col" class="px-3 py-2">Eficacia</th>
-              <th scope="col" class="px-3 py-2">Capt.</th>
-              <th scope="col" class="px-3 py-2 min-w-[150px]">Obs.</th>
-              <th scope="col" class="px-3 py-2 text-center sticky right-0 bg-surface">Acciones</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.dateTime') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.weatherWorker') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.zone') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.species') }}</th>
+              <th scope="col" class="px-3 py-2">{{ t('reports.table.count') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[120px]">{{ t('reports.table.behavior') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[120px]">{{ t('reports.table.type') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.operation') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[150px]">{{ t('reports.table.interaction') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.method') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[100px]">{{ t('reports.table.animal') }}</th>
+              <th scope="col" class="px-3 py-2">{{ t('reports.table.efficacy') }}</th>
+              <th scope="col" class="px-3 py-2">{{ t('reports.table.captured') }}</th>
+              <th scope="col" class="px-3 py-2 min-w-[150px]">{{ t('reports.table.notes') }}</th>
+              <th scope="col" class="px-3 py-2 text-center sticky right-0 bg-surface">{{ t('reports.table.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -43,7 +46,7 @@ import { trashOutline } from 'ionicons/icons';
                   <div class="text-xs text-muted">{{ row.time || '-' }}</div>
                 </td>
                 <td class="px-3 py-2 whitespace-nowrap">
-                  <div class="font-medium text-foreground">{{ row.weather || '-' }}</div>
+                  <div class="font-medium text-foreground">{{ opt('weather', row.weather) }}</div>
                   <div class="text-xs text-muted">{{ row.worker || '-' }}</div>
                 </td>
                 <td class="px-3 py-2 font-medium text-foreground whitespace-nowrap">
@@ -51,13 +54,13 @@ import { trashOutline } from 'ionicons/icons';
                 </td>
                 <td class="px-3 py-2">{{ row.speciesId }}</td>
                 <td class="px-3 py-2">{{ row.count }}</td>
-                <td class="px-3 py-2">{{ row.behavior }}</td>
-                <td class="px-3 py-2">{{ row.actionType }}</td>
-                <td class="px-3 py-2">{{ row.operation }}</td>
-                <td class="px-3 py-2">{{ row.interaction }}</td>
-                <td class="px-3 py-2">{{ row.method }}</td>
+                <td class="px-3 py-2">{{ opt('behavior', row.behavior) }}</td>
+                <td class="px-3 py-2">{{ opt('actionType', row.actionType) }}</td>
+                <td class="px-3 py-2">{{ opt('yesNo', row.operation) }}</td>
+                <td class="px-3 py-2">{{ opt('yesNo', row.interaction) }}</td>
+                <td class="px-3 py-2">{{ opt('method', row.method) }}</td>
                 <td class="px-3 py-2">{{ row.animal }}</td>
-                <td class="px-3 py-2">{{ row.efficacy }}</td>
+                <td class="px-3 py-2">{{ opt('yesNo', row.efficacy) }}</td>
                 <td class="px-3 py-2">{{ row.captured }}</td>
                 <td class="px-3 py-2 truncate max-w-[150px]" title="{{ row.notes }}">
                   {{ row.notes }}
@@ -85,6 +88,12 @@ import { trashOutline } from 'ionicons/icons';
   `,
 })
 export default class ActuacionTableComponent {
+  protected t = injectT(i18n);
+
+  /** Texto traducido de un valor guardado ("-" si está vacío). */
+  protected opt(group: OptionGroup, value: unknown): string {
+    return optionLabel(this.t, group, value);
+  }
   @Input() data: ActuacionData[] = [];
   @Output() remove = new EventEmitter<number>();
 
