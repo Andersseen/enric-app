@@ -57,3 +57,20 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Android
+
+The native Android project lives in `android/` and is committed to git (Capacitor recommends this):
+permissions, icons and version live there. Build outputs, `local.properties` and the copied web
+assets are ignored by `android/.gitignore`. Never commit a signing keystore.
+
+Requirements: Android Studio (SDK + emulator) and **JDK 21** (Capacitor 8 plugins compile with
+Java 21; the JDK bundled with Android Studio may be newer). On macOS: `brew install openjdk@21`.
+
+```bash
+export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
+pnpm run android:apk        # debug APK in android/app/build/outputs/apk/debug/
+```
+
+After changing web code, `npx cap sync android` copies the build into the native project.
+App icons are generated from `assets/` with `npx capacitor-assets generate --android`.

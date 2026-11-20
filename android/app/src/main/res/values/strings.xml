@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Fauna Tech</string>
+    <string name="title_activity_main">Fauna Tech</string>
+    <string name="package_name">com.enric.app</string>
+    <string name="custom_url_scheme">com.enric.app</string>
+</resources>
