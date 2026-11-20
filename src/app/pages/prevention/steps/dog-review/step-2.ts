@@ -32,8 +32,6 @@ export default class DogReviewStepTwo extends PreventionStep {
   }
 
   async save() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
     const zone = this.store.dogReviewZone();
 
     if (!zone) return; // Should not happen
@@ -51,11 +49,7 @@ export default class DogReviewStepTwo extends PreventionStep {
       efficacy: 'Si',
       captured: 0,
       notes: this.store.dogReviewNotes(),
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.#toast.create({

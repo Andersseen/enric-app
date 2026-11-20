@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ReportsStorageService } from './reports-storage.service';
-import Session from './session';
 
 export interface GlobalReportRow {
   zoneId: string;
@@ -252,7 +251,6 @@ const COLOR = {
 })
 export class GlobalExcelService {
   private reportsStorage = inject(ReportsStorageService);
-  private session = inject(Session);
 
   createScfSheetsData(sourceRows: GlobalReportRow[] = []): ScfSheetData[] {
     const actuacionesRows = this.mapGlobalRowsToActuacionesRows(sourceRows);
@@ -311,15 +309,11 @@ export class GlobalExcelService {
   }
 
   mapGlobalRowsToActuacionesRows(data: GlobalReportRow[]): string[][] {
-    const sessionData = this.session.sessionForm.value;
-
     return data.map((row) => [
-      row.date || sessionData.date || new Date().toLocaleDateString('es-ES'),
-      row.weather || sessionData.weather || '',
-      row.worker || sessionData.worker || '',
-      row.time ||
-        sessionData.time ||
-        new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      row.date || '',
+      row.weather || '',
+      row.worker || '',
+      row.time || '',
       row.zoneId || '',
       row.speciesId || '',
       String(row.count || 0),

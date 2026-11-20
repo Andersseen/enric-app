@@ -30,8 +30,6 @@ export default class PerimeterReviewStepPage extends PreventionStep {
   }
 
   async save() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
 
     this.#reportStore.addRow({
       zoneId: 'Perímetro',
@@ -46,11 +44,7 @@ export default class PerimeterReviewStepPage extends PreventionStep {
       efficacy: 'Si',
       captured: 0,
       notes: this.store.perimeterReviewObservation(),
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.#toast.create({

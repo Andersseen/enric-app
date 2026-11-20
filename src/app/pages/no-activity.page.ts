@@ -102,9 +102,6 @@ export default class NoActivityPage {
     const zone = this.zone();
     if (!zone) return;
 
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
-
     this.#reportStore.addRow({
       zoneId: zone.name,
       speciesId: 'Sin avistamientos',
@@ -118,11 +115,7 @@ export default class NoActivityPage {
       efficacy: '-',
       captured: 0,
       notes: this.notes().trim(),
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.#toast.create({

@@ -366,6 +366,7 @@ export default class FullReportPage {
 
     if (currentRows.length === 0) {
       this.updateSectionRows('ACTUACIONES_DIARIAS', 'ACTUACIONES_DIARIAS', rows);
+      await this.clearMovedSourceRows();
       this.showToast(`${rows.length} filas movidas a ACTUACIONES DIARIAS`, 'success');
       return;
     }
@@ -377,6 +378,7 @@ export default class FullReportPage {
 
     const mergedRows = decision === 'replace' ? rows : [...currentRows, ...rows];
     this.updateSectionRows('ACTUACIONES_DIARIAS', 'ACTUACIONES_DIARIAS', mergedRows);
+    await this.clearMovedSourceRows();
 
     const actionText = decision === 'replace' ? 'reemplazadas' : 'agregadas';
     this.showToast(`${rows.length} filas ${actionText} en ACTUACIONES DIARIAS`, 'success');
@@ -425,6 +427,15 @@ export default class FullReportPage {
     );
 
     this.persistScfState();
+  }
+
+  /**
+   * Tras mover los registros al SCF se vacía la lista de origen (Mis Reportes)
+   * para no poder moverlos dos veces. Se guarda una copia de seguridad que se
+   * puede recuperar desde Mis Reportes.
+   */
+  private async clearMovedSourceRows() {
+    await this.reportStore.clear();
   }
 
   private getSectionRows(sheetId: string, sectionTitle: string): string[][] {

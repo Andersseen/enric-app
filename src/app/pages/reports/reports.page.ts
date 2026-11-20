@@ -21,7 +21,6 @@ import {
   arrowBack,
   cloudUploadOutline,
   downloadOutline,
-  flashOutline,
   refreshOutline,
   trashBinOutline,
 } from 'ionicons/icons';
@@ -61,9 +60,6 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
           <ion-button (click)="fileInput.click()" title="Importar Excel">
             <ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
           </ion-button>
-          <!-- <ion-button (click)="generateMock()" title="Generar Datos">
-            <ion-icon slot="icon-only" name="flash-outline"></ion-icon>
-          </ion-button> -->
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -72,9 +68,9 @@ import ActuacionTableComponent from '../../components/actuacion-table/actuacion-
       <div class="flex flex-col gap-4 h-full">
         <!-- Control Bar -->
         <div
-          class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-lg shadow-sm"
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-surface p-4 rounded-lg shadow-sm border border-border"
         >
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-muted">
             Total registros: <span class="font-bold">{{ count() }}</span>
           </div>
           <div class="w-full sm:w-auto">
@@ -139,7 +135,6 @@ export default class ReportsPage {
       downloadOutline,
       cloudUploadOutline,
       trashBinOutline,
-      flashOutline,
       arrowBack,
       refreshOutline,
     });
@@ -198,11 +193,6 @@ export default class ReportsPage {
     if (confirm('¿Borrar esta fila?')) {
       this.reportStore.removeRow(index);
     }
-  }
-
-  async generateMock() {
-    this.reportStore.generateMockData();
-    this.showToast('Datos de prueba generados', 'medium');
   }
 
   private async showToast(message: string, color: 'success' | 'danger' | 'medium') {

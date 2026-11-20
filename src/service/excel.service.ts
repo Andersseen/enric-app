@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ReportsStorageService } from './reports-storage.service';
-import Session from './session';
 
 export interface ActuacionData {
   zoneId: string;
@@ -28,7 +27,6 @@ export interface ActuacionData {
 })
 export class ExcelService {
   private reportsStorage = inject(ReportsStorageService);
-  private session = inject(Session);
   /**
    * Creates a header row with dark green background and white text (matching reference Excel)
    */
@@ -84,292 +82,6 @@ export class ExcelService {
         wrapText: true,
       };
     });
-  }
-
-  async generateActuacionExcel(data: ActuacionData, filename?: string): Promise<void> {
-    // Get current session data
-    const sessionData = this.session.sessionForm.value;
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Actuación');
-
-    this.createHeaderRow(worksheet, [
-      'Fecha',
-      'Climatología',
-      'Personal',
-      'Hora',
-      'Localización',
-      'Especie',
-      'Nº',
-      'Actitud',
-      'Tipo actuación',
-      'Operación',
-      'Interacción operación',
-      'Método empleado',
-      'Animal empleado',
-      'Eficacia',
-      'Captura (Nº indiv)',
-      'Observaciones',
-    ]);
-
-    this.addDataRow(worksheet, [
-      sessionData.date || new Date().toLocaleDateString('es-ES'), // Fecha
-      sessionData.weather || '', // Climatología
-      sessionData.worker || '', // Personal
-      sessionData.time ||
-        new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), // Hora
-      data.zoneId || '', // Localización
-      data.speciesId || '', // Especie
-      data.count || 0, // Nº
-      data.behavior || '', // Actitud
-      data.actionType || '', // Tipo actuación
-      data.operation || '', // Operación
-      data.interaction || '', // Interacción perro/halcón
-      data.method || '', // Método empleado
-      data.animal || '', // Animal empleado
-      data.efficacy || '', // Eficacia
-      data.captured || 0, // Captura Efectiva
-      data.notes || '', // Observaciones
-    ]);
-
-    // Column widths (matching reference Excel)
-    worksheet.columns = [
-      { width: 10 }, // Fecha
-      { width: 12 }, // Crimológico
-      { width: 10 }, // Personal
-      { width: 8 }, // Hora
-      { width: 14 }, // Localización
-      { width: 16 }, // Especie
-      { width: 6 }, // Nº
-      { width: 14 }, // Actitud
-      { width: 14 }, // Tipo actuación
-      { width: 12 }, // Operación
-      { width: 18 }, // Interacción perro/halcón
-      { width: 16 }, // Método empleado
-      { width: 16 }, // Animal empleado
-      { width: 10 }, // Eficacia
-      { width: 14 }, // Captura Efectiva
-      { width: 30 }, // Observaciones
-    ];
-
-    // Generate filename: actuacion_2026-02-01_18-30.xlsx
-    const dateStr = (sessionData.date || new Date().toISOString().split('T')[0]).replace(
-      /\//g,
-      '-',
-    );
-    const timeStr = (sessionData.time || new Date().toTimeString().slice(0, 5)).replace(':', '-');
-    const generatedFilename = `actuacion_${dateStr}_${timeStr}.xlsx`;
-
-    // Save with metadata including session data
-    await this.saveWorkbook(workbook, generatedFilename, 'actuacion', {
-      zone: data.zoneId,
-      species: data.speciesId,
-      count: data.count,
-      worker: sessionData.worker || undefined,
-      date: sessionData.date || undefined,
-      time: sessionData.time || undefined,
-      weather: sessionData.weather || undefined,
-    });
-  }
-
-  /**
-   * Generates an Excel file for "Trampas"
-   */
-  async generateTrampaExcel(data: ActuacionData, filename?: string): Promise<void> {
-    const sessionData = this.session.sessionForm.value;
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Trampa');
-
-    this.createHeaderRow(worksheet, [
-      'Fecha',
-      'Climatología',
-      'Personal',
-      'Hora',
-      'Localización',
-      'Especie',
-      'Nº',
-      'Actitud',
-      'Tipo actuación',
-      'Operación',
-      'Interacción operación',
-      'Método empleado',
-      'Animal empleado',
-      'Eficacia',
-      'Captura (Nº indiv)',
-      'Observaciones',
-    ]);
-
-    this.addDataRow(worksheet, [
-      sessionData.date || new Date().toLocaleDateString('es-ES'),
-      sessionData.weather || '',
-      sessionData.worker || '',
-      sessionData.time ||
-        new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      data.zoneId || '',
-      data.speciesId || '',
-      data.count || 0,
-      data.behavior || '',
-      data.actionType || '',
-      data.operation || '',
-      data.interaction || '',
-      data.method || '',
-      data.animal || '',
-      data.efficacy || '',
-      data.captured || 0,
-      data.notes || '',
-    ]);
-
-    worksheet.columns = [
-      { width: 10 },
-      { width: 12 },
-      { width: 10 },
-      { width: 8 },
-      { width: 14 },
-      { width: 16 },
-      { width: 6 },
-      { width: 14 },
-      { width: 14 },
-      { width: 12 },
-      { width: 18 },
-      { width: 16 },
-      { width: 16 },
-      { width: 10 },
-      { width: 14 },
-      { width: 30 },
-    ];
-
-    const dateStr = (sessionData.date || new Date().toISOString().split('T')[0]).replace(
-      /\//g,
-      '-',
-    );
-    const timeStr = (sessionData.time || new Date().toTimeString().slice(0, 5)).replace(':', '-');
-    const generatedFilename = filename || `trampas_${dateStr}_${timeStr}.xlsx`;
-
-    await this.saveWorkbook(workbook, generatedFilename, 'trampa', {
-      zone: data.zoneId,
-      species: data.speciesId,
-      count: data.count,
-      worker: sessionData.worker || undefined,
-      date: sessionData.date || undefined,
-      time: sessionData.time || undefined,
-      weather: sessionData.weather || undefined,
-    });
-  }
-
-  /**
-   * Generates an Excel file for "Prevención"
-   */
-  async generatePrevencionExcel(data: ActuacionData, filename?: string): Promise<void> {
-    const sessionData = this.session.sessionForm.value;
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Prevención');
-
-    this.createHeaderRow(worksheet, [
-      'Fecha',
-      'Climatología',
-      'Personal',
-      'Hora',
-      'Localización',
-      'Especie',
-      'Nº',
-      'Actitud',
-      'Tipo actuación',
-      'Operación',
-      'Interacción operación',
-      'Método empleado',
-      'Animal empleado',
-      'Eficacia',
-      'Captura (Nº indiv)',
-      'Observaciones',
-    ]);
-
-    this.addDataRow(worksheet, [
-      sessionData.date || new Date().toLocaleDateString('es-ES'),
-      sessionData.weather || '',
-      sessionData.worker || '',
-      sessionData.time ||
-        new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      data.zoneId || '',
-      data.speciesId || '',
-      data.count || 0,
-      data.behavior || '',
-      data.actionType || '',
-      data.operation || '',
-      data.interaction || '',
-      data.method || '',
-      data.animal || '',
-      data.efficacy || '',
-      data.captured || 0,
-      data.notes || '',
-    ]);
-
-    worksheet.columns = [
-      { width: 10 },
-      { width: 12 },
-      { width: 10 },
-      { width: 8 },
-      { width: 14 },
-      { width: 16 },
-      { width: 6 },
-      { width: 14 },
-      { width: 14 },
-      { width: 12 },
-      { width: 18 },
-      { width: 16 },
-      { width: 16 },
-      { width: 10 },
-      { width: 14 },
-      { width: 30 },
-    ];
-
-    const dateStr = (sessionData.date || new Date().toISOString().split('T')[0]).replace(
-      /\//g,
-      '-',
-    );
-    const timeStr = (sessionData.time || new Date().toTimeString().slice(0, 5)).replace(':', '-');
-    const generatedFilename = filename || `prevencion_${dateStr}_${timeStr}.xlsx`;
-
-    await this.saveWorkbook(workbook, generatedFilename, 'prevencion', {
-      zone: data.zoneId,
-      species: data.speciesId,
-      count: data.count,
-      worker: sessionData.worker || undefined,
-      date: sessionData.date || undefined,
-      time: sessionData.time || undefined,
-      weather: sessionData.weather || undefined,
-    });
-  }
-
-  /**
-   * Generic method to create a custom Excel with full control
-   */
-  async generateCustomExcel(
-    sheetName: string,
-    headers: string[],
-    dataRows: any[][],
-    columnWidths: number[],
-    filename: string,
-    reportType: 'actuacion' | 'trampa' | 'prevencion' = 'actuacion',
-    metadata?: any,
-  ): Promise<void> {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet(sheetName);
-
-    // Headers
-    this.createHeaderRow(worksheet, headers);
-
-    // Data Rows
-    dataRows.forEach((rowData) => {
-      this.addDataRow(worksheet, rowData);
-    });
-
-    // Column widths
-    worksheet.columns = columnWidths.map((width) => ({ width }));
-
-    // Save
-    await this.saveWorkbook(workbook, filename, reportType, metadata);
   }
 
   /**
@@ -463,16 +175,12 @@ export class ExcelService {
       'Observaciones',
     ]);
 
-    const sessionData = this.session.sessionForm.value;
-
     data.forEach((row) => {
       this.addDataRow(worksheet, [
-        row.date || sessionData.date || new Date().toLocaleDateString('es-ES'), // Fallback to session
-        row.weather || sessionData.weather || '',
-        row.worker || sessionData.worker || '',
-        row.time ||
-          sessionData.time ||
-          new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+        row.date || '',
+        row.weather || '',
+        row.worker || '',
+        row.time || '',
         row.zoneId || '',
         row.speciesId || '',
         row.count || 0,
@@ -542,15 +250,5 @@ export class ExcelService {
       const file = new Blob([buffer], { type: 'application/octet-stream' });
       saveAs(file, filename);
     }
-  }
-
-  private getColumnLetter(columnNumber: number): string {
-    let letter = '';
-    while (columnNumber > 0) {
-      const remainder = (columnNumber - 1) % 26;
-      letter = String.fromCharCode(65 + remainder) + letter;
-      columnNumber = Math.floor((columnNumber - 1) / 26);
-    }
-    return letter;
   }
 }

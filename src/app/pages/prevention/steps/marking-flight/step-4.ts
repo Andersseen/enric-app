@@ -72,8 +72,6 @@ export default class FlightStepFour extends PreventionStep {
   }
 
   async save() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
     const zone = this.store.flightReviewZone();
 
     if (!zone) return;
@@ -91,11 +89,7 @@ export default class FlightStepFour extends PreventionStep {
       efficacy: 'Si',
       captured: 0,
       notes: this.store.flightReviewNotes(),
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.#toast.create({

@@ -30,8 +30,9 @@ import { IonGrid, IonRow, IonCol, IonCard, IonCardContent } from '@ionic/angular
               [class.bg-primary]="selected() === item"
               [class.text-white]="selected() === item"
               [class.border-primary]="selected() === item"
-              [class.bg-white]="selected() !== item"
-              [class.border-transparent]="selected() !== item"
+              [class.bg-surface]="selected() !== item"
+              [class.text-foreground]="selected() !== item"
+              [class.border-border]="selected() !== item"
               [class.scale-105]="selected() === item"
               (click)="select.emit(item)"
             >

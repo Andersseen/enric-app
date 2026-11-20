@@ -136,8 +136,6 @@ export class TrapsFormStepTwelve {
   }
 
   async generate() {
-    const sessionData = this.#session.sessionForm.value;
-    const now = new Date();
 
     this.#reportStore.addRow({
       zoneId: this.zone()?.name || '',
@@ -152,11 +150,7 @@ export class TrapsFormStepTwelve {
       captured: this.captured() || 0,
       notes: this.notes() || '',
       operation: 'No', // Traps usually distinct from active operation? Or "Si"? Leaving "No" or matching logic
-      date: sessionData.date || now.toLocaleDateString('es-ES'),
-      time:
-        sessionData.time || now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-      weather: sessionData.weather || '',
-      worker: sessionData.worker || '',
+      ...this.#session.recordMeta(),
     });
 
     const toast = await this.toastController.create({

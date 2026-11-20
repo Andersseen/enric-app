@@ -7,11 +7,11 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonIcon,
-  IonInput,
   IonSelect,
   IonSelectOption,
 } from '@ionic/angular/standalone';
 import Session from '@service/session';
+import { WEATHER_OPTIONS } from '@data/weather';
 import { addIcons } from 'ionicons';
 import { chevronDown, chevronUp } from 'ionicons/icons';
 
@@ -23,7 +23,6 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
     IonCardTitle,
     IonCardContent,
     IonIcon,
-    IonInput,
     IonSelect,
     IonSelectOption,
     ReactiveFormsModule,
@@ -43,17 +42,15 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
             <ion-card-title class="text-xl font-bold flex items-center gap-2">
               Datos de sesión
               @if (!expanded()) {
-                <span class="text-sm font-normal text-gray-500"> (Click para editar) </span>
+                <span class="text-sm font-normal text-muted"> (Toca para editar) </span>
               }
             </ion-card-title>
-            <div class="text-base text-gray-600">
+            <div class="text-base text-muted">
               <span class="font-medium">{{
                 sessionForm.get('worker')?.value || 'Sin asignar'
               }}</span>
               <span class="mx-2">·</span>
-              <span>{{ sessionForm.get('date')?.value }}</span>
-              <span class="mx-2">·</span>
-              <span>{{ sessionForm.get('time')?.value }}</span>
+              <span>{{ sessionForm.get('weather')?.value || 'Sin climatología' }}</span>
             </div>
           </div>
           <ion-button shape="round" size="large" [class.rotate-180]="expanded()">
@@ -70,27 +67,9 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
         [attr.aria-hidden]="!expanded()"
       >
         <form
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3 text-sm"
           [formGroup]="sessionForm"
         >
-          <div class="flex flex-col">
-            <ion-input
-              label="Fecha"
-              formControlName="date"
-              type="date"
-              class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
-            />
-          </div>
-
-          <div class="flex flex-col">
-            <ion-input
-              label="Hora"
-              formControlName="time"
-              type="time"
-              class="rounded-lg border border-muted bg-surface px-2 py-1 focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary"
-            />
-          </div>
-
           <div class="flex flex-col">
             <ion-select
               label="Climatología"
@@ -149,19 +128,7 @@ import { chevronDown, chevronUp } from 'ionicons/icons';
 export default class SessionHeaderComponent {
   #session = inject(Session);
 
-  weatherOptions = [
-    'Despejado',
-    'Despejado/viento',
-    'Claros',
-    'Claros/viento',
-    'Nublado',
-    'Nublado/viento',
-    'Lluvioso',
-    'Lluvioso/viento',
-    'Lluvia',
-    'Lluvia/viento',
-    'Tormenta',
-  ].map((w) => ({ value: w, label: w }));
+  weatherOptions = WEATHER_OPTIONS.map((w) => ({ value: w, label: w }));
 
   expanded = computed(() => this.#session.expand());
 

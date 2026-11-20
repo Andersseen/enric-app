@@ -1,8 +1,12 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { SessionData } from '@data/session';
+import { RecordMeta, SessionData } from '@data/session';
+import { WEATHER_OPTIONS } from '@data/weather';
 import { format } from 'date-fns';
 import { Preferences } from '@capacitor/preferences';
+
+const SESSION_STORAGE_KEY = 'enric_session_data';
+const WORKERS_STORAGE_KEY = 'workers';
 
 @Injectable({ providedIn: 'root' })
 export default class Session {
@@ -12,78 +16,35 @@ export default class Session {
   #workers = signal<string[]>([]);
   workers = this.#workers.asReadonly();
 
+  sessionForm = inject(FormBuilder).nonNullable.group({
+    weather: [''],
+    worker: [''],
+  });
+
   constructor() {
     this.loadWorkers();
     this.loadSessionData();
 
-    this.sessionForm.valueChanges.subscribe((val) => {
-      // Update signal
-      this.sessionData.set(val as SessionData);
-      // Save to storage
-      this.saveSessionData(val as SessionData);
-    });
+    this.sessionForm.valueChanges.subscribe(() => this.saveSessionData());
   }
 
-  readonly initial = (): SessionData => {
+  /**
+   * Datos comunes de una fila: trabajador y climatología de la sesión,
+   * y la fecha y hora reales del momento en que se guarda.
+   */
+  recordMeta(): RecordMeta {
     const now = new Date();
+    const { weather, worker } = this.sessionForm.getRawValue();
     return {
       date: format(now, 'yyyy-MM-dd'),
       time: format(now, 'HH:mm'),
-      weather: '',
-      worker: '',
+      weather,
+      worker,
     };
-  };
-
-  sessionData = signal(this.initial());
-
-  sessionForm = inject(FormBuilder).group({
-    date: [this.sessionData().date],
-    time: [this.sessionData().time],
-    weather: [this.sessionData().weather],
-    worker: [this.sessionData().worker],
-  });
+  }
 
   setExpand(value: boolean): void {
     this.#expand.set(value);
-  }
-
-  private async loadWorkers(): Promise<void> {
-    const { value } = await Preferences.get({ key: 'workers' });
-    if (value) {
-      this.#workers.set(JSON.parse(value));
-    } else {
-      const defaults = ['Enric'];
-      this.#workers.set(defaults);
-      this.saveWorkers(defaults);
-    }
-  }
-
-  private async loadSessionData(): Promise<void> {
-    const { value } = await Preferences.get({ key: 'enric_session_data' });
-    if (value) {
-      try {
-        const stored = JSON.parse(value) as SessionData;
-        // Si la sesión guardada es de otro día, se renuevan fecha y hora
-        // (se mantienen trabajador y climatología).
-        const fresh = this.initial();
-        const data: SessionData =
-          stored.date === fresh.date ? stored : { ...stored, date: fresh.date, time: fresh.time };
-        this.sessionData.set(data);
-        this.sessionForm.patchValue(data, { emitEvent: false });
-        if (data !== stored) {
-          this.saveSessionData(data);
-        }
-      } catch (e) {
-        console.error('Error loading session data', e);
-      }
-    }
-  }
-
-  private async saveSessionData(data: SessionData): Promise<void> {
-    await Preferences.set({
-      key: 'enric_session_data',
-      value: JSON.stringify(data),
-    });
   }
 
   addWorker(name: string): void {
@@ -101,10 +62,39 @@ export default class Session {
     this.saveWorkers(updated);
   }
 
+  private async loadWorkers(): Promise<void> {
+    const { value } = await Preferences.get({ key: WORKERS_STORAGE_KEY });
+    if (value) {
+      this.#workers.set(JSON.parse(value));
+    } else {
+      const defaults = ['Enric'];
+      this.#workers.set(defaults);
+      this.saveWorkers(defaults);
+    }
+  }
+
+  private async loadSessionData(): Promise<void> {
+    const { value } = await Preferences.get({ key: SESSION_STORAGE_KEY });
+    if (!value) return;
+    try {
+      const stored = JSON.parse(value) as Partial<SessionData>;
+      // Una climatología que ya no está en la lista se descarta para volver a elegirla
+      const weather = WEATHER_OPTIONS.includes(stored.weather ?? '') ? stored.weather! : '';
+      this.sessionForm.patchValue(
+        { weather, worker: stored.worker ?? '' },
+        { emitEvent: false },
+      );
+    } catch (e) {
+      console.error('Error loading session data', e);
+    }
+  }
+
+  private async saveSessionData(): Promise<void> {
+    const data: SessionData = this.sessionForm.getRawValue();
+    await Preferences.set({ key: SESSION_STORAGE_KEY, value: JSON.stringify(data) });
+  }
+
   private async saveWorkers(workers: string[]): Promise<void> {
-    await Preferences.set({
-      key: 'workers',
-      value: JSON.stringify(workers),
-    });
+    await Preferences.set({ key: WORKERS_STORAGE_KEY, value: JSON.stringify(workers) });
   }
 }
