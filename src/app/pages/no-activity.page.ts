@@ -95,7 +95,7 @@ export default class NoActivityPage {
   #nav = inject(NavController);
 
   zone = signal<Zone | null>(null);
-  notes = signal('');
+  notes = signal('Permanecemos en observación');
 
   constructor() {
     addIcons({ arrowBack, saveOutline });
