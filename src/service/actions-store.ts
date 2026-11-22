@@ -5,6 +5,7 @@ import { STEP_ID } from '@data/state';
 import { STEP_STATE, StepId } from '@data/steps';
 import { Zone } from '@data/zones';
 import BaseStore from './base-store';
+import { isFlightMethod } from '@data/methods';
 
 @Injectable({ providedIn: 'root' })
 export default class ActionsStore extends BaseStore {
@@ -13,7 +14,7 @@ export default class ActionsStore extends BaseStore {
   override steps = this.#steps.asReadonly();
 
   #methodUsesAnimal(method: string | null | undefined): boolean {
-    return method === 'Perro' || method === 'Vuelo dispersión halcón';
+    return method === 'Perro' || isFlightMethod(method);
   }
 
   currentStateStep = computed(() => {
@@ -28,11 +29,11 @@ export default class ActionsStore extends BaseStore {
       state.prev = STEP_ID.Step8;
     }
 
-    // Skip step-11 (Captura) if method is not 'Vuelo dispersión halcón'.
-    if (this.currentStep() === STEP_ID.Step10 && method !== 'Vuelo dispersión halcón') {
+    // Skip step-11 (Captura) if method is not a falcon/Harris flight.
+    if (this.currentStep() === STEP_ID.Step10 && !isFlightMethod(method)) {
       state.next = STEP_ID.Step12;
     }
-    if (this.currentStep() === STEP_ID.Step12 && method !== 'Vuelo dispersión halcón') {
+    if (this.currentStep() === STEP_ID.Step12 && !isFlightMethod(method)) {
       state.prev = STEP_ID.Step10;
     }
     return state;
@@ -100,7 +101,7 @@ export default class ActionsStore extends BaseStore {
           };
         }
 
-        if (method !== 'Vuelo dispersión halcón') {
+        if (!isFlightMethod(method)) {
           updatedState[STEP_ID.Step11] = {
             label: currentState[STEP_ID.Step11].label,
             value: null,

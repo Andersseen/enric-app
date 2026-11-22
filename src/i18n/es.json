@@ -36,7 +36,8 @@
       "prevention": { "title": "Prevención", "description": "Medidas preventivas de fauna en pista." },
       "acting": { "title": "Actuación", "description": "Registrar acciones ejecutadas en campo." },
       "traps": { "title": "Trampas", "description": "Revisión y control de trampas activas." },
-      "noActivity": { "title": "No actividad", "description": "Registrar una zona sin avistamientos." },
+      "vigilance": { "title": "Vigilancia", "description": "Registrar una zona en vigilancia." },
+      "maintenance": { "title": "Mantenimiento", "description": "Registrar tareas de mantenimiento en una zona." },
       "myReports": { "title": "Mis Reportes", "description": "Ver, filtrar y compartir reportes generados." },
       "fullReport": { "title": "Reporte SCF", "description": "Libro SCF completo para importar y exportar." },
       "workers": { "title": "Gestionar Trabajadores", "description": "Añadir o eliminar trabajadores." },
@@ -65,6 +66,7 @@
   },
   "steps": {
     "zone": "Zona",
+    "flightBird": "Ave del vuelo",
     "species": "Especie",
     "count": "Número",
     "behavior": "Comportamiento",
@@ -120,9 +122,10 @@
       "laser": "Láser",
       "dog": "Perro",
       "falconFlight": "Vuelo dispersión halcón",
+      "harrisFlight": "Vuelo dispersión Harris",
       "observation": "Observación"
     },
-    "trapAction": { "capture": "Captura" },
+    "trapAction": { "capture": "Captura", "removal": "Retirar" },
     "trapMethod": {
       "balChatri": "Bal-chatri",
       "snare": "Lazo",
@@ -152,9 +155,13 @@
     "favorite": "Favorito",
     "markFavorite": "Marcar favorito"
   },
-  "noActivity": {
-    "title": "No actividad",
-    "saved": "No actividad añadida a la tabla"
+  "vigilance": {
+    "title": "Vigilancia",
+    "saved": "Vigilancia añadida a la tabla"
+  },
+  "maintenance": {
+    "title": "Mantenimiento",
+    "saved": "Mantenimiento añadido a la tabla"
   },
   "prevention": {
     "title": "Prevención",

@@ -154,11 +154,18 @@ export default class List {
       color: 'primary',
     },
     {
-      icon: '⏸️',
-      title: this.t('home.cards.noActivity.title'),
-      description: this.t('home.cards.noActivity.description'),
-      routerLink: ['no-activity'],
+      icon: '👁️',
+      title: this.t('home.cards.vigilance.title'),
+      description: this.t('home.cards.vigilance.description'),
+      routerLink: ['vigilance'],
       color: 'secondary',
+    },
+    {
+      icon: '🛠️',
+      title: this.t('home.cards.maintenance.title'),
+      description: this.t('home.cards.maintenance.description'),
+      routerLink: ['maintenance'],
+      color: 'primary',
     },
   ]);
 

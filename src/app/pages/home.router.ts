@@ -13,7 +13,18 @@ const homeRoutes: Routes = [
         path: 'manage-workers',
         loadComponent: () => import('./manage-workers.page'),
       },
-      { path: 'no-activity', loadComponent: () => import('./no-activity.page') },
+      {
+        path: 'vigilance',
+        loadComponent: () => import('./zone-log.page'),
+        data: { kind: 'vigilance' },
+      },
+      {
+        path: 'maintenance',
+        loadComponent: () => import('./zone-log.page'),
+        data: { kind: 'maintenance' },
+      },
+      // Ruta antigua
+      { path: 'no-activity', redirectTo: 'vigilance' },
       {
         path: 'manage-animals',
         loadComponent: () => import('./manage-animals.page'),

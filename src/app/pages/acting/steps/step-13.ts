@@ -16,6 +16,7 @@ import { ReportStore } from '@service/report-store';
 import Session from '@service/session';
 import { addIcons } from 'ionicons';
 import { downloadOutline, homeOutline } from 'ionicons/icons';
+import { isFlightMethod } from '@data/methods';
 import StepPage from '.';
 import { injectT } from '@etyma/angular';
 import { i18n } from '@i18n/i18n';
@@ -142,7 +143,7 @@ export class FormStepThirteen {
   efficacy = this.#store.step10Value;
   captured = this.#store.step11Value;
   displayCaptured = computed(() => {
-    if (this.method() !== 'Vuelo dispersión halcón') return 0;
+    if (!isFlightMethod(this.method())) return 0;
     return this.captured() ?? 0;
   });
   notes = this.#store.step12Value;
@@ -165,7 +166,7 @@ export class FormStepThirteen {
       method: this.method() || '',
       animal: this.animal() || '',
       efficacy: this.efficacy() || '',
-      captured: this.method() !== 'Vuelo dispersión halcón' ? 0 : this.captured() || 0,
+      captured: !isFlightMethod(this.method()) ? 0 : this.captured() || 0,
       notes: this.notes() || '',
       operation: this.operation() || 'No',
       ...this.#session.recordMeta(),

@@ -36,7 +36,8 @@
       "prevention": { "title": "Prevenció", "description": "Mesures preventives de fauna a pista." },
       "acting": { "title": "Actuació", "description": "Registrar accions executades al camp." },
       "traps": { "title": "Trampes", "description": "Revisió i control de trampes actives." },
-      "noActivity": { "title": "Sense activitat", "description": "Registrar una zona sense albiraments." },
+      "vigilance": { "title": "Vigilància", "description": "Registrar una zona en vigilància." },
+      "maintenance": { "title": "Manteniment", "description": "Registrar tasques de manteniment en una zona." },
       "myReports": { "title": "Els meus informes", "description": "Veure, filtrar i compartir informes generats." },
       "fullReport": { "title": "Informe SCF", "description": "Llibre SCF complet per importar i exportar." },
       "workers": { "title": "Gestionar treballadors", "description": "Afegir o eliminar treballadors." },
@@ -65,6 +66,7 @@
   },
   "steps": {
     "zone": "Zona",
+    "flightBird": "Au del vol",
     "species": "Espècie",
     "count": "Nombre",
     "behavior": "Comportament",
@@ -120,9 +122,10 @@
       "laser": "Làser",
       "dog": "Gos",
       "falconFlight": "Vol de dispersió amb falcó",
+      "harrisFlight": "Vol de dispersió amb Harris",
       "observation": "Observació"
     },
-    "trapAction": { "capture": "Captura" },
+    "trapAction": { "capture": "Captura", "removal": "Retirar" },
     "trapMethod": {
       "balChatri": "Bal-chatri",
       "snare": "Llaç",
@@ -152,9 +155,13 @@
     "favorite": "Preferit",
     "markFavorite": "Marcar com a preferit"
   },
-  "noActivity": {
-    "title": "Sense activitat",
-    "saved": "Sense activitat afegida a la taula"
+  "vigilance": {
+    "title": "Vigilància",
+    "saved": "Vigilància afegida a la taula"
+  },
+  "maintenance": {
+    "title": "Manteniment",
+    "saved": "Manteniment afegit a la taula"
   },
   "prevention": {
     "title": "Prevenció",

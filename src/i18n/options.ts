@@ -30,9 +30,10 @@ export const OPTION_KEYS = {
     Láser: 'laser',
     Perro: 'dog',
     'Vuelo dispersión halcón': 'falconFlight',
+    'Vuelo dispersión Harris': 'harrisFlight',
     Observación: 'observation',
   },
-  trapAction: { Captura: 'capture' },
+  trapAction: { Captura: 'capture', Retirar: 'removal' },
   trapMethod: {
     'Bal-chatri': 'balChatri',
     Lazo: 'snare',
