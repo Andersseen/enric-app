@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -22,14 +23,39 @@ import Session from '@service/session';
 import { addIcons } from 'ionicons';
 import { arrowBack, saveOutline } from 'ionicons/icons';
 import { injectT } from '@etyma/angular';
-import { i18n } from '@i18n/i18n';
+import { i18n, type MessageKey } from '@i18n/i18n';
+
+export type ZoneLogKind = 'vigilance' | 'maintenance';
 
 /**
- * "NO ACTIVIDAD": registra una fila en ACTUACIONES DIARIAS sin avistamientos.
- * Solo se indica la zona y, opcionalmente, observaciones.
+ * Configuración de cada pantalla. `actionType` y `defaultNotes` van siempre en
+ * castellano porque se guardan y salen tal cual en el Excel.
+ */
+const ZONE_LOGS: Record<
+  ZoneLogKind,
+  { actionType: string; defaultNotes: string; title: MessageKey; saved: MessageKey }
+> = {
+  vigilance: {
+    actionType: 'Vigilancia',
+    defaultNotes: 'Permanecemos en observación',
+    title: 'vigilance.title',
+    saved: 'vigilance.saved',
+  },
+  maintenance: {
+    actionType: 'Mantenimiento',
+    defaultNotes: 'Tareas de mantenimiento',
+    title: 'maintenance.title',
+    saved: 'maintenance.saved',
+  },
+};
+
+/**
+ * "VIGILANCIA" y "MANTENIMIENTO": registran una fila en ACTUACIONES DIARIAS
+ * sin especie. Solo se indica la zona y las observaciones (con un texto por
+ * defecto que se puede cambiar o borrar).
  */
 @Component({
-  selector: 'app-no-activity',
+  selector: 'app-zone-log',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IonHeader,
@@ -54,7 +80,7 @@ import { i18n } from '@i18n/i18n';
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ t('noActivity.title') }}</ion-title>
+        <ion-title>{{ t(config.title) }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -87,17 +113,20 @@ import { i18n } from '@i18n/i18n';
     </ion-content>
   `,
 })
-export default class NoActivityPage {
+export default class ZoneLogPage {
   protected t = injectT(i18n);
   #reportStore = inject(ReportStore);
   #session = inject(Session);
   #toast = inject(ToastController);
   #nav = inject(NavController);
 
+  protected config = ZONE_LOGS[
+    (inject(ActivatedRoute).snapshot.data['kind'] as ZoneLogKind) ?? 'vigilance'
+  ];
+
   zone = signal<Zone | null>(null);
-  // Texto por defecto, editable o borrable. Siempre en castellano porque se
-  // guarda y sale tal cual en el Excel, que es para otra empresa.
-  notes = signal('Permanecemos en observación');
+  // Texto por defecto, editable o borrable
+  notes = signal(this.config.defaultNotes);
 
   constructor() {
     addIcons({ arrowBack, saveOutline });
@@ -109,10 +138,10 @@ export default class NoActivityPage {
 
     this.#reportStore.addRow({
       zoneId: zone.name,
-      speciesId: 'Sin avistamientos',
+      speciesId: '-',
       count: 0,
       behavior: '-',
-      actionType: 'No actividad',
+      actionType: this.config.actionType,
       operation: 'No',
       interaction: 'No',
       method: '-',
@@ -124,7 +153,7 @@ export default class NoActivityPage {
     });
 
     const toast = await this.#toast.create({
-      message: this.t('noActivity.saved'),
+      message: this.t(this.config.saved),
       duration: 2000,
       position: 'bottom',
       color: 'success',

@@ -10,7 +10,7 @@ All data is stored on the device (Capacitor Preferences and Filesystem); there i
 ## Main features
 
 - **Actuación**, **Trampas** and **Prevención** (runway, perimeter, dog review, marking flight,
-  PPOAM) step-by-step records, plus **No actividad** for zones without sightings.
+  PPOAM) step-by-step records, plus **Vigilancia** and **Mantenimiento** zone records.
 - **Mis Reportes**: table of saved records, Excel export/import, backups.
 - **Reporte SCF**: the full SCF workbook (all sheets), import an existing SCF, move the records
   into `ACTUACIONES DIARIAS` and export it.

@@ -20,7 +20,7 @@ import TrapsActionsStore from '@service/traps-store';
 })
 export class TrapsFormStepFive {
   #store = inject(TrapsActionsStore);
-  options = ['Captura'];
+  options = ['Captura', 'Retirar'];
   selectedOption = signal<string | null>(null);
 
   onSelect(option: string) {
