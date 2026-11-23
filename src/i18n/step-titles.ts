@@ -11,6 +11,7 @@ export const ACTING_STEP_TITLES: Record<StepId, MessageKey> = {
   'step-6': 'steps.operation',
   'step-7': 'steps.interaction',
   'step-8': 'steps.method',
+  'step-8b': 'steps.flightBird',
   'step-9': 'steps.animal',
   'step-10': 'steps.efficacy',
   'step-11': 'steps.captured',
@@ -32,6 +33,7 @@ export const TRAPS_STEP_TITLES: Record<StepId, MessageKey> = {
   'step-6': 'steps.interaction',
   'step-7': 'steps.method',
   'step-8': 'steps.animal',
+  'step-8b': 'steps.flightBird', // no se usa en Trampas
   'step-9': 'steps.efficacy',
   'step-10': 'steps.captured',
   'step-11': 'steps.observations',

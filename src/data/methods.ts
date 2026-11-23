@@ -5,6 +5,9 @@
 export const FALCON_FLIGHT = 'Vuelo dispersión halcón';
 export const HARRIS_FLIGHT = 'Vuelo dispersión Harris';
 
+/** Botón del paso "Método": el ave (Halcón / Harris) se elige en la pantalla siguiente. */
+export const FLIGHT_OPTION = 'Vuelo dispersión';
+
 export function isFlightMethod(method: unknown): boolean {
   return method === FALCON_FLIGHT || method === HARRIS_FLIGHT;
 }

@@ -38,6 +38,10 @@ const actingRoutes: Routes = [
         loadComponent: () => import('./steps/step-8'),
       },
       {
+        path: 'step-8b',
+        loadComponent: () => import('./steps/step-8b'),
+      },
+      {
         path: 'step-9',
         loadComponent: () => import('./steps/step-9'),
       },

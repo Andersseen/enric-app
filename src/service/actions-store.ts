@@ -5,7 +5,7 @@ import { STEP_ID } from '@data/state';
 import { STEP_STATE, StepId } from '@data/steps';
 import { Zone } from '@data/zones';
 import BaseStore from './base-store';
-import { isFlightMethod } from '@data/methods';
+import { FALCON_FLIGHT, HARRIS_FLIGHT, isFlightMethod } from '@data/methods';
 
 @Injectable({ providedIn: 'root' })
 export default class ActionsStore extends BaseStore {
@@ -20,6 +20,14 @@ export default class ActionsStore extends BaseStore {
   currentStateStep = computed(() => {
     const state = { ...STEP_STATE[this.currentStep()] };
     const method = this.step8Value() as string;
+
+    // Vuelo de dispersión: después del método se elige Halcón o Harris (step-8b).
+    if (this.currentStep() === STEP_ID.Step8 && isFlightMethod(method)) {
+      state.next = STEP_ID.Step8b;
+    }
+    if (this.currentStep() === STEP_ID.Step9 && isFlightMethod(method)) {
+      state.prev = STEP_ID.Step8b;
+    }
 
     // Skip step-9 (Animal) if method does not use an animal.
     if (this.currentStep() === STEP_ID.Step8 && !this.#methodUsesAnimal(method)) {
@@ -57,6 +65,7 @@ export default class ActionsStore extends BaseStore {
   step6Value = computed(() => this.state()[STEP_ID.Step6].value);
   step7Value = computed(() => this.state()[STEP_ID.Step7]?.value); // Operación
   step8Value = computed(() => this.state()[STEP_ID.Step8]?.value); // Método
+  step8bValue = computed(() => this.state()[STEP_ID.Step8b]?.value); // Halcón / Harris
   step9Value = computed(() => this.state()[STEP_ID.Step9]?.value); // Animal
   step10Value = computed(() => this.state()[STEP_ID.Step10]?.value); // Eficacia
   step11Value = computed(() => this.state()[STEP_ID.Step11]?.value); // Captura
@@ -84,6 +93,18 @@ export default class ActionsStore extends BaseStore {
     }
   }
 
+  /** Paso "Ave del vuelo": guarda Halcón/Harris y ajusta el método. */
+  setFlightBird(bird: 'Halcón' | 'Harris') {
+    this.state.update((currentState) => ({
+      ...currentState,
+      [STEP_ID.Step8]: {
+        label: currentState[STEP_ID.Step8].label,
+        value: bird === 'Harris' ? HARRIS_FLIGHT : FALCON_FLIGHT,
+      },
+      [STEP_ID.Step8b]: { label: currentState[STEP_ID.Step8b].label, value: bird },
+    }));
+  }
+
   setValueForCurrentStep(value: unknown) {
     this.state.update((currentState) => {
       const updatedState = {
@@ -93,6 +114,15 @@ export default class ActionsStore extends BaseStore {
 
       if (this.currentStep() === STEP_ID.Step8) {
         const method = (value as string | null | undefined) ?? '';
+        const previous = currentState[STEP_ID.Step8].value;
+
+        // Al entrar o salir del vuelo de dispersión hay que volver a elegir el ave
+        if (!isFlightMethod(method) || !isFlightMethod(previous)) {
+          updatedState[STEP_ID.Step8b] = {
+            label: currentState[STEP_ID.Step8b].label,
+            value: null,
+          };
+        }
 
         if (!this.#methodUsesAnimal(method)) {
           updatedState[STEP_ID.Step9] = {
