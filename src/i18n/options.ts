@@ -29,6 +29,7 @@ export const OPTION_KEYS = {
     Pirotecnia: 'pyrotechnics',
     Láser: 'laser',
     Perro: 'dog',
+    'Vuelo dispersión': 'flight',
     'Vuelo dispersión halcón': 'falconFlight',
     'Vuelo dispersión Harris': 'harrisFlight',
     Observación: 'observation',

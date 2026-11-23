@@ -9,6 +9,7 @@ export type StepId =
   | 'step-6'
   | 'step-7'
   | 'step-8'
+  | 'step-8b'
   | 'step-9'
   | 'step-10'
   | 'step-11'
@@ -26,6 +27,8 @@ export const STEP_STATE: BaseStepNavigationMap<StepId> = {
   'step-6': { prev: 'step-5', next: 'step-7' },
   'step-7': { prev: 'step-6', next: 'step-8' },
   'step-8': { prev: 'step-7', next: 'step-9' },
+  // Solo en Actuación, con vuelo de dispersión: elegir Halcón o Harris
+  'step-8b': { prev: 'step-8', next: 'step-9' },
   'step-9': { prev: 'step-8', next: 'step-10' },
   'step-10': { prev: 'step-9', next: 'step-11' },
   'step-11': { prev: 'step-10', next: 'step-12' },

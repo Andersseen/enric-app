@@ -9,6 +9,7 @@ export const ACTIONS_STEPS: Step[] = [
   { id: 'step-6', title: 'Operación', icon: 'medkit' },
   { id: 'step-7', title: 'Interacción', icon: 'people' },
   { id: 'step-8', title: 'Método', icon: 'build' },
+  { id: 'step-8b', title: 'Ave del vuelo', icon: 'paw' },
   { id: 'step-9', title: 'Animal', icon: 'paw' },
   { id: 'step-10', title: 'Eficacia', icon: 'checkmark-circle' },
   { id: 'step-11', title: 'Captura', icon: 'camera' },
